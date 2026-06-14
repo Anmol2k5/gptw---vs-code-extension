@@ -24,25 +24,35 @@ function codexTarget(): string {
 const ENV = { ...process.env };
 afterEach(() => { process.env = { ...ENV }; });
 
+// Suppress OpenCode discovery on machines where it is installed — its
+// registry entry uses KICKBACKS_OC_TARGET the same way CC/Codex use theirs.
+function suppressOpenCode(): void {
+  process.env.KICKBACKS_OC_TARGET = "/nope";
+}
+
 describe("registry.discover", () => {
   it("neither present -> empty", () => {
     process.env.VIBE_ADS_CC_TARGET = "/nope";
     process.env.VIBE_ADS_CODEX_TARGET = "/nope";
+    suppressOpenCode();
     expect(discover().length).toBe(0);
   });
   it("CC only", () => {
     process.env.VIBE_ADS_CC_TARGET = ccTarget();
     process.env.VIBE_ADS_CODEX_TARGET = "/nope";
+    suppressOpenCode();
     expect(discover().map((x) => x.id)).toEqual(["claude-code"]);
   });
   it("Codex only", () => {
     process.env.VIBE_ADS_CC_TARGET = "/nope";
     process.env.VIBE_ADS_CODEX_TARGET = codexTarget();
+    suppressOpenCode();
     expect(discover().map((x) => x.id)).toEqual(["codex"]);
   });
   it("both -> claude-code first (primary precedence)", () => {
     process.env.VIBE_ADS_CC_TARGET = ccTarget();
     process.env.VIBE_ADS_CODEX_TARGET = codexTarget();
+    suppressOpenCode();
     expect(discover().map((x) => x.id)).toEqual(["claude-code", "codex"]);
   });
   it("adapters are constructed and typed", () => {

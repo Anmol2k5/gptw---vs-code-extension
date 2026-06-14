@@ -103,7 +103,7 @@ function run() {
   // is on PATH under `npm run`). Package from a temporary staged root so build
   // metadata never mutates tracked package.json / README.md.
   const r = spawnSync("vsce",
-    ["package", "--no-dependencies", "-o", join(extDir, STABLE)],
+    ["package", "--no-dependencies", "-o", `"${join(extDir, STABLE)}"`],
     { cwd: stageDir, stdio: "inherit", shell: true });
   if ((r.status ?? 1) !== 0) process.exit(r.status ?? 1);
   rmSync(stageDir, { recursive: true, force: true });

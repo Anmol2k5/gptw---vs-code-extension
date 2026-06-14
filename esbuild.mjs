@@ -87,6 +87,9 @@ copyAsset("src/adapters/codex-cli/wrapper.cmd.asset",
           "dist/adapters/codex-cli/wrapper.cmd.asset");
 copyAsset("src/adapters/codex-cli/wrapper.sh.asset",
           "dist/adapters/codex-cli/wrapper.sh.asset");
+// OpenCode plugin script. Shipped raw (placeholders filled at install time).
+copyAsset("src/adapters/opencode/plugin.asset.js",
+          "dist/adapters/opencode/plugin.asset.js");
 // Generate the DETAILS-pane readme under dist. scripts/package.mjs copies it
 // into the temporary VSCE package root as README.md. The tracked source of
 // record is readme_extension.md; there is intentionally no bare README.md in

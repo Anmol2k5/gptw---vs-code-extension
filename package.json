@@ -20,107 +20,107 @@
     "commands": [
       {
         "command": "kickbacks.signIn",
-        "title": "Kickbacks: Sign in"
+        "title": "GPTW: Sign in"
       },
       {
         "command": "kickbacks.signOut",
-        "title": "Kickbacks: Sign out"
+        "title": "GPTW: Sign out"
       },
       {
         "command": "kickbacks.restore",
-        "title": "Kickbacks: Restore Claude Code"
+        "title": "GPTW: Restore Claude Code"
       },
       {
         "command": "kickbacks.status",
-        "title": "Kickbacks: Show status"
+        "title": "GPTW: Show status"
       },
       {
         "command": "kickbacks.debugMenu",
-        "title": "Kickbacks: Menu"
+        "title": "GPTW: Menu"
       },
       {
         "command": "kickbacks.editConfig",
-        "title": "Kickbacks: Edit Config"
+        "title": "GPTW: Edit Config"
       },
       {
         "command": "kickbacks.diagnose",
-        "title": "Kickbacks: Diagnose"
+        "title": "GPTW: Diagnose"
       },
       {
         "command": "vibe-ads.diagnose",
-        "title": "Kickbacks: Diagnose (legacy alias)"
+        "title": "GPTW: Diagnose (legacy alias)"
       },
       {
         "command": "vibe-ads.signIn",
-        "title": "Kickbacks: Sign in (legacy alias)"
+        "title": "GPTW: Sign in (legacy alias)"
       },
       {
         "command": "vibe-ads.signOut",
-        "title": "Kickbacks: Sign out (legacy alias)"
+        "title": "GPTW: Sign out (legacy alias)"
       },
       {
         "command": "vibe-ads.restore",
-        "title": "Kickbacks: Restore Claude Code (legacy alias)"
+        "title": "GPTW: Restore Claude Code (legacy alias)"
       },
       {
         "command": "vibe-ads.status",
-        "title": "Kickbacks: Show status (legacy alias)"
+        "title": "GPTW: Show status (legacy alias)"
       },
       {
         "command": "vibe-ads.debugMenu",
-        "title": "Kickbacks: Menu (legacy alias)"
+        "title": "GPTW: Menu (legacy alias)"
       },
       {
         "command": "kickbacks.test.fireImpressionRendered",
-        "title": "Kickbacks (Test): Fire impression_rendered"
+        "title": "GPTW (Test): Fire impression_rendered"
       },
       {
         "command": "kickbacks.test.fireImpressionViewable",
-        "title": "Kickbacks (Test): Fire impression_viewable"
+        "title": "GPTW (Test): Fire impression_viewable"
       },
       {
         "command": "kickbacks.test.fireViewTick",
-        "title": "Kickbacks (Test): Fire view_tick"
+        "title": "GPTW (Test): Fire view_tick"
       },
       {
         "command": "kickbacks.test.fireViewThresholdMet",
-        "title": "Kickbacks (Test): Fire view_threshold_met (credits)"
+        "title": "GPTW (Test): Fire view_threshold_met (credits)"
       },
       {
         "command": "kickbacks.test.fireErrorImpression",
-        "title": "Kickbacks (Test): Fire error_impression (5s stuck-session safety net)"
+        "title": "GPTW (Test): Fire error_impression (5s stuck-session safety net)"
       },
       {
         "command": "kickbacks.test.fireClick",
-        "title": "Kickbacks (Test): Fire click"
+        "title": "GPTW (Test): Fire click"
       },
       {
         "command": "kickbacks.test.refreshPortfolio",
-        "title": "Kickbacks (Test): Refresh portfolio"
+        "title": "GPTW (Test): Refresh portfolio"
       },
       {
         "command": "kickbacks.test.refreshEarnings",
-        "title": "Kickbacks (Test): Refresh earnings"
+        "title": "GPTW (Test): Refresh earnings"
       },
       {
         "command": "kickbacks.test.getState",
-        "title": "Kickbacks (Test): Get state snapshot"
+        "title": "GPTW (Test): Get state snapshot"
       },
       {
         "command": "kickbacks.test.clearEventLog",
-        "title": "Kickbacks (Test): Clear event log"
+        "title": "GPTW (Test): Clear event log"
       },
       {
         "command": "kickbacks.test.disableInjection",
-        "title": "Kickbacks (Test): Disable injection"
+        "title": "GPTW (Test): Disable injection"
       },
       {
         "command": "kickbacks.test.enableInjection",
-        "title": "Kickbacks (Test): Enable injection"
+        "title": "GPTW (Test): Enable injection"
       },
       {
         "command": "kickbacks.test.refreshStatusBar",
-        "title": "Kickbacks (Test): Refresh status bar"
+        "title": "GPTW (Test): Refresh status bar"
       }
     ],
     "menus": {
@@ -180,7 +180,7 @@
       ]
     },
     "configuration": {
-      "title": "Kickbacks",
+      "title": "GPTW",
       "properties": {
         "kickbacks.viewThresholdSeconds": {
           "type": "number",

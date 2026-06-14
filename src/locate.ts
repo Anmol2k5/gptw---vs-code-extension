@@ -33,7 +33,10 @@ export function locateClaudeCode(): string | null {
                        join(homedir(), ".vscode-server", "extensions"),
                        join(homedir(), ".vscode-server-insiders", "extensions"),
                        join(homedir(), ".cursor", "extensions"),
-                       join(homedir(), ".cursor-server", "extensions")]) {
+                       join(homedir(), ".cursor-server", "extensions"),
+                       join(homedir(), ".antigravity", "extensions"),
+                       join(homedir(), ".antigravity-ide", "extensions"),
+                       join(homedir(), ".antigravity-server", "extensions")]) {
     try {
       const hits = globClaudeCode(root).sort(compareClaudeCodeInstall);
       if (hits.length) return hits[hits.length - 1];

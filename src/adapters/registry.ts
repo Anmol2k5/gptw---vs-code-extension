@@ -4,6 +4,7 @@ import { readdirSync, existsSync } from "node:fs";
 import type { TargetAdapter } from "./types";
 import { ClaudeCodeAdapter } from "./claude-code/adapter";
 import { CodexAdapter } from "./codex/adapter";
+import { OpenCodeAdapter } from "./opencode/adapter";
 import { compareClaudeCodeInstall } from "../util/claudeCodeVersion";
 
 // Same host roots locate.ts scans for Claude Code (keep the lists in sync):
@@ -11,7 +12,7 @@ import { compareClaudeCodeInstall } from "../util/claudeCodeVersion";
 // (Remote-SSH, dev containers, vscode.dev) where extensions live under
 // *-server/.
 const ROOTS = [".vscode", ".vscode-insiders", ".vscode-server",
-  ".vscode-server-insiders", ".cursor", ".cursor-server"]
+  ".vscode-server-insiders", ".cursor", ".cursor-server", ".antigravity", ".antigravity-ide", ".antigravity-server"]
   .map((d) => join(homedir(), d, "extensions"));
 
 // An env override is AUTHORITATIVE when set (non-empty): return it iff it
@@ -94,6 +95,21 @@ export const REGISTRY: TargetEntry[] = [
     },
     make: (t) => new CodexAdapter(t),
   },
+  {
+    id: "opencode",
+    locate: () => {
+      const ev = envTarget("KICKBACKS_OC_TARGET");
+      if (ev !== undefined) return ev;        // authoritative when set
+      // OpenCode is config-driven, not file-driven. Return a sentinel
+      // when the tool is detected; the adapter constructor needs no path.
+      try {
+        const adapter = new OpenCodeAdapter();
+        const pf = adapter.preflight();
+        return pf.compatible ? "__opencode_present__" : null;
+      } catch { return null; }
+    },
+    make: () => new OpenCodeAdapter(),
+  },
 ];
 
 /** The Codex chunk target on this host (env override authoritative when set,
@@ -103,6 +119,13 @@ export function locateCodexTarget(): string | null {
   try {
     return REGISTRY.find((e) => e.id === "codex")!.locate();
   } catch { return null; }
+}
+
+/** True iff an OpenCode installation is detected on this host. Never throws. */
+export function locateOpenCodeTarget(): boolean {
+  try {
+    return REGISTRY.find((e) => e.id === "opencode")!.locate() !== null;
+  } catch { return false; }
 }
 
 /** Every target present on this host, in registry (precedence) order. One bad
