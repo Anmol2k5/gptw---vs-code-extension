@@ -20,12 +20,10 @@ const ANCHORS = [
 ];
 // >=2 comma-separated double-quoted tokens (the S0 multi-element requirement).
 const ARRAY_RE = /\[(?:"[^"\\]*"\s*,\s*)+"[^"\\]*"\]/g;
-const BLOCK_START = "/* VIBE-ADS-START */";
+const BLOCK_START = "/* GPTW-START */";
 // Strip a previously-injected block delimited by EITHER the current markers
-// or the legacy /* VIBADS-START/END */ markers. An install patched before the
-// Vibe-Ads rename still carries the old markers; re-apply must not stack the
-// block and restore-via-Tier-0 must still find it (reversibility contract).
-const BLOCK_RE = /\/\* VIB(?:E-)?ADS-START \*\/[\s\S]*?\/\* VIB(?:E-)?ADS-END \*\//g;
+// or the legacy /* VIBE-ADS-START/END */, /* VIBADS-START/END */, or /* GPTW-START/END */ markers.
+const BLOCK_RE = /\/\* (?:GPTW|VIB(?:E-)?ADS)-START \*\/[\s\S]*?\/\* (?:GPTW|VIB(?:E-)?ADS)-END \*\//g;
 
 /** Resolve the shipped block asset relative to `baseDir` (= dirname of the
  *  running adapter file). In the esbuild-bundled VSIX the adapter is inlined
@@ -47,7 +45,7 @@ export function resolveBlockAsset(baseDir: string): string {
 // some Windows filesystems where ENOENT can race the temp creation),
 // so the worst case stays the prior behavior, not a refusal to write.
 function atomicWriteFile(target: string, data: Buffer): void {
-  const tmp = target + ".kickbacks-tmp-" + process.pid + "-" + Date.now();
+  const tmp = target + ".gptw-tmp-" + process.pid + "-" + Date.now();
   try {
     writeFileSync(tmp, data);
     renameSync(tmp, target);
@@ -105,7 +103,16 @@ export class ClaudeCodeAdapter implements TargetAdapter {
     // sibling = <ext>/anthropic.claude-code-X/extension.js
     return join(dirname(dirname(this.target)), "extension.js");
   }
-  private extBackupPath(): string { return this.extTarget() + ".vibe-ads-backup"; }
+  private extBackupPath(): string { return this.extTarget() + ".gptw-backup"; }
+  private legacyExtBackupPaths(): string[] {
+    return [this.extTarget() + ".kickbacks-backup",
+            this.extTarget() + ".vibe-ads-backup"];
+  }
+  private existingExtBackupPath(): string | null {
+    if (existsSync(this.extBackupPath())) return this.extBackupPath();
+    for (const p of this.legacyExtBackupPaths()) if (existsSync(p)) return p;
+    return null;
+  }
 
   /** Idempotent, reversible connect-src insertion. Never throws.
    *
@@ -124,8 +131,9 @@ export class ClaudeCodeAdapter implements TargetAdapter {
       if (src.includes(this.CSP_MARK)) return { ok: true, reason: "already" };
       const m = this.CSP_ANCHOR_RE.exec(src);
       if (!m) return { ok: false, reason: "anchor-missing" };
-      if (!existsSync(this.extBackupPath()))
-        writeFileSync(this.extBackupPath(), Buffer.from(src, "utf8")); // pristine
+      const extBak = this.existingExtBackupPath() || this.extBackupPath();
+      if (!existsSync(extBak))
+        writeFileSync(extBak, Buffer.from(src, "utf8")); // pristine
       // m[1] is the template variable token (e.g. "${q}" or "${U}"); preserve
       // it so the rest of CC's CSP template renders identically.
       const replaced = src.replace(this.CSP_ANCHOR_RE,
@@ -156,8 +164,8 @@ export class ClaudeCodeAdapter implements TargetAdapter {
   /** Byte-exact revert of the CSP patch from its pristine backup. Never throws. */
   private restoreCsp(): void {
     try {
-      const bak = this.extBackupPath();
-      if (!existsSync(bak)) return;
+      const bak = this.existingExtBackupPath() || this.extBackupPath();
+      if (!bak || !existsSync(bak)) return;
       const pristine = readFileSync(bak);
       writeFileSync(this.extTarget(), pristine);
       if (sha256(readFileSync(this.extTarget())) === sha256(pristine))
@@ -165,15 +173,17 @@ export class ClaudeCodeAdapter implements TargetAdapter {
     } catch { /* best-effort */ }
   }
 
-  private backupPath(): string { return this.target + ".kickbacks-backup"; }
+  private backupPath(): string { return this.target + ".gptw-backup"; }
   // Pre-rename installs wrote the pristine backup under earlier names; prefer
   // any existing backup (new OR legacy) so we never (a) lose the real pristine
   // by overwriting it with an already-patched file, nor (b) report "no backup"
-  // when a legacy one exists. New backups use the .kickbacks-backup name.
+  // when a legacy one exists. New backups use the .gptw-backup name.
+  //   kickbacks-backup:   .kickbacks-backup
   //   W1 (this rename):   .vibe-ads-backup   (the Vibe-Ads era)
   //   pre-S3 install:     .vibads-backup     (the original spelling)
   private legacyBackupPaths(): string[] {
-    return [this.target + ".vibe-ads-backup",
+    return [this.target + ".kickbacks-backup",
+            this.target + ".vibe-ads-backup",
             this.target + ".vibads-backup"];
   }
   private existingBackupPath(): string | null {
@@ -336,21 +346,21 @@ export class ClaudeCodeAdapter implements TargetAdapter {
     const assetPath = resolveBlockAsset(dirname(__filename));
     let src = readFileSync(assetPath, "utf8");
     const subs: Record<string, string> = {
-      __VIBE_ADS_TIER__: String(p.tier),
-      __VIBE_ADS_AD__: JSON.stringify(p.adText),
-      __VIBE_ADS_ICON__: JSON.stringify(p.iconRef),
-      __VIBE_ADS_ICON_URL__: JSON.stringify(p.iconUrl),
-      __VIBE_ADS_PORT__: String(p.loopbackPort),
-      __VIBE_ADS_LBTOKEN__: JSON.stringify(p.loopbackToken),
-      __VIBE_ADS_BASE__: JSON.stringify(p.loopbackBase ?? ""),
-      __VIBE_ADS_DEBUG__: p.debug ? "true" : "false",
-      __VIBE_ADS_CLICKTOKEN__: JSON.stringify(p.clickToken),
-      __VIBE_ADS_CLICKURL__: JSON.stringify(p.clickUrl),
-      __VIBE_ADS_CORR__: JSON.stringify(p.corr),
+      __GPTW_TIER__: String(p.tier),
+      __GPTW_AD__: JSON.stringify(p.adText),
+      __GPTW_ICON__: JSON.stringify(p.iconRef),
+      __GPTW_ICON_URL__: JSON.stringify(p.iconUrl),
+      __GPTW_PORT__: String(p.loopbackPort),
+      __GPTW_LBTOKEN__: JSON.stringify(p.loopbackToken),
+      __GPTW_BASE__: JSON.stringify(p.loopbackBase ?? ""),
+      __GPTW_DEBUG__: p.debug ? "true" : "false",
+      __GPTW_CLICKTOKEN__: JSON.stringify(p.clickToken),
+      __GPTW_CLICKURL__: JSON.stringify(p.clickUrl),
+      __GPTW_CORR__: JSON.stringify(p.corr),
       // Mirror-of-spinner usage-banner ad gate (spec §4.1).
-      __VIBE_ADS_BANNER_ON__: p.bannerOn ? "true" : "false",
+      __GPTW_BANNER_ON__: p.bannerOn ? "true" : "false",
       // W3: server-authoritative visible-time threshold (15 s default).
-      __VIBE_ADS_VIEW_THRESHOLD_MS__:
+      __GPTW_VIEW_THRESHOLD_MS__:
         String(typeof p.viewThresholdMs === "number"
           && p.viewThresholdMs > 0 ? p.viewThresholdMs : 15000),
     };

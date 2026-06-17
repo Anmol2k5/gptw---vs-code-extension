@@ -8,8 +8,8 @@ import { resolveAsset } from "../../util/asset";
 // Strip a previously-injected block (current OR legacy markers) so re-apply
 // never stacks and preflight evaluates the pristine shape — same reversibility
 // contract as the Claude Code adapter.
-const BLOCK_START = "/* VIBE-ADS-START */";
-const BLOCK_END = "/* VIBE-ADS-END */";
+const BLOCK_START = "/* GPTW-START */";
+const BLOCK_END = "/* GPTW-END */";
 // Codex injection is an INLINE wrapper `arg=(<block>)||arg;`, unlike the
 // Claude Code adapter's appended standalone block. Stripping must remove the
 // WHOLE wrapper, not just the comment-delimited body — else a re-derive from
@@ -24,7 +24,7 @@ const STRIP_RES: RegExp[] = [
   // 1 + 2: optional `ident=(` prefix and `)||ident;` suffix around the markers
   new RegExp(
     "(?:" + ID + "=\\()?" +
-    "\\/\\* VIB(?:E-)?ADS-START \\*\\/[\\s\\S]*?\\/\\* VIB(?:E-)?ADS-END \\*\\/" +
+    "\\/\\* (?:GPTW|VIB(?:E-)?ADS)-START \\*\\/[\\s\\S]*?\\/\\* (?:GPTW|VIB(?:E-)?ADS)-END \\*\\/" +
     "(?:\\)\\|\\|" + ID + ";)?", "g"),
   // 3: empty-wrapper residue. `=()||ident;` cannot occur in valid minified JS
   // (`()` is not a valid expression), so matching it is safe and targeted.
@@ -58,13 +58,19 @@ export class CodexAdapter implements TargetAdapter {
   private readonly target: string;
   constructor(target: string) { this.target = resolve(target); }
 
-  private backupPath(): string { return this.target + ".vibe-ads-backup"; }
+  private backupPath(): string { return this.target + ".gptw-backup"; }
   // Pre-rename installs wrote ".vibads-backup"; prefer any existing backup so
   // we never overwrite the real pristine nor falsely report "no backup".
-  private legacyBackupPath(): string { return this.target + ".vibads-backup"; }
+  private legacyBackupPaths(): string[] {
+    return [
+      this.target + ".kickbacks-backup",
+      this.target + ".vibe-ads-backup",
+      this.target + ".vibads-backup"
+    ];
+  }
   private existingBackupPath(): string | null {
     if (existsSync(this.backupPath())) return this.backupPath();
-    if (existsSync(this.legacyBackupPath())) return this.legacyBackupPath();
+    for (const p of this.legacyBackupPaths()) if (existsSync(p)) return p;
     return null;
   }
 
@@ -84,7 +90,18 @@ export class CodexAdapter implements TargetAdapter {
     return null;
   }
   private extBackupPath(ext: string): string {
-    return ext + ".vibe-ads-backup";
+    return ext + ".gptw-backup";
+  }
+  private legacyExtBackupPaths(ext: string): string[] {
+    return [
+      ext + ".kickbacks-backup",
+      ext + ".vibe-ads-backup"
+    ];
+  }
+  private existingExtBackupPath(ext: string): string | null {
+    if (existsSync(this.extBackupPath(ext))) return this.extBackupPath(ext);
+    for (const p of this.legacyExtBackupPaths(ext)) if (existsSync(p)) return p;
+    return null;
   }
 
   /** Codex's overlay can render while CSP blocks every loopback fetch. Add
@@ -103,7 +120,7 @@ export class CodexAdapter implements TargetAdapter {
         return "`connect-src " + CSP_INSERT + " " + rest.trim() + "`";
       });
       if (!changed) return { ok: false, reason: "anchor-missing" };
-      const bak = this.extBackupPath(ext);
+      const bak = this.existingExtBackupPath(ext) || this.extBackupPath(ext);
       if (!existsSync(bak))
         writeFileSync(bak, Buffer.from(src, "utf8"));
       writeFileSync(ext, Buffer.from(patched, "utf8"));
@@ -125,8 +142,8 @@ export class CodexAdapter implements TargetAdapter {
     try {
       const ext = this.extTarget();
       if (!ext) return;
-      const bak = this.extBackupPath(ext);
-      if (!existsSync(bak)) return;
+      const bak = this.existingExtBackupPath(ext) || this.extBackupPath(ext);
+      if (!bak || !existsSync(bak)) return;
       const pristine = readFileSync(bak);
       writeFileSync(ext, pristine);
       if (sha256(readFileSync(ext)) === sha256(pristine))
@@ -196,17 +213,17 @@ export class CodexAdapter implements TargetAdapter {
     const assetPath = resolveCodexBlockAsset(dirname(__filename));
     let src = readFileSync(assetPath, "utf8").trim();
     const subs: Record<string, string> = {
-      __VIBE_ADS_ARG__: arg,                       // bare identifier (e)
-      __VIBE_ADS_JSX__: jsx,                       // bare identifier (d)
-      __VIBE_ADS_AD__: JSON.stringify(p.adText),
-      __VIBE_ADS_PORT__: String(p.loopbackPort),
-      __VIBE_ADS_LBTOKEN__: JSON.stringify(p.loopbackToken),
-      __VIBE_ADS_BASE__: JSON.stringify(p.loopbackBase ?? ""),
-      __VIBE_ADS_CLICKTOKEN__: JSON.stringify(p.clickToken),
-      __VIBE_ADS_CLICKURL__: JSON.stringify(p.clickUrl),
-      __VIBE_ADS_CORR__: JSON.stringify(p.corr),
-      __VIBE_ADS_DEBUG__: p.debug ? "true" : "false",
-      __VIBE_ADS_VIEW_THRESHOLD_MS__: String(
+      __GPTW_ARG__: arg,                       // bare identifier (e)
+      __GPTW_JSX__: jsx,                       // bare identifier (d)
+      __GPTW_AD__: JSON.stringify(p.adText),
+      __GPTW_PORT__: String(p.loopbackPort),
+      __GPTW_LBTOKEN__: JSON.stringify(p.loopbackToken),
+      __GPTW_BASE__: JSON.stringify(p.loopbackBase ?? ""),
+      __GPTW_CLICKTOKEN__: JSON.stringify(p.clickToken),
+      __GPTW_CLICKURL__: JSON.stringify(p.clickUrl),
+      __GPTW_CORR__: JSON.stringify(p.corr),
+      __GPTW_DEBUG__: p.debug ? "true" : "false",
+      __GPTW_VIEW_THRESHOLD_MS__: String(
         typeof p.viewThresholdMs === "number" && p.viewThresholdMs > 0
           ? p.viewThresholdMs : 15000),
     };

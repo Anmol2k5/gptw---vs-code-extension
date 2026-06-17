@@ -8,16 +8,16 @@ import { type AdSurface, parseAdSurface } from "./types/surface";
  *  Remote/Server the webview runs on the *client*, so raw 127.0.0.1 (the
  *  remote host's loopback) is unreachable; vscode.env.asExternalUri returns a
  *  tunneled URL the client can reach (identity no-op on local desktop).
- *  Always includes the /vibe-ads/<token> path so the block uses it verbatim.
+ *  Always includes the /gptw/<token> path so the block uses it verbatim.
  *  Falls back to 127.0.0.1 if the API is unavailable/throws. */
 export async function resolveLoopbackBase(
   port: number, token: string): Promise<string> {
   const local = `http://127.0.0.1:${port}`;
   try {
     const ext = await vscode.env.asExternalUri(vscode.Uri.parse(local));
-    return ext.toString().replace(/\/+$/, "") + "/vibe-ads/" + token;
+    return ext.toString().replace(/\/+$/, "") + "/gptw/" + token;
   } catch {
-    return local + "/vibe-ads/" + token;
+    return local + "/gptw/" + token;
   }
 }
 
@@ -132,7 +132,7 @@ export class Loopback {
     this.token = opts.token && /^[0-9a-f]{16,}$/i.test(opts.token)
       ? opts.token
       : randomBytes(16).toString("hex");
-    const prefix = `/vibe-ads/${this.token}/`;
+    const prefix = `/gptw/${this.token}/`;
     this.server = createServer((req, res) => {
       // 2A-M02: bound per-connection lifetime. A misbehaving webview that
       // opens a request and never sends data (or sends headers and stalls)

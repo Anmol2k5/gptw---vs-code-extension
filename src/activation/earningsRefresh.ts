@@ -141,7 +141,7 @@ export function setupEarningsRefresh(
   // Initial status bar state + sign-in nudge.
   if (!auth.accessToken()) {
     statusBar.set({ kind: "signed-out" });
-    const NUDGE_KEY = "kickbacks.signinNudge.shownAt";
+    const NUDGE_KEY = "gptw.signinNudge.shownAt";
     const NUDGE_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const lastShownAt = Number(ctx.globalState.get<number>(NUDGE_KEY) || 0);
     if (Date.now() - lastShownAt > NUDGE_COOLDOWN_MS) {
@@ -149,10 +149,10 @@ export function setupEarningsRefresh(
       void (async () => {
         try {
           const choice = await vscode.window.showInformationMessage?.(
-            "Kickbacks: sign in to start earning on Claude Code spinner ads.",
+            "GPTW: sign in to start earning on Claude Code spinner ads.",
             "Sign in", "Later");
           if (choice === "Sign in") {
-            await vscode.commands.executeCommand("kickbacks.signIn");
+            await vscode.commands.executeCommand("gptw.signIn");
           }
         } catch { /* toast is best-effort */ }
       })();

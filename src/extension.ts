@@ -56,20 +56,20 @@ const CFG = readConfig();
 
 const BASE = (() => {
   const v = resolveBackendBase(CFG,
-    process.env.KICKBACKS_BASE || process.env.VIBE_ADS_BASE);
+    process.env.GPTW_BASE || process.env.KICKBACKS_BASE || process.env.VIBE_ADS_BASE);
   if (v.startsWith("http://")) {
     const looplike = isLoopbackBase(v);
     if (!looplike) {
       // eslint-disable-next-line no-console
-      console.error(`Kickbacks: refusing non-loopback HTTP base "${v}". ` +
-        `Set VIBE_ADS_BASE (or ~/.vibe-ads/config.json) to https://...`);
+      console.error(`GPTW: refusing non-loopback HTTP base "${v}". ` +
+        `Set GPTW_BASE (or ~/.gptw/config.json) to https://...`);
       return "https://invalid.example.invalid";
     }
   }
   return v;
 })();
 
-const UPDATE_BASE = resolveUpdateBase(CFG, process.env.KICKBACKS_UPDATE_BASE);
+const UPDATE_BASE = resolveUpdateBase(CFG, process.env.GPTW_UPDATE_BASE || process.env.KICKBACKS_UPDATE_BASE);
 
 // Client-environment fingerprint sent on every metrics beacon so the backend
 // can segment ad traffic by client type (admin Traffic). Transparent and
@@ -109,7 +109,7 @@ let actx: ActivationContext = createActivationContext();
  *  returns 200 killed:true, cleared by a later 200 killed:false. Read at the
  *  top of the NEXT activation so no writer patches before the first live
  *  kill check — without blocking boot on a network round-trip. */
-const KILL_CONFIRMED_KEY = "kickbacks.kill.confirmed";
+const KILL_CONFIRMED_KEY = "gptw.kill.confirmed";
 
 export async function activate(ctx: vscode.ExtensionContext): Promise<void> {
   try {
@@ -198,9 +198,8 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<void> {
     const dm = () => debugCtl?.openMenu();
     const ec = async () => { try { await debugCtl?.editConfig(); } catch { /* ok */ } };
     ctx.subscriptions.push(
-      vscode.commands.registerCommand("kickbacks.debugMenu", dm),
-      vscode.commands.registerCommand("vibe-ads.debugMenu", dm),
-      vscode.commands.registerCommand("kickbacks.editConfig", ec),
+      vscode.commands.registerCommand("gptw.debugMenu", dm),
+      vscode.commands.registerCommand("gptw.editConfig", ec),
       // Register the diagnose command BEFORE the preflight early-return so it's
       // available precisely when a build reports incompatible.
       // The Codex adapter is located for DIAGNOSIS even when the serving
@@ -222,14 +221,14 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<void> {
     // Test hook injection commands (before preflight early-return).
     if (testHooksEnabled()) {
       ctx.subscriptions.push(
-        vscode.commands.registerCommand("kickbacks.test.disableInjection",
+        vscode.commands.registerCommand("gptw.test.disableInjection",
           async () => {
             dlog("ext", "testhook.setInjection.fire", { on: false });
             await debugCtl?.setOn(false);
             dlog("ext", "testhook.setInjection.done",
               { on: false, hasDebugCtl: !!debugCtl });
           }),
-        vscode.commands.registerCommand("kickbacks.test.enableInjection",
+        vscode.commands.registerCommand("gptw.test.enableInjection",
           async () => {
             dlog("ext", "testhook.setInjection.fire", { on: true });
             await debugCtl?.setOn(true);
@@ -237,7 +236,7 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<void> {
               { on: true, hasDebugCtl: !!debugCtl });
           }));
       void vscode.commands.executeCommand(
-        "setContext", "kickbacks.test.enabled", true);
+        "setContext", "gptw.test.enabled", true);
       dlog("ext", "testhook.injection.enabled", {});
     }
 
@@ -809,10 +808,10 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<void> {
     if (testHooksEnabled()) {
       testHooks.registerCommands(ctx);
       ctx.subscriptions.push(
-        vscode.commands.registerCommand("kickbacks.test.refreshStatusBar",
+        vscode.commands.registerCommand("gptw.test.refreshStatusBar",
           async () => { await showActive(); }));
       void vscode.commands.executeCommand(
-        "setContext", "kickbacks.test.enabled", true);
+        "setContext", "gptw.test.enabled", true);
       dlog("ext", "testhook.enabled", {});
     }
   } catch (e) {
@@ -843,7 +842,7 @@ export async function deactivate(): Promise<void> {
   for (const t of actx.timers) clearInterval(t);
   actx.timers.length = 0;
   try {
-    const canaryPath = join(homedir(), ".vibe-ads", "boot.canary");
+    const canaryPath = join(homedir(), ".gptw", "boot.canary");
     if (existsSync(canaryPath)) unlinkSync(canaryPath);
   } catch { /* best-effort */ }
   const userWantsPatched = !!actx.debugCtl?.on();

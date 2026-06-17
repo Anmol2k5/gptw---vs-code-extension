@@ -22,7 +22,8 @@ export function globClaudeCode(root: string): string[] {
 
 export function locateClaudeCode(): string | null {
   // Explicit escape hatch for S5 matrix / manual smoke / portable installs.
-  const explicit = process.env.KICKBACKS_CC_TARGET
+  const explicit = process.env.GPTW_CC_TARGET
+    || process.env.KICKBACKS_CC_TARGET
     || process.env.VIBE_ADS_CC_TARGET;
   if (explicit && existsSync(explicit)) return explicit;
   // Covers local (.vscode/.vscode-insiders/.cursor) AND remote/server hosts
@@ -122,7 +123,8 @@ function scanTranscripts(): { p: string; m: number }[] {
 // none are tagged (older CC builds). VIBE_ADS_CC_LOG overrides. "" => LogTail
 // yields null => block self-simulates.
 export function locateClaudeCodeLog(): string {
-  const explicit = process.env.KICKBACKS_CC_LOG
+  const explicit = process.env.GPTW_CC_LOG
+    || process.env.KICKBACKS_CC_LOG
     || process.env.VIBE_ADS_CC_LOG;
   if (explicit && existsSync(explicit)) return explicit;
   try {
@@ -163,7 +165,7 @@ export function locateClaudeCodeLog(): string {
 // cross-surface double-tick is written as a zero-debit audit row.
 // Consumers: the statusline view-tick loop (cliTick).
 export function locateClaudeCliLog(): string {
-  const explicit = process.env.KICKBACKS_CLI_LOG;
+  const explicit = process.env.GPTW_CLI_LOG || process.env.KICKBACKS_CLI_LOG;
   if (explicit && existsSync(explicit)) return explicit;
   try {
     const cands = scanTranscripts();

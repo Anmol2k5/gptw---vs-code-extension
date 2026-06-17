@@ -1,4 +1,4 @@
-// User-editable extension config at ~/.vibe-ads/config.json.
+// User-editable extension config at ~/.gptw/config.json.
 //
 // Shape (all fields optional):
 //   {
@@ -26,8 +26,8 @@ export interface VibeAdsConfig {
   updateBaseUrl: string;
   localVsixPath: string;
   updatePollIntervalMs: number;
-  /** When true, the extension behaves as if `VIBE_ADS_DEBUG=1` or the
-   *  `~/.vibe-ads/debug.enabled` sentinel were present: dlog writes events.
+  /** When true, the extension behaves as if `GPTW_DEBUG=1` or the
+   *  `~/.gptw/debug.enabled` sentinel were present: dlog writes events.
    *  False (or unset) = off. */
   debugMode: boolean;
 }
@@ -35,7 +35,7 @@ export interface VibeAdsConfig {
 export const DEFAULT_POLL_MS = 90_000;
 
 export function configDir(): string {
-  return join(homedir(), ".vibe-ads");
+  return join(homedir(), ".gptw");
 }
 export function configPath(): string {
   return join(configDir(), "config.json");
@@ -84,8 +84,8 @@ export function ensureConfigFile(): string {
       localVsixPath: "",
       // Remote-manifest poll cadence in ms. Clamped to >= 10s.
       updatePollIntervalMs: DEFAULT_POLL_MS,
-      // Debug mode. Equivalent to setting `VIBE_ADS_DEBUG=1` or touching
-      // ~/.vibe-ads/debug.enabled: enables dlog writes. Off in prod.
+      // Debug mode. Equivalent to setting `GPTW_DEBUG=1` or touching
+      // ~/.gptw/debug.enabled: enables dlog writes. Off in prod.
       debugMode: false,
     };
     try { writeFileSync(p, JSON.stringify(tmpl, null, 2) + "\n", "utf8"); }
@@ -94,7 +94,7 @@ export function ensureConfigFile(): string {
   return p;
 }
 
-const DEFAULT_BACKEND_BASE = "https://kickbacks-backend-gmdaqm2c7q-uw.a.run.app";
+const DEFAULT_BACKEND_BASE = "https://get-paid-to-wait-m44znelko-mayurs-projects-4c08c14e.vercel.app";
 
 /** Resolve the effective backend base URL: config file > env > default.
  *  Non-loopback HTTP is refused at the call site in extension.ts (this fn
@@ -105,7 +105,7 @@ export function resolveBackendBase(cfg: VibeAdsConfig, env: string | undefined):
   return DEFAULT_BACKEND_BASE;
 }
 
-const DEFAULT_UPDATE_BASE = "https://kickbacks-public-gmdaqm2c7q-uw.a.run.app";
+const DEFAULT_UPDATE_BASE = "https://get-paid-to-wait-m44znelko-mayurs-projects-4c08c14e.vercel.app";
 
 /** Resolve the self-update manifest base URL: config > env > public site.
  *  Separated from the API base so self-update works over the public internet

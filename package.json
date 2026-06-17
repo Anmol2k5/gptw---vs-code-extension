@@ -1,13 +1,13 @@
 {
-  "name": "kickbacks-ai",
-  "displayName": "Kickbacks.ai",
-  "publisher": "Kickbacksai",
+  "name": "gptw",
+  "displayName": "Get Paid to Wait - GPTW",
+  "publisher": "gptw",
   "version": "0.3.174",
-  "description": "Get paid while you code. Subtle, clickable ads in the Claude Code and Codex spinners — 50/50 revenue split to users.",
+  "description": "Get paid while you code. Subtle, clickable ads in the Claude Code and Codex spinners.",
   "icon": "media/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/andrewmccalip/kickbacks.ai.git"
+    "url": "https://github.com/gptw/gptw.git"
   },
   "engines": {
     "vscode": "^1.80.0"
@@ -19,170 +19,146 @@
   "contributes": {
     "commands": [
       {
-        "command": "kickbacks.signIn",
+        "command": "gptw.signIn",
         "title": "GPTW: Sign in"
       },
       {
-        "command": "kickbacks.signOut",
+        "command": "gptw.signOut",
         "title": "GPTW: Sign out"
       },
       {
-        "command": "kickbacks.restore",
+        "command": "gptw.restore",
         "title": "GPTW: Restore Claude Code"
       },
       {
-        "command": "kickbacks.status",
+        "command": "gptw.status",
         "title": "GPTW: Show status"
       },
       {
-        "command": "kickbacks.debugMenu",
+        "command": "gptw.debugMenu",
         "title": "GPTW: Menu"
       },
       {
-        "command": "kickbacks.editConfig",
+        "command": "gptw.editConfig",
         "title": "GPTW: Edit Config"
       },
       {
-        "command": "kickbacks.diagnose",
+        "command": "gptw.diagnose",
         "title": "GPTW: Diagnose"
       },
       {
-        "command": "vibe-ads.diagnose",
-        "title": "GPTW: Diagnose (legacy alias)"
-      },
-      {
-        "command": "vibe-ads.signIn",
-        "title": "GPTW: Sign in (legacy alias)"
-      },
-      {
-        "command": "vibe-ads.signOut",
-        "title": "GPTW: Sign out (legacy alias)"
-      },
-      {
-        "command": "vibe-ads.restore",
-        "title": "GPTW: Restore Claude Code (legacy alias)"
-      },
-      {
-        "command": "vibe-ads.status",
-        "title": "GPTW: Show status (legacy alias)"
-      },
-      {
-        "command": "vibe-ads.debugMenu",
-        "title": "GPTW: Menu (legacy alias)"
-      },
-      {
-        "command": "kickbacks.test.fireImpressionRendered",
+        "command": "gptw.test.fireImpressionRendered",
         "title": "GPTW (Test): Fire impression_rendered"
       },
       {
-        "command": "kickbacks.test.fireImpressionViewable",
+        "command": "gptw.test.fireImpressionViewable",
         "title": "GPTW (Test): Fire impression_viewable"
       },
       {
-        "command": "kickbacks.test.fireViewTick",
+        "command": "gptw.test.fireViewTick",
         "title": "GPTW (Test): Fire view_tick"
       },
       {
-        "command": "kickbacks.test.fireViewThresholdMet",
+        "command": "gptw.test.fireViewThresholdMet",
         "title": "GPTW (Test): Fire view_threshold_met (credits)"
       },
       {
-        "command": "kickbacks.test.fireErrorImpression",
+        "command": "gptw.test.fireErrorImpression",
         "title": "GPTW (Test): Fire error_impression (5s stuck-session safety net)"
       },
       {
-        "command": "kickbacks.test.fireClick",
+        "command": "gptw.test.fireClick",
         "title": "GPTW (Test): Fire click"
       },
       {
-        "command": "kickbacks.test.refreshPortfolio",
+        "command": "gptw.test.refreshPortfolio",
         "title": "GPTW (Test): Refresh portfolio"
       },
       {
-        "command": "kickbacks.test.refreshEarnings",
+        "command": "gptw.test.refreshEarnings",
         "title": "GPTW (Test): Refresh earnings"
       },
       {
-        "command": "kickbacks.test.getState",
+        "command": "gptw.test.getState",
         "title": "GPTW (Test): Get state snapshot"
       },
       {
-        "command": "kickbacks.test.clearEventLog",
+        "command": "gptw.test.clearEventLog",
         "title": "GPTW (Test): Clear event log"
       },
       {
-        "command": "kickbacks.test.disableInjection",
+        "command": "gptw.test.disableInjection",
         "title": "GPTW (Test): Disable injection"
       },
       {
-        "command": "kickbacks.test.enableInjection",
+        "command": "gptw.test.enableInjection",
         "title": "GPTW (Test): Enable injection"
       },
       {
-        "command": "kickbacks.test.refreshStatusBar",
+        "command": "gptw.test.refreshStatusBar",
         "title": "GPTW (Test): Refresh status bar"
       }
     ],
     "menus": {
       "commandPalette": [
         {
-          "command": "kickbacks.test.fireImpressionRendered",
-          "when": "kickbacks.test.enabled"
+          "command": "gptw.test.fireImpressionRendered",
+          "when": "gptw.test.enabled"
         },
         {
-          "command": "kickbacks.test.fireImpressionViewable",
-          "when": "kickbacks.test.enabled"
+          "command": "gptw.test.fireImpressionViewable",
+          "when": "gptw.test.enabled"
         },
         {
-          "command": "kickbacks.test.fireViewTick",
-          "when": "kickbacks.test.enabled"
+          "command": "gptw.test.fireViewTick",
+          "when": "gptw.test.enabled"
         },
         {
-          "command": "kickbacks.test.fireViewThresholdMet",
-          "when": "kickbacks.test.enabled"
+          "command": "gptw.test.fireViewThresholdMet",
+          "when": "gptw.test.enabled"
         },
         {
-          "command": "kickbacks.test.fireErrorImpression",
-          "when": "kickbacks.test.enabled"
+          "command": "gptw.test.fireErrorImpression",
+          "when": "gptw.test.enabled"
         },
         {
-          "command": "kickbacks.test.fireClick",
-          "when": "kickbacks.test.enabled"
+          "command": "gptw.test.fireClick",
+          "when": "gptw.test.enabled"
         },
         {
-          "command": "kickbacks.test.refreshPortfolio",
-          "when": "kickbacks.test.enabled"
+          "command": "gptw.test.refreshPortfolio",
+          "when": "gptw.test.enabled"
         },
         {
-          "command": "kickbacks.test.refreshEarnings",
-          "when": "kickbacks.test.enabled"
+          "command": "gptw.test.refreshEarnings",
+          "when": "gptw.test.enabled"
         },
         {
-          "command": "kickbacks.test.getState",
-          "when": "kickbacks.test.enabled"
+          "command": "gptw.test.getState",
+          "when": "gptw.test.enabled"
         },
         {
-          "command": "kickbacks.test.clearEventLog",
-          "when": "kickbacks.test.enabled"
+          "command": "gptw.test.clearEventLog",
+          "when": "gptw.test.enabled"
         },
         {
-          "command": "kickbacks.test.disableInjection",
-          "when": "kickbacks.test.enabled"
+          "command": "gptw.test.disableInjection",
+          "when": "gptw.test.enabled"
         },
         {
-          "command": "kickbacks.test.enableInjection",
-          "when": "kickbacks.test.enabled"
+          "command": "gptw.test.enableInjection",
+          "when": "gptw.test.enabled"
         },
         {
-          "command": "kickbacks.test.refreshStatusBar",
-          "when": "kickbacks.test.enabled"
+          "command": "gptw.test.refreshStatusBar",
+          "when": "gptw.test.enabled"
         }
       ]
     },
     "configuration": {
       "title": "GPTW",
       "properties": {
-        "kickbacks.viewThresholdSeconds": {
+        "gptw.viewThresholdSeconds": {
           "type": "number",
           "default": 5,
           "minimum": 1,
@@ -198,7 +174,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "icon": "node scripts/gen-icon.mjs",
     "package": "node scripts/package.mjs",
-    "marketplace:publish": "vsce publish --no-dependencies --packagePath kickbacks.vsix"
+    "marketplace:publish": "vsce publish --no-dependencies --packagePath gptw.vsix"
   },
   "devDependencies": {
     "@types/jsdom": "21.1.7",
@@ -211,19 +187,19 @@
     "vitest": "2.0.5"
   },
   "author": {
-    "name": "ShiftKeys, Inc.",
-    "url": "https://kickbacks.ai"
+    "name": "GPTW",
+    "url": "https://get-paid-to-wait-m44znelko-mayurs-projects-4c08c14e.vercel.app/"
   },
   "license": "SEE LICENSE IN LICENSE",
-  "homepage": "https://kickbacks.ai",
+  "homepage": "https://get-paid-to-wait-m44znelko-mayurs-projects-4c08c14e.vercel.app/",
   "bugs": {
-    "url": "https://github.com/andrewmccalip/kickbacks.ai/issues"
+    "url": "https://get-paid-to-wait-m44znelko-mayurs-projects-4c08c14e.vercel.app/"
   },
   "keywords": [
     "claude-code",
     "ads",
     "spinner",
     "earnings",
-    "kickbacks"
+    "gptw"
   ]
 }

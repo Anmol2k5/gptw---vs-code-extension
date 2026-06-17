@@ -331,24 +331,24 @@ export class TestHooks {
    *  gate is also re-checked inside each fire method so a sentinel removal
    *  mid-session disables the hooks immediately (next fire returns ok:false).
    *  Commands accept an optional first arg `FireArgs` object so callers can
-   *  do `executeCommand("kickbacks.test.fireClick", { surface: "banner" })`. */
+   *  do `executeCommand("gptw.test.fireClick", { surface: "banner" })`. */
   registerCommands(ctx: vscode.ExtensionContext): void {
     const reg = (id: string, fn: (a?: FireArgs) => unknown) =>
       ctx.subscriptions.push(vscode.commands.registerCommand(id, fn));
-    reg("kickbacks.test.fireImpressionRendered",
+    reg("gptw.test.fireImpressionRendered",
       (a) => this.fireImpressionRendered(a || {}));
-    reg("kickbacks.test.fireImpressionViewable",
+    reg("gptw.test.fireImpressionViewable",
       (a) => this.fireImpressionViewable(a || {}));
-    reg("kickbacks.test.fireViewTick", (a) => this.fireViewTick(a || {}));
-    reg("kickbacks.test.fireViewThresholdMet",
+    reg("gptw.test.fireViewTick", (a) => this.fireViewTick(a || {}));
+    reg("gptw.test.fireViewThresholdMet",
       (a) => this.fireViewThresholdMet(a || {}));
-    reg("kickbacks.test.fireErrorImpression",
+    reg("gptw.test.fireErrorImpression",
       (a) => this.fireErrorImpression(a || {}));
-    reg("kickbacks.test.fireClick", (a) => this.fireClick(a || {}));
-    reg("kickbacks.test.refreshPortfolio", () => this.refreshPortfolio());
-    reg("kickbacks.test.refreshEarnings", () => this.refreshEarnings());
-    reg("kickbacks.test.getState", () => this.getState());
-    reg("kickbacks.test.clearEventLog", () => this.clearEventLog());
+    reg("gptw.test.fireClick", (a) => this.fireClick(a || {}));
+    reg("gptw.test.refreshPortfolio", () => this.refreshPortfolio());
+    reg("gptw.test.refreshEarnings", () => this.refreshEarnings());
+    reg("gptw.test.getState", () => this.getState());
+    reg("gptw.test.clearEventLog", () => this.clearEventLog());
     dlog("ext", "testhook.registered", {});
   }
 }

@@ -25,12 +25,12 @@ export function notifyIncompatible(
     if (!pf.reason?.includes("verb array not found")) return;
     if (adapter.isPatched?.()) return;
     const version = pf.version ?? "unknown";
-    const key = `kickbacks.incompatNotified:${version}`;
+    const key = `gptw.incompatNotified:${version}`;
     if (ctx.globalState.get<boolean>(key)) return;
     void ctx.globalState.update(key, true);
     dlog("ext", "incompat.notify", { version });
     void vscode.window.showWarningMessage?.(
-      `Kickbacks couldn't find Claude Code ${version}'s spinner hook — ads are paused. `
-      + `Your editor is unaffected; run Kickbacks: Diagnose for details.`);
+      `GPTW couldn't find Claude Code ${version}'s spinner hook — ads are paused. `
+      + `Your editor is unaffected; run GPTW: Diagnose for details.`);
   } catch { /* notification is best-effort */ }
 }

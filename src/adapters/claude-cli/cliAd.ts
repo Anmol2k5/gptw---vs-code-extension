@@ -11,7 +11,7 @@ export interface CliAd { adText: string; iconRef: string; iconUrl: string;
                          clickUrl: string; ts: number; }
 
 export function vibeAdsDir(home = homedir()): string {
-  return join(home, ".vibe-ads");
+  return join(home, ".gptw");
 }
 export function cliAdPath(home = homedir()): string {
   return join(vibeAdsDir(home), "cli-ad.json");

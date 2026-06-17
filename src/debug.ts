@@ -26,8 +26,8 @@ export interface AuthHook {
   signOut(): Promise<void>;
 }
 
-const K_TEXT = "kickbacks.debug.text";
-const K_ON = "kickbacks.debug.on";
+const K_TEXT = "gptw.debug.text";
+const K_ON = "gptw.debug.on";
 // Remembers whether injection was ON at the moment of an explicit sign-out so
 // the next sign-in can RESTORE it. doSignOut() forces K_ON=false (a signed-out
 // session must not serve ads), but that false is byte-identical to the false a
@@ -35,14 +35,16 @@ const K_ON = "kickbacks.debug.on";
 // auto-enable gate (neverToggled) stays false forever after the first sign-out,
 // so signing back in left the user silently disabled — see
 // shouldAutoEnableOnSignIn(). Undefined ⇒ "no remembered sign-out intent".
-const K_PRESIGNOUT = "kickbacks.debug.onBeforeSignOut";
+const K_PRESIGNOUT = "gptw.debug.onBeforeSignOut";
 // Legacy storage keys read once on init for the rename migration (W1). New
-// state always lands under the kickbacks.* keys; the vibe-ads.* keys are
+// state always lands under the gptw.* keys; the kickbacks.* and vibe-ads.* keys are
 // kept readable (never deleted) so a downgrade keeps working.
-const K_TEXT_LEGACY = "vibe-ads.debug.text";
-const K_ON_LEGACY = "vibe-ads.debug.on";
-const DEFAULT_TEXT = "Your ad here — kickbacks.ai";
-const DEFAULT_CLICK = "https://kickbacks.ai";
+const K_TEXT_LEGACY = "kickbacks.debug.text";
+const K_TEXT_LEGACY2 = "vibe-ads.debug.text";
+const K_ON_LEGACY = "kickbacks.debug.on";
+const K_ON_LEGACY2 = "vibe-ads.debug.on";
+const DEFAULT_TEXT = "Your ad here — gptw.ai";
+const DEFAULT_CLICK = "https://get-paid-to-wait-m44znelko-mayurs-projects-4c08c14e.vercel.app/";
 /** Click-threshold floor for the DEBUG-injection path. Mirrors
  *  CLICK_THRESHOLD_MS in extension.ts (kept local to avoid an
  *  extension→debug import cycle). 15s per product call. */
@@ -169,17 +171,21 @@ export class DebugController {
   text(): string {
     return this.ctx.globalState.get<string>(K_TEXT)
       || this.ctx.globalState.get<string>(K_TEXT_LEGACY)
+      || this.ctx.globalState.get<string>(K_TEXT_LEGACY2)
       || this.portfolioAd?.text
       || DEFAULT_TEXT;
   }
   on(): boolean {
     const cur = this.ctx.globalState.get<boolean>(K_ON);
     if (typeof cur === "boolean") return cur;
-    return this.ctx.globalState.get<boolean>(K_ON_LEGACY) ?? false;
+    return this.ctx.globalState.get<boolean>(K_ON_LEGACY)
+      || this.ctx.globalState.get<boolean>(K_ON_LEGACY2)
+      || false;
   }
   neverToggled(): boolean {
     return this.ctx.globalState.get<boolean>(K_ON) === undefined
-      && this.ctx.globalState.get<boolean>(K_ON_LEGACY) === undefined;
+      && this.ctx.globalState.get<boolean>(K_ON_LEGACY) === undefined
+      && this.ctx.globalState.get<boolean>(K_ON_LEGACY2) === undefined;
   }
 
   /** Tiered auto-enable decision for the sign-in path. True ⇒ injection should
@@ -259,14 +265,14 @@ export class DebugController {
         // Always the very top row — the payout portal is the product's whole
         // promise, so it outranks even the auth flip.
         { id: "getpaid", label: "$(credit-card) GET PAID OUT $$$",
-          description: "your earnings portal — kickbacks.ai/me" },
+          description: "your earnings portal — getpaidtowait.com" },
         ...(authItem ? [authItem] : []),
         { id: "toggle",
-          label: on ? "$(circle-slash) Disable Kickbacks"
-                    : "$(megaphone) Enable Kickbacks",
+          label: on ? "$(circle-slash) Disable GPTW"
+                    : "$(megaphone) Enable GPTW",
           description: on ? "currently ON" : "currently OFF" },
-        { id: "config", label: "$(json) Edit Vibe-Ads config…",
-          description: "~/.vibe-ads/config.json" },
+        { id: "config", label: "$(json) Edit GPTW config…",
+          description: "~/.gptw/config.json" },
         { id: "reapply", label: "$(sync) Re-apply patch now",
           description: "Claude Code + Codex" },
         { id: "checkupdates", label: "$(cloud-download) Check for updates",
@@ -279,19 +285,19 @@ export class DebugController {
           description: buildLabel() },
       ];
       const pick = await vscode.window.showQuickPick(items as never, {
-        placeHolder: "Kickbacks",
+        placeHolder: "GPTW",
       }) as { id: string } | undefined;
       if (!pick) return;
       if (pick.id === "getpaid")
         await vscode.env.openExternal(
-          vscode.Uri.parse("https://kickbacks.ai/me"));
+          vscode.Uri.parse("https://get-paid-to-wait-m44znelko-mayurs-projects-4c08c14e.vercel.app/"));
       else if (pick.id === "toggle") await this.setOn(!on);
       else if (pick.id === "config") await this.editConfig();
       else if (pick.id === "restore") await this.doRestore();
       else if (pick.id === "signin")
-        await vscode.commands.executeCommand("kickbacks.signIn");
+        await vscode.commands.executeCommand("gptw.signIn");
       else if (pick.id === "signout")
-        await vscode.commands.executeCommand("kickbacks.signOut");
+        await vscode.commands.executeCommand("gptw.signOut");
       else if (pick.id === "reload")
         await vscode.commands.executeCommand(
           "workbench.action.restartExtensionHost");
@@ -304,11 +310,11 @@ export class DebugController {
         if (this.on()) await this.apply();
         vscode.window.showInformationMessage(
           this.on()
-            ? "Kickbacks: re-applied (Claude Code + Codex)."
-            : "Kickbacks: re-apply triggered (no-op — injection OFF).");
+            ? "GPTW: re-applied (Claude Code + Codex)."
+            : "GPTW: re-apply triggered (no-op — injection OFF).");
       }
       else if (pick.id === "checkupdates")
-        await vscode.commands.executeCommand("kickbacks.checkUpdates");
+        await vscode.commands.executeCommand("gptw.checkUpdates");
       else if (pick.id === "openlog")
         await vscode.commands.executeCommand(
           "vscode.open", vscode.Uri.file(LOG_PATH));
@@ -336,7 +342,7 @@ export class DebugController {
       await vscode.window.showTextDocument(doc, { preview: false });
     } catch (e) {
       vscode.window.showErrorMessage(
-        `Kickbacks: could not open config — ${errMsg(e, 200)}`);
+        `GPTW: could not open config — ${errMsg(e, 200)}`);
     }
   }
 
@@ -512,8 +518,8 @@ export class DebugController {
     await this.ctx.globalState.update(K_PRESIGNOUT, undefined);
     this.onState(false);
     vscode.window.showInformationMessage(
-      r.restored ? "Kickbacks: Claude Code restored."
-                 : `Kickbacks: ${r.reason || "nothing to restore"}`);
+      r.restored ? "GPTW: Claude Code restored."
+                 : `GPTW: ${r.reason || "nothing to restore"}`);
   }
 
   /** Sign out + leave Claude Code pristine. A signed-out session must not keep
@@ -532,7 +538,7 @@ export class DebugController {
       await this.ctx.globalState.update(K_ON, false);
       this.onState(false);
       vscode.window.showInformationMessage(
-        "Kickbacks: signed out. Claude Code restored.");
+        "GPTW: signed out. Claude Code restored.");
     } catch { /* prime directive */ }
   }
 
@@ -616,7 +622,7 @@ export class DebugController {
     // failed for a real reason.
     const ccPresent = res.reason !== "target not found";
     if (!res.ok && ccPresent)
-      vscode.window.showErrorMessage(`Kickbacks: patch failed — ${res.reason}`);
+      vscode.window.showErrorMessage(`GPTW: patch failed — ${res.reason}`);
     return !!res.ok || codexOk;
   }
 
@@ -631,7 +637,7 @@ export class DebugController {
       ? (this.auth.signedIn() ? "in" : "out")
       : "n/a";
     return [
-      "Kickbacks diagnostics",
+      "GPTW diagnostics",
       buildLabel(),
       `auth: ${authLine}`,
       `injection(K_ON): ${this.on() ? "ON" : "OFF"}`,

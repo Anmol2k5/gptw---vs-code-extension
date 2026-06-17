@@ -35,14 +35,14 @@ export interface PatchParams {
   corr: string;
   loopbackPort: number;
   loopbackToken: string;
-  /** Webview-reachable loopback base (scheme/host/port + /vibe-ads/<token>).
+  /** Webview-reachable loopback base (scheme/host/port + /gptw/<token>).
    *  On VS Code Remote/Server the webview runs on the client, so raw
    *  127.0.0.1 is unreachable — callers resolve this via
    *  vscode.env.asExternalUri before applyPatch. */
   loopbackBase: string;
   /** When true the injected block relays timestamped lifecycle events to the
-   *  loopback /log route (→ ~/.vibe-ads/debug.log) for headless diagnosis.
-   *  Resolved from VIBE_ADS_DEBUG / the debug.enabled sentinel at patch time. */
+   *  loopback /log route (→ ~/.gptw/debug.log) for headless diagnosis.
+   *  Resolved from GPTW_DEBUG / the debug.enabled sentinel at patch time. */
   debug?: boolean;
   /** When true the injected block also renders the auction ad in Claude
    *  Code's usage-limit banner (mirror of the spinner ad; spec §3). Resolved
@@ -53,11 +53,11 @@ export interface PatchParams {
    *  before it counts as "shown". Server-authoritative via
    *  /v1/portfolio.view_threshold_seconds; falls back to 15_000 ms when the
    *  server did not specify. Baked into the block as
-   *  `__VIBE_ADS_VIEW_THRESHOLD_MS__`. */
+   *  `__GPTW_VIEW_THRESHOLD_MS__`. */
   viewThresholdMs?: number;
 }
 
-/** Ground-truth snapshot for the `Kickbacks: Diagnose` command — everything
+/** Ground-truth snapshot for the `GPTW: Diagnose` command — everything
  *  needed to tell a cosmetic flash from a real miss without reading the bundle
  *  by hand. `bareVerbPresent` is the key tell: a verb word exists in the live
  *  file but `hasArray` is false ⇒ the bundle format changed (fix the regex);

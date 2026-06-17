@@ -9,7 +9,7 @@ import { resolveAsset } from "../../util/asset";
 import { parseable, upsertPlugin, removePlugin, removeTopLevel }
   from "./settingsEdit";
 
-const MARKER = "KICKBACKS-OPENCODE";
+const MARKER = "GPTW-OPENCODE";
 const AD_FILE_NAME = "opencode-ad.json";
 const PLUGIN_FILE_NAME = "opencode-plugin.js";
 const FRESH_MS = 10 * 60 * 1000;
@@ -55,13 +55,13 @@ export function resolvePluginAsset(baseDir: string): string {
   return resolveAsset(baseDir, "adapters/opencode", "plugin.asset.js");
 }
 
-/** Wraps OpenCode's native plugin system to inject Kickbacks-served ads
+/** Wraps OpenCode's native plugin system to inject GPTW-served ads
  *  into the TUI spinner/status display. Reversible: the plugin registration
  *  in opencode.jsonc is added on apply and removed on restore.
  *
  *  The adapter writes THREE things:
- *  1. ~/.vibe-ads/opencode-plugin.js — the plugin script (placeholders filled).
- *  2. ~/.vibe-ads/opencode-ad.json  — the current ad cache (re-read by plugin).
+ *  1. ~/.gptw/opencode-plugin.js — the plugin script (placeholders filled).
+ *  2. ~/.gptw/opencode-ad.json  — the current ad cache (re-read by plugin).
  *  3. opencode.jsonc "plugin" array  — registers the plugin path.
  *
  *  Restore removes (3) and cleans up (1) + (2). */
@@ -73,10 +73,10 @@ export class OpenCodeAdapter implements TargetAdapter {
     this.configPath = opencodeConfigPath();
   }
 
-  private vibeDir(): string { return join(homedir(), ".vibe-ads"); }
+  private vibeDir(): string { return join(homedir(), ".gptw"); }
   private adFilePath(): string { return join(this.vibeDir(), AD_FILE_NAME); }
   private pluginPath(): string { return join(this.vibeDir(), PLUGIN_FILE_NAME); }
-  private backupPath(): string { return this.configPath + ".kickbacks-backup"; }
+  private backupPath(): string { return this.configPath + ".gptw-backup"; }
 
   /** The plugin spec registered into the opencode.jsonc "plugin" array.
    *  OpenCode resolves file:// paths relative to the config dir; we use an
@@ -113,9 +113,9 @@ export class OpenCodeAdapter implements TargetAdapter {
   private renderPlugin(loopbackBase: string): string {
     const assetPath = resolvePluginAsset(dirname(__filename));
     return readFileSync(assetPath, "utf8")
-      .split("__KICKBACKS_OC_AD_PATH__").join(JSON.stringify(this.adFilePath()))
-      .split("__KICKBACKS_OC_FRESH_MS__").join(String(FRESH_MS))
-      .split("__KICKBACKS_OC_LOOPBACK_BASE__").join(JSON.stringify(loopbackBase));
+      .split("__GPTW_OC_AD_PATH__").join(JSON.stringify(this.adFilePath()))
+      .split("__GPTW_OC_FRESH_MS__").join(String(FRESH_MS))
+      .split("__GPTW_OC_LOOPBACK_BASE__").join(JSON.stringify(loopbackBase));
   }
 
   applyPatch(p: PatchParams): OpResult {
@@ -123,7 +123,7 @@ export class OpenCodeAdapter implements TargetAdapter {
       // 1. Write/update the ad cache file (cheap, decoupled from plugin).
       mkdirSync(this.vibeDir(), { recursive: true });
       const adData = JSON.stringify({
-        adText: stripControlChars(p.adText || "") || "Earning Kickback",
+        adText: stripControlChars(p.adText || "") || "Earning GPTW",
         clickUrl: p.clickUrl || "",
         adId: p.clickToken || "",
         campaignId: p.corr || "",
@@ -149,7 +149,7 @@ export class OpenCodeAdapter implements TargetAdapter {
       // Backup the original config (once).
       if (!existsSync(this.backupPath()))
         writeFileSync(this.backupPath(),
-          pristine === null ? " KICKBACKS-ABSENT" : pristine, "utf8");
+          pristine === null ? " GPTW-ABSENT" : pristine, "utf8");
 
       const base = pristine ?? '{\n  "$schema": "https://opencode.ai/config.json"\n}\n';
       const next = upsertPlugin(base, this.pluginSpec());

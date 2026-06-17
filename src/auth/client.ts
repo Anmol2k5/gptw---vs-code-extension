@@ -9,13 +9,13 @@ import { isLoopbackBase } from "../util/loopback";
 import { timeoutFetch } from "../util/http";
 
 type Fetch = typeof fetch;
-// kickbacks.* are the current keys; vibe-ads.* are legacy (pre-W1-rename)
+// gptw.* are the current keys; kickbacks.* and vibe-ads.* are legacy
 // and read-through-only — copied forward on first access so the user's stable
 // device id, refresh token, and access token survive the rename. We never
 // DELETE the legacy entries; that way a downgrade still finds a session.
-const A = "kickbacks.access", R = "kickbacks.refresh", CID = "kickbacks.clientId";
-const A_LEGACY = "vibe-ads.access", R_LEGACY = "vibe-ads.refresh";
-const CID_LEGACY = "vibe-ads.clientId";
+const A = "gptw.access", R = "gptw.refresh", CID = "gptw.clientId";
+const A_LEGACY = "kickbacks.access", R_LEGACY = "kickbacks.refresh", CID_LEGACY = "kickbacks.clientId";
+const A_VIBE = "vibe-ads.access", R_VIBE = "vibe-ads.refresh", CID_VIBE = "vibe-ads.clientId";
 // A vault-sealed refresh value; anything NOT matching is a pre-vault legacy
 // plaintext token written by an older build (upgraded in place on first read).
 const ENVELOPE = /^(plain|keychain|dpapi|libsecret):1:/;
@@ -62,15 +62,13 @@ export class AuthClient {
               private ctx: vscode.ExtensionContext,
               private f: Fetch = timeoutFetch(15000),
               private pollMs = 1500,
-              // ~/.kickbacks/auth.json is the new universal floor. If only the
-              // legacy ~/.vibe-ads/auth.json exists we migrate-on-read inside
-              // readFallback(); the legacy file is left in place for downgrade.
-              private authFile = join(homedir(), ".kickbacks", "auth.json"),
+              // ~/.gptw/auth.json is the new universal floor. If only the
+              // legacy ~/.kickbacks/auth.json or ~/.vibe-ads/auth.json exists we migrate-on-read
+              // inside readFallback(); the legacy files are left in place.
+              private authFile = join(homedir(), ".gptw", "auth.json"),
               private vault: SecretVault = createVault(process.platform),
-              // Defined AFTER `vault` to preserve the constructor's positional
-              // parameter order — existing call sites that pass `vault` as the
-              // 6th arg keep working without test churn.
-              private legacyAuthFile = join(homedir(), ".vibe-ads", "auth.json")) {}
+              private legacyAuthFile = join(homedir(), ".kickbacks", "auth.json"),
+              private legacyAuthFile2 = join(homedir(), ".vibe-ads", "auth.json")) {}
 
   accessToken(): string | null { return this.at; }
   signedIn(): boolean { return this.at != null; }
@@ -117,9 +115,11 @@ export class AuthClient {
     const env = this.readFallback().refresh;
     try { await this.ctx.secrets.delete(A); } catch { /* best-effort */ }
     try { await this.ctx.secrets.delete(R); } catch { /* best-effort */ }
-    // Also clear legacy vibe-ads.* keys so a stale token can't re-sign-in.
+    // Also clear legacy keys so a stale token can't re-sign-in.
     try { await this.ctx.secrets.delete(A_LEGACY); } catch { /* best-effort */ }
     try { await this.ctx.secrets.delete(R_LEGACY); } catch { /* best-effort */ }
+    try { await this.ctx.secrets.delete(A_VIBE); } catch { /* best-effort */ }
+    try { await this.ctx.secrets.delete(R_VIBE); } catch { /* best-effort */ }
     if (env && ENVELOPE.test(env)) {
       try { await this.vault.clear(env); } catch { /* best-effort */ }
     }
@@ -156,6 +156,8 @@ export class AuthClient {
     try { return JSON.parse(readFileSync(this.authFile, "utf8")) as Fallback; }
     catch { /* fall through to legacy */ }
     try { return JSON.parse(readFileSync(this.legacyAuthFile, "utf8")) as Fallback; }
+    catch { /* fall through to legacy 2 */ }
+    try { return JSON.parse(readFileSync(this.legacyAuthFile2, "utf8")) as Fallback; }
     catch { return {}; }
   }
   private writeFallback(patch: Fallback): void {
@@ -170,7 +172,8 @@ export class AuthClient {
   clientId(): string {
     const fileId = this.readFallback().clientId;
     let id = this.ctx.globalState.get<string>(CID)
-      || this.ctx.globalState.get<string>(CID_LEGACY)  // W1: pre-rename users
+      || this.ctx.globalState.get<string>(CID_LEGACY)
+      || this.ctx.globalState.get<string>(CID_VIBE)
       || fileId;
     if (!id) id = randomBytes(12).toString("hex");
     this.ctx.globalState.update(CID, id);
@@ -191,14 +194,16 @@ export class AuthClient {
         { hadAccess: true, refreshSource: "dev-bypass", signedIn: true });
       return;
     }
-    // W1 rename: try kickbacks.* first, fall back to legacy vibe-ads.* keys.
+    // Rebrand migration: try gptw first, fall back to legacy keys.
     this.at = (await this.ctx.secrets.get(A))
       || (await this.ctx.secrets.get(A_LEGACY))
+      || (await this.ctx.secrets.get(A_VIBE))
       || null;
     // Recover the refresh token from the id-independent file if the
     // SecretStorage namespace was lost (reinstall / rename / keyring-less).
     let rt = (await this.ctx.secrets.get(R))
-      || (await this.ctx.secrets.get(R_LEGACY)) || undefined;
+      || (await this.ctx.secrets.get(R_LEGACY))
+      || (await this.ctx.secrets.get(R_VIBE)) || undefined;
     let rtSource = rt ? "secrets" : "none";
     if (!rt) {
       const stored = this.readFallback().refresh;
@@ -301,13 +306,13 @@ export class AuthClient {
       }
       dlog("ext", "auth.signin", { ok: false, reason: "timeout" });
       vscode.window.showErrorMessage(
-        "Vibe-Ads sign-in timed out: no token after polling. " +
+        "GPTW sign-in timed out: no token after polling. " +
         "Did you complete the Google consent in the browser?");
       return false;
     } catch (e) {
       dlog("ext", "auth.signin", { ok: false, reason: "error" });
       vscode.window.showErrorMessage(
-        `Vibe-Ads sign-in failed: ${e instanceof Error ? e.message : String(e)}`);
+        `GPTW sign-in failed: ${e instanceof Error ? e.message : String(e)}`);
       return false;
     }
   }
@@ -412,7 +417,8 @@ export class AuthClient {
   }
 
   private devBypassEnabled(): boolean {
-    const on = process.env.KICKBACKS_DEV_BYPASS === "1"
+    const on = process.env.GPTW_DEV_BYPASS === "1"
+      || process.env.KICKBACKS_DEV_BYPASS === "1"
       || process.env.VIBE_ADS_DEV_BYPASS === "1";
     return on && isLoopbackBase(this.base);
   }

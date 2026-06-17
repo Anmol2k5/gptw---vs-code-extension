@@ -3,8 +3,8 @@ import { randomBytes } from "node:crypto";
 import type { Loopback } from "../loopback";
 import { resolveLoopbackBase } from "../loopback";
 
-const STABLE_TOKEN_KEY = "kickbacks.loopback.token";
-const STABLE_PORT_KEY = "kickbacks.loopback.port";
+const STABLE_TOKEN_KEY = "gptw.loopback.token";
+const STABLE_PORT_KEY = "gptw.loopback.port";
 
 export interface LoopbackBootResult { port: number; token: string; base: string; }
 

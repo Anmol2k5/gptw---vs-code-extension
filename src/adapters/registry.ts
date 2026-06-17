@@ -78,7 +78,8 @@ export const REGISTRY: TargetEntry[] = [
   {
     id: "claude-code",
     locate: () => {
-      const ev = envTarget("KICKBACKS_CC_TARGET")
+      const ev = envTarget("GPTW_CC_TARGET")
+        ?? envTarget("KICKBACKS_CC_TARGET")
         ?? envTarget("VIBE_ADS_CC_TARGET");
       if (ev !== undefined) return ev;        // authoritative when set
       return newestUnder("anthropic.claude-code-", ["webview", "index.js"]);
@@ -88,7 +89,8 @@ export const REGISTRY: TargetEntry[] = [
   {
     id: "codex",
     locate: () => {
-      const ev = envTarget("KICKBACKS_CODEX_TARGET")
+      const ev = envTarget("GPTW_CODEX_TARGET")
+        ?? envTarget("KICKBACKS_CODEX_TARGET")
         ?? envTarget("VIBE_ADS_CODEX_TARGET");
       if (ev !== undefined) return ev;        // authoritative when set
       return newestCodexChunk();
@@ -98,7 +100,8 @@ export const REGISTRY: TargetEntry[] = [
   {
     id: "opencode",
     locate: () => {
-      const ev = envTarget("KICKBACKS_OC_TARGET");
+      const ev = envTarget("GPTW_OC_TARGET")
+        ?? envTarget("KICKBACKS_OC_TARGET");
       if (ev !== undefined) return ev;        // authoritative when set
       // OpenCode is config-driven, not file-driven. Return a sentinel
       // when the tool is detected; the adapter constructor needs no path.

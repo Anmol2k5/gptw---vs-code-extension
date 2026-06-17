@@ -24,7 +24,7 @@ import { codexBuildOptIn, testHooksBuildOptIn, verboseBuild } from "./buildflags
  *     — the sentinel is the headless toggle (create/remove from a shell, no
  *     rebuild, no UI).
  *  Never throws. */
-const DIR = join(homedir(), ".vibe-ads");
+const DIR = join(homedir(), ".gptw");
 const LOG = join(DIR, "debug.log");
 const SENTINEL = join(DIR, "debug.enabled");
 const CONFIG = join(DIR, "config.json");
@@ -51,7 +51,8 @@ export function debugEnabled(): boolean {
     // Build-time verbose flag (esbuild define).
     if (verboseBuild()) return true;
     // Env-var opt-in: both legacy and new prefixes.
-    if (process.env.KICKBACKS_DEBUG === "1"
+    if (process.env.GPTW_DEBUG === "1"
+        || process.env.KICKBACKS_DEBUG === "1"
         || process.env.VIBE_ADS_DEBUG === "1") return true;
     // Sentinel file: ~/.vibe-ads/debug.enabled.
     if (existsSync(SENTINEL)) return true;
@@ -78,7 +79,8 @@ const CODEX_SENTINEL = join(DIR, "codex.enabled");
 export function codexEnabled(): boolean {
   try {
     if (codexBuildOptIn()) return true;
-    if (process.env.KICKBACKS_CODEX === "1"
+    if (process.env.GPTW_CODEX === "1"
+        || process.env.KICKBACKS_CODEX === "1"
         || process.env.VIBE_ADS_CODEX === "1") return true;
     return existsSync(CODEX_SENTINEL);
   } catch { return false; }
@@ -92,7 +94,8 @@ export function codexEnabled(): boolean {
 const CODEX_DISABLED_SENTINEL = join(DIR, "codex.disabled");
 export function codexDisabled(): boolean {
   try {
-    if (process.env.KICKBACKS_CODEX === "0"
+    if (process.env.GPTW_CODEX === "0"
+        || process.env.KICKBACKS_CODEX === "0"
         || process.env.VIBE_ADS_CODEX === "0") return true;
     return existsSync(CODEX_DISABLED_SENTINEL);
   } catch { return false; }
@@ -106,7 +109,8 @@ export function codexDisabled(): boolean {
 const CODEX_CLI_SENTINEL = join(DIR, "codex-cli.enabled");
 export function codexCliEnabled(): boolean {
   try {
-    if (process.env.KICKBACKS_CODEX_CLI === "1"
+    if (process.env.GPTW_CODEX_CLI === "1"
+        || process.env.KICKBACKS_CODEX_CLI === "1"
         || process.env.VIBE_ADS_CODEX_CLI === "1") return true;
     return existsSync(CODEX_CLI_SENTINEL);
   } catch { return false; }
@@ -121,8 +125,8 @@ const TEST_HOOKS_SENTINEL = join(DIR, "test-hooks.enabled");
 export function testHooksEnabled(): boolean {
   try {
     if (testHooksBuildOptIn()) return true;
-    if ((process.env.KICKBACKS_TEST_HOOKS || process.env.VIBE_ADS_TEST_HOOKS)
-        && (process.env.KICKBACKS_TEST_HOOKS || process.env.VIBE_ADS_TEST_HOOKS) !== "0")
+    if ((process.env.GPTW_TEST_HOOKS || process.env.KICKBACKS_TEST_HOOKS || process.env.VIBE_ADS_TEST_HOOKS)
+        && (process.env.GPTW_TEST_HOOKS || process.env.KICKBACKS_TEST_HOOKS || process.env.VIBE_ADS_TEST_HOOKS) !== "0")
       return true;
     return existsSync(TEST_HOOKS_SENTINEL);
   } catch { return false; }
@@ -140,7 +144,8 @@ export function testHooksEnabled(): boolean {
 // fallback exactly as before. Never throws.
 export function debugIconDataUri(): string {
   try {
-    const v = process.env.KICKBACKS_E2E_ICON_DATA_URI
+    const v = process.env.GPTW_E2E_ICON_DATA_URI
+      || process.env.KICKBACKS_E2E_ICON_DATA_URI
       || process.env.VIBE_ADS_E2E_ICON_DATA_URI || "";
     return /^data:image\//i.test(v) ? v : "";
   } catch { return ""; }
@@ -241,7 +246,7 @@ export function dlog(src: "ext" | "webview", evt: string,
     maybeTrimLog();
   } catch {
     // Logging must never disrupt the extension. Note once to stderr only.
-    if (!warned) { warned = true; try { process.stderr.write("vibe-ads: dlog disabled\n"); } catch { /* ignore */ } }
+    if (!warned) { warned = true; try { process.stderr.write("gptw: dlog disabled\n"); } catch { /* ignore */ } }
   }
 }
 

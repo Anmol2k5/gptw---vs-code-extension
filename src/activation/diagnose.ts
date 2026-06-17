@@ -14,7 +14,7 @@ export function interpret(d: AdapterDiagnostics): string {
   }
   if (!d.targetExists)
     return "VERDICT: Claude Code not found at the target path. Is the Claude Code "
-      + "extension installed? (No action for Kickbacks.)";
+      + "extension installed? (No action for GPTW.)";
   if (d.live.bareVerbPresent && !d.live.hasArray)
     return "VERDICT: the verb words exist but NOT in a matchable array — Claude "
       + "Code likely changed its bundle format. FIX: update the adapter's array "
@@ -25,7 +25,7 @@ export function interpret(d: AdapterDiagnostics): string {
       + "reinstall or update Claude Code to restore its original file, then reload.";
   if (d.backup.exists && !d.backup.hasArray && d.live.hasArray)
     return "VERDICT: stale backup but the live file is fine — should self-heal on "
-      + "the next apply. FIX: update Kickbacks to the latest build and reload.";
+      + "the next apply. FIX: update GPTW to the latest build and reload.";
   return "VERDICT: incompatible — verb array not located. Send this report to the dev.";
 }
 
@@ -48,12 +48,12 @@ export function interpretCodex(
 ): string {
   if (p.optOut)
     return "VERDICT: Codex ad-serving is explicitly disabled "
-      + "(~/.vibe-ads/codex.disabled or KICKBACKS_CODEX=0).";
+      + "(~/.gptw/codex.disabled or GPTW_CODEX=0).";
   if (!p.discoveryEnabled)
     return "VERDICT: Codex detected but Codex ad-serving is OFF — it is "
       + "opt-in on machines with a working Claude Code (expected, not a bug). "
-      + "To serve ads in Codex too: set KICKBACKS_CODEX=1 or create "
-      + "~/.vibe-ads/codex.enabled, then reload.";
+      + "To serve ads in Codex too: set GPTW_CODEX=1 or create "
+      + "~/.gptw/codex.enabled, then reload.";
   return compatible
     ? "VERDICT: OK — Codex is a live ad target this session."
     : "VERDICT: Codex targeted but incompatible — send this report to the dev.";
@@ -64,7 +64,7 @@ export function formatDiagnostics(
   cc: TargetAdapter | null, codex: CodexDiagnostics | null,
 ): string {
   const L: string[] = [];
-  L.push("=== Kickbacks Diagnostics ===");
+  L.push("=== GPTW Diagnostics ===");
   L.push(`extension version: ${buildVersion()}`);
   L.push(`build: ${buildLabel()}  (BUILD_TS=${BUILD_TS || "dev"})`);
   L.push(`debug enabled: ${debugEnabled()}`);
@@ -111,7 +111,7 @@ export function formatDiagnostics(
   return L.join("\n");
 }
 
-/** Register the `Kickbacks: Diagnose` command (+ legacy alias). Opens the report
+/** Register the `GPTW: Diagnose` command. Opens the report
  *  in an untitled editor AND copies it to the clipboard so the user can paste it
  *  straight back. Registered early in activation so it works even when the build
  *  is incompatible — which is exactly when it's needed. */
@@ -128,11 +128,10 @@ export function registerDiagnoseCommand(
     } catch { /* best-effort */ }
     try {
       await vscode.window.showInformationMessage?.(
-        "Kickbacks diagnostics copied to clipboard.");
+        "GPTW diagnostics copied to clipboard.");
     } catch { /* best-effort */ }
   };
   return [
-    vscode.commands.registerCommand("kickbacks.diagnose", run),
-    vscode.commands.registerCommand("vibe-ads.diagnose", run),
+    vscode.commands.registerCommand("gptw.diagnose", run),
   ];
 }

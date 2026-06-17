@@ -1,13 +1,13 @@
-// Kickbacks OpenCode plugin asset. Shipped raw (placeholders substituted at
+// GPTW OpenCode plugin asset. Shipped raw (placeholders substituted at
 // install time by the adapter). Runs inside the OpenCode plugin host.
 // Pure: reads a local ad cache file and injects into the TUI via plugin hooks.
-// No bundling — this file is copied as-is into ~/.vibe-ads/opencode-plugin.js.
+// No bundling — this file is copied as-is into ~/.gptw/opencode-plugin.js.
 
 const { readFileSync, existsSync } = require("node:fs");
 
-const AD_CACHE_PATH = __KICKBACKS_OC_AD_PATH__;
-const FRESH_MS = __KICKBACKS_OC_FRESH_MS__;
-const LOOPBACK_BASE = __KICKBACKS_OC_LOOPBACK_BASE__;
+const AD_CACHE_PATH = __GPTW_OC_AD_PATH__;
+const FRESH_MS = __GPTW_OC_FRESH_MS__;
+const LOOPBACK_BASE = __GPTW_OC_LOOPBACK_BASE__;
 
 /** Read the ad cache file. Returns null if stale/missing. */
 function readAd() {
@@ -27,7 +27,7 @@ function strip(s) {
   return s.replace(/[\u0000-\u001f\u007f-\u009f]/g, "");
 }
 
-/** Fire-and-forget metric ping to the Kickbacks loopback server. */
+/** Fire-and-forget metric ping to the GPTW loopback server. */
 function sendMetric(event, ad) {
   if (!LOOPBACK_BASE || !ad) return;
   try {

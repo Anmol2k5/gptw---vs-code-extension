@@ -6,7 +6,7 @@ import type { TargetAdapter, PreflightResult, OpResult, RestoreResult,
 import { sha256 } from "../../util/crypto";
 import { resolveAsset } from "../../util/asset";
 
-const MARKER = "VIBE-ADS-CODEX-CLI";
+const MARKER = "GPTW-CODEX-CLI";
 const AD_FILE_NAME = "codex-cli-ad.txt";
 
 /** Terminal esc()-analog: strip control chars (C0 + DEL + C1) — and ONLY
@@ -52,9 +52,9 @@ export class CodexCliWrapperAdapter implements TargetAdapter {
     this.isWin = this.shim.toLowerCase().endsWith(".cmd");
   }
 
-  private vibeDir(): string { return join(this.home, ".vibe-ads"); }
+  private vibeDir(): string { return join(this.home, ".gptw"); }
   private adFilePath(): string { return join(this.vibeDir(), AD_FILE_NAME); }
-  /** Backup lives ALONGSIDE the shim, not under ~/.vibe-ads, because cmd.exe's
+  /** Backup lives ALONGSIDE the shim, not under ~/.gptw, because cmd.exe's
    *  `call` resolves relative to the wrapper and only honours .cmd/.bat
    *  extensions on Windows. Keep round-trip simple by mirroring the shim's
    *  basename + extension. */
@@ -62,9 +62,22 @@ export class CodexCliWrapperAdapter implements TargetAdapter {
     const dir = dirname(this.shim);
     if (this.isWin) {
       const stem = basename(this.shim, ".cmd");
+      return join(dir, stem + ".gptw-orig.cmd");
+    }
+    return join(dir, basename(this.shim) + ".gptw-orig");
+  }
+  private legacyBackupPath(): string {
+    const dir = dirname(this.shim);
+    if (this.isWin) {
+      const stem = basename(this.shim, ".cmd");
       return join(dir, stem + ".vibe-ads-orig.cmd");
     }
     return join(dir, basename(this.shim) + ".vibe-ads-orig");
+  }
+  private existingBackupPath(): string | null {
+    if (existsSync(this.backupPath())) return this.backupPath();
+    if (existsSync(this.legacyBackupPath())) return this.legacyBackupPath();
+    return null;
   }
 
   version(): string | null { return "cli"; }
@@ -101,8 +114,8 @@ export class CodexCliWrapperAdapter implements TargetAdapter {
   private renderWrapper(): string {
     const asset = resolveWrapperAsset(dirname(__filename), this.isWin);
     return readFileSync(asset, "utf8")
-      .split("__VIBE_ADS_AD_PATH__").join(this.adFilePath())
-      .split("__VIBE_ADS_BACKUP__").join(this.backupPath());
+      .split("__GPTW_AD_PATH__").join(this.adFilePath())
+      .split("__GPTW_BACKUP__").join(this.backupPath());
   }
 
   applyPatch(p: PatchParams): OpResult {
@@ -117,7 +130,7 @@ export class CodexCliWrapperAdapter implements TargetAdapter {
       // file raw and cannot sanitize); an adText that strips to empty falls
       // back to the default line rather than printing a blank banner.
       writeFileSync(this.adFilePath(),
-        (stripControlChars(p.adText || "") || "Earning Kickback") + "\n",
+        (stripControlChars(p.adText || "") || "Earning GPTW") + "\n",
         "utf8");
       // Idempotent: if the shim already carries our marker, no wrapper rewrite.
       const current = readFileSync(this.shim, "utf8");
@@ -125,8 +138,9 @@ export class CodexCliWrapperAdapter implements TargetAdapter {
       // First-time install: snapshot the pristine npm shim. The check guards
       // against ever overwriting an existing backup with our wrapper, which
       // would happen if a stale wrapper file somehow lost its MARKER.
-      if (!existsSync(this.backupPath()))
-        copyFileSync(this.shim, this.backupPath());
+      const bak = this.existingBackupPath() || this.backupPath();
+      if (!existsSync(bak))
+        copyFileSync(this.shim, bak);
       const wrapper = this.renderWrapper();
       writeFileSync(this.shim, wrapper, "utf8");
       if (!this.isWin) {
@@ -140,7 +154,7 @@ export class CodexCliWrapperAdapter implements TargetAdapter {
 
   restore(): RestoreResult {
     try {
-      const bak = this.backupPath();
+      const bak = this.existingBackupPath() || this.backupPath();
       if (!existsSync(bak))
         return { ok: true, restored: false, reason: "no backup present" };
       const pristine = readFileSync(bak);

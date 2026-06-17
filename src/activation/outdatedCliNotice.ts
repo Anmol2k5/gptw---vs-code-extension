@@ -24,12 +24,12 @@ export function notifyOutdatedCli(
     const cur = `${v[0]}.${v[1]}.${v[2]}`;
     const floor =
       `${SPINNER_VERBS_FLOOR[0]}.${SPINNER_VERBS_FLOOR[1]}.${SPINNER_VERBS_FLOOR[2]}`;
-    const key = `kickbacks.outdatedCliNotified:${cur}`;
+    const key = `gptw.outdatedCliNotified:${cur}`;
     if (ctx.globalState.get<boolean>(key)) return;
     void ctx.globalState.update(key, true);
     dlog("ext", "cli.outdated.notify", { version: v, floor: SPINNER_VERBS_FLOOR });
     void vscode.window.showWarningMessage?.(
-      `Kickbacks: your Claude Code CLI (${cur}) is older than ${floor}, so `
+      `GPTW: your Claude Code CLI (${cur}) is older than ${floor}, so `
       + `spinner ads can't render. Run \`claude update\` (or reinstall the `
       + `latest Claude Code), then reload the window.`);
   } catch { /* notification is best-effort */ }

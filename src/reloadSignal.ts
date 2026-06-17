@@ -5,7 +5,7 @@ export interface ReloadSentinel { version: string; ts: string; }
 
 /** Fixed sentinel path shared by the deploy script and the extension watcher. */
 export function reloadSentinelPath(): string {
-  return join(homedir(), ".vibe-ads", "reload");
+  return join(homedir(), ".gptw", "reload");
 }
 
 /** Parse the sentinel payload. Returns null for any malformed/half-written

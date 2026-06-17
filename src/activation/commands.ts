@@ -49,7 +49,7 @@ export function registerCommands(
       session.set({ signedIn: true, authHealthy: "ok" });
       // Tiered auto-enable: turn injection back on for a first-run user
       // (neverToggled) OR a user who was running ads before they signed out
-      // (K_PRESIGNOUT). A deliberate "Disable Kickbacks" survives — see
+      // (K_PRESIGNOUT). A deliberate "Disable GPTW" survives — see
       // DebugController.shouldAutoEnableOnSignIn(). Pre-fix this used the
       // bare neverToggled() gate, so a sign-out (which writes K_ON=false) left
       // the user permanently disabled on the next sign-in.
@@ -87,7 +87,7 @@ export function registerCommands(
   const cmdStatus = guardCmd("status", () => {
     const st = auth.storageInfo();
     vscode.window.showInformationMessage(
-      `Kickbacks (Claude Code ${ccVersion}) — ${
+      `GPTW (Claude Code ${ccVersion}) — ${
         auth.signedIn() ? "signed in" : "signed out"} · ${buildLabel()}`
       + ` · store: ${st.scheme}${
         st.keyringDurable === false ? " (keyring not durable — using file)" : ""}`);
@@ -97,27 +97,23 @@ export function registerCommands(
       const installed = await updater.checkOnce();
       if (installed) {
         void vscode.window.showInformationMessage?.(
-          "Kickbacks: update installed; the extension host will restart.");
+          "GPTW: update installed; the extension host will restart.");
       } else {
         void vscode.window.showInformationMessage?.(
-          `Kickbacks: already up to date (v${buildVersion()}).`);
+          `GPTW: already up to date (v${buildVersion()}).`);
       }
     } catch (e) {
       void vscode.window.showErrorMessage?.(
-        `Kickbacks: update check failed — `
+        `GPTW: update check failed — `
         + `${errMsg(e, 200)}`);
     }
   });
 
   ctx.subscriptions.push(
-    vscode.commands.registerCommand("kickbacks.signIn", cmdSignIn),
-    vscode.commands.registerCommand("vibe-ads.signIn", cmdSignIn),
-    vscode.commands.registerCommand("kickbacks.signOut", cmdSignOut),
-    vscode.commands.registerCommand("vibe-ads.signOut", cmdSignOut),
-    vscode.commands.registerCommand("kickbacks.restore", cmdRestore),
-    vscode.commands.registerCommand("vibe-ads.restore", cmdRestore),
-    vscode.commands.registerCommand("kickbacks.status", cmdStatus),
-    vscode.commands.registerCommand("vibe-ads.status", cmdStatus),
-    vscode.commands.registerCommand("kickbacks.checkUpdates", cmdCheckUpdates),
+    vscode.commands.registerCommand("gptw.signIn", cmdSignIn),
+    vscode.commands.registerCommand("gptw.signOut", cmdSignOut),
+    vscode.commands.registerCommand("gptw.restore", cmdRestore),
+    vscode.commands.registerCommand("gptw.status", cmdStatus),
+    vscode.commands.registerCommand("gptw.checkUpdates", cmdCheckUpdates),
   );
 }

@@ -36,7 +36,7 @@ export class StatusBar {
   private item = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right, 1000);
   text = "";
-  constructor() { this.item.command = "kickbacks.debugMenu"; this.item.show(); }
+  constructor() { this.item.command = "gptw.debugMenu"; this.item.show(); }
 
   // Always render the two-figure form. A missing figure (fetch failed, or
   // signed-in before the first /v1/earnings poll) degrades to "$0.00" — the
@@ -72,21 +72,21 @@ export class StatusBar {
     }
     let color: string | undefined;
     let background: vscode.ThemeColor | undefined;
-    let command = "kickbacks.debugMenu";
-    let tooltip = "Kickbacks";
+    let command = "gptw.debugMenu";
+    let tooltip = "GPTW";
     switch (s.kind) {
       case "signed-out":
         // No icon — the "K" codicon doesn't exist in VS Code's default set,
         // and a generic glyph would misrepresent the brand. Text only.
         // RED to flag the not-earning state at a glance.
-        this.text = "Kickbacks: Sign in";
+        this.text = "GPTW: Sign in";
         color = RED;
-        tooltip = "Click to sign in to Kickbacks";
+        tooltip = "Click to sign in to GPTW";
         break;
       case "active":
-        this.text = `Kickbacks${this.earned(s.usd, s.usdToday)}`;
+        this.text = `GPTW${this.earned(s.usd, s.usdToday)}`;
         color = GREEN;
-        tooltip = `Kickbacks active${s.version ? ` · Claude Code ${s.version}` : ""}`
+        tooltip = `GPTW active${s.version ? ` · Claude Code ${s.version}` : ""}`
           + ` · $${s.usdToday ?? "0.00"} today · $${s.usd ?? "0.00"} earned`
           + " (display-only credit, payout TBD)";
         break;
@@ -94,37 +94,37 @@ export class StatusBar {
         // Signed-in/debug: green when ON, red when OFF (user has the menu
         // master switch flipped off — earnings paused).
         if (s.on === false) {
-          this.text = "Kickbacks: Off";
+          this.text = "GPTW: Off";
           color = RED;
-          tooltip = "Kickbacks is currently OFF — click to re-enable";
+          tooltip = "GPTW is currently OFF — click to re-enable";
         } else {
-          this.text = `Kickbacks${this.earned(s.usd, s.usdToday)}`;
+          this.text = `GPTW${this.earned(s.usd, s.usdToday)}`;
           color = GREEN;
-          tooltip = `Kickbacks active${s.version ? ` · Claude Code ${s.version}` : ""}`
+          tooltip = `GPTW active${s.version ? ` · Claude Code ${s.version}` : ""}`
             + ` · $${s.usdToday ?? "0.00"} today · $${s.usd ?? "0.00"} earned`
             + " (display-only credit, payout TBD)";
         }
         break;
       case "incompatible":
-        this.text = `Kickbacks incompatible (${s.version})`;
+        this.text = `GPTW incompatible (${s.version})`;
         break;
       case "killed":
-        this.text = "Kickbacks killed";
+        this.text = "GPTW killed";
         color = RED;
         break;
       case "offline":
-        this.text = "Kickbacks offline";
+        this.text = "GPTW offline";
         color = RED;
         break;
       case "ad":
         // Brand the status-bar ad with a pipe separator: "Kickbacks.ai  |  <ad>".
-        this.text = `Kickbacks.ai  |  ${s.adText}`;
+        this.text = `GPTW  |  ${s.adText}`;
         color = GREEN;
-        tooltip = "Kickbacks ad";
+        tooltip = "GPTW ad";
         break;
       case "needs-reload":
         this.reloadLock = true;
-        this.text = "$(warning) Kickbacks: RELOAD to earn money";
+        this.text = "$(warning) GPTW: RELOAD to earn money";
         // errorBackground is the only red background VS Code lets a status-bar
         // item paint; the theme pairs it with white foreground. Explicit white
         // on top so a custom theme can't dim the call-to-action.
@@ -133,7 +133,7 @@ export class StatusBar {
         // One click = the reload itself (not the menu) — the whole point of
         // this state is removing every step between the user and the reload.
         command = "workbench.action.reloadWindow";
-        tooltip = "Kickbacks won't earn money until you reload — click to reload now";
+        tooltip = "GPTW won't earn money until you reload — click to reload now";
         break;
     }
     // The click opens the menu (GET PAID OUT / sign in / sign out live there)

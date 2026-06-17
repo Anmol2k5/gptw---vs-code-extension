@@ -9,15 +9,15 @@ import { dlog } from "../log";
 import { errMsg } from "../util/errMsg";
 import { DEFAULT_POLL_MS } from "../config";
 
-const UPD_KEY = "vibe-ads.update.attempted";
-const UPD_TRANSIENT_KEY = "vibe-ads.update.transient";
+const UPD_KEY = "gptw.update.attempted";
+const UPD_TRANSIENT_KEY = "gptw.update.transient";
 // Single-slot SUCCESS record {k, v, ts} (trey-nag-loop 2026-06-11): the
 // artifact that last installed without throwing. Unlike the attempted ring
 // it has NO cooldown — a successfully-installed artifact must never
 // re-install/re-toast just because the user hasn't reloaded yet. A single
 // slot (not a ring) keeps the rollback contract working: a rollback artifact
 // differs from the latest success, so it is never suppressed by old history.
-const UPD_INSTALLED_KEY = "vibe-ads.update.installed";
+const UPD_INSTALLED_KEY = "gptw.update.installed";
 const UPD_COOLDOWN_MS = 30 * 60 * 1000;
 const UPD_TRANSIENT_COOLDOWN_MS = 15 * 60 * 1000;
 const UPD_RING_CAP = 16;
@@ -87,23 +87,23 @@ export function setupSelfUpdate(
   }
 
   const installVsix = async (vsix: ArrayBuffer): Promise<void> => {
-    const p = join(tmpdir(), `vibe-ads-update-${Date.now()}.vsix`);
+    const p = join(tmpdir(), `gptw-update-${Date.now()}.vsix`);
     writeFileSync(p, Buffer.from(vsix));
     await vscode.commands.executeCommand(
       "workbench.extensions.installExtension", vscode.Uri.file(p));
     // Re-arm injection for the new build, but PRESERVE a deliberate user
     // disable (audit EXT-01 / 2A-02). K_ON === false means the user explicitly
-    // ran "Disable Kickbacks"; undefined/true means default-on or already-on.
+    // ran "Disable GPTW"; undefined/true means default-on or already-on.
     // The old unconditional `= true` stomped an explicit opt-out on every
     // self-update, so the only durable opt-out was uninstall.
-    if (ctx.globalState.get<boolean>("kickbacks.debug.on") !== false) {
-      await ctx.globalState.update("kickbacks.debug.on", true);
+    if (ctx.globalState.get<boolean>("gptw.debug.on") !== false) {
+      await ctx.globalState.update("gptw.debug.on", true);
     }
     dlog("ext", "selfupdate.installed", { path: p });
     void (async () => {
       try {
         const choice = await vscode.window.showInformationMessage?.(
-          "Kickbacks updated. Reload window to activate the new build?",
+          "GPTW updated. Reload window to activate the new build?",
           { modal: false }, "Reload Window", "Later");
         dlog("ext", "selfupdate.toast", { choice: choice || "dismissed" });
         if (choice === "Reload Window") {
@@ -146,8 +146,8 @@ export function setupSelfUpdate(
                                       rollback: boolean }) => {
     try {
       const msg = info.rollback
-        ? `Kickbacks: rolling back to v${info.version} (from v${info.current})…`
-        : `Kickbacks: v${info.version} available — installing now…`;
+        ? `GPTW: rolling back to v${info.version} (from v${info.current})…`
+        : `GPTW: v${info.version} available — installing now…`;
       void vscode.window.showInformationMessage?.(msg);
     } catch { /* toast best-effort */ }
   };
@@ -171,9 +171,9 @@ export function setupSelfUpdate(
     markTransientFailed: (v, sha) => { ringMark(ctx, UPD_TRANSIENT_KEY, updKey(v, sha)); },
     recordLkg: (v, vsix) => {
       try {
-        const lkgPath = join(tmpdir(), `kickbacks-lkg-${v}.vsix`);
+        const lkgPath = join(tmpdir(), `gptw-lkg-${v}.vsix`);
         writeFileSync(lkgPath, vsix);
-        void ctx.globalState.update("vibe-ads.update.lkg", { v, path: lkgPath });
+        void ctx.globalState.update("gptw.update.lkg", { v, path: lkgPath });
       } catch { /* best-effort */ }
     },
   }, onUpdateAvailable);

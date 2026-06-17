@@ -4,9 +4,9 @@ import { join } from "node:path";
 import type { BannerOverride } from "./banner";
 
 /** Dev-only overrides for the three injection surfaces, backed by sentinel
- *  files under ~/.vibe-ads/ (headless parity with debug.enabled / banner.txt).
+ *  files under ~/.gptw/ (headless parity with debug.enabled / banner.txt).
  *  Every function is guarded — fs failure ⇒ safe default, never throws. */
-function dir(): string { return join(homedir(), ".vibe-ads"); }
+function dir(): string { return join(homedir(), ".gptw"); }
 
 function ensureDir(): void {
   try { mkdirSync(dir(), { recursive: true }); } catch { /* ignore */ }

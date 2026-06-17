@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { generateKeyPairSync, sign } from "node:crypto";
+// @ts-expect-error - import from JS file
 import { manifestSignedString } from "../scripts/deploy.mjs";
 import { _verifyManifestSignature } from "../src/update/client";
 

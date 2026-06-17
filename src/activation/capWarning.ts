@@ -26,7 +26,7 @@ export function formatReset(seconds: number): string {
  *  figure stays visible alongside it.
  *
  *  Both scopes render red; the icon distinguishes them ($(clock) hourly vs
- *  $(warning) daily). Click opens the Kickbacks menu (where the cap + payout
+ *  $(warning) daily). Click opens the GPTW menu (where the cap + payout
  *  are also explained). */
 export class CapWarning {
   // Priority 999 sits just to the RIGHT of the earnings item (priority 1000)
@@ -34,7 +34,7 @@ export class CapWarning {
   private item = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right, 999);
   constructor() {
-    this.item.command = "kickbacks.debugMenu";
+    this.item.command = "gptw.debugMenu";
     this.item.color = RED;
   }
 

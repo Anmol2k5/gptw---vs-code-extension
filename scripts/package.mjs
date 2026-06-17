@@ -26,10 +26,10 @@ import { fileURLToPath } from "node:url";
 /** The versioned artifact name for a given semver. Pure; kept tiny but
  *  separate so the naming convention has one definition. */
 export function versionedVsixName(version) {
-  return `kickbacks-${version}.vsix`;
+  return `gptw-${version}.vsix`;
 }
 
-const STABLE = "kickbacks.vsix";
+const STABLE = "gptw.vsix";
 
 // scripts/package.mjs -> extension/
 const extDir = join(fileURLToPath(import.meta.url), "..", "..");
@@ -38,17 +38,17 @@ const stageDir = join(extDir, ".vsce-stage");
 function packageManifestForVsce(pkg) {
   const pj = JSON.parse(JSON.stringify(pkg));
   pj.author ??= {
-    name: "Andrew McCalip",
-    url: "https://github.com/andrewmccalip",
+    name: "GPTW",
+    url: "https://get-paid-to-wait-m44znelko-mayurs-projects-4c08c14e.vercel.app/",
   };
   pj.license ??= "SEE LICENSE IN LICENSE";
-  pj.homepage ??= "https://kickbacks.ai";
-  pj.bugs ??= { url: "https://github.com/andrewmccalip/kickbacks/issues" };
+  pj.homepage ??= "https://get-paid-to-wait-m44znelko-mayurs-projects-4c08c14e.vercel.app/";
+  pj.bugs ??= { url: "https://get-paid-to-wait-m44znelko-mayurs-projects-4c08c14e.vercel.app/" };
   const c = pj.contributes?.commands;
-  if (c && !c.some((x) => x.command === "kickbacks.signOut")) {
-    const i = c.findIndex((x) => x.command === "kickbacks.signIn");
+  if (c && !c.some((x) => x.command === "gptw.signOut")) {
+    const i = c.findIndex((x) => x.command === "gptw.signIn");
     if (i >= 0) c.splice(i + 1, 0,
-      { command: "kickbacks.signOut", title: "Kickbacks: Sign out" });
+      { command: "gptw.signOut", title: "GPTW: Sign out" });
   }
   pj.description = "Get paid while you code. Subtle, clickable ads in the Claude Code and Codex spinners — 50/50 revenue split to users.";
   return pj;
@@ -92,7 +92,7 @@ function run() {
   // Drop any stale versioned vsix from prior builds so the dir always holds
   // exactly the current one (plus the stable kickbacks.vsix). Best-effort.
   for (const f of readdirSync(extDir)) {
-    if (/^kickbacks-.*\.vsix$/.test(f) && f !== versioned) {
+    if (/^gptw-.*\.vsix$/.test(f) && f !== versioned) {
       try { unlinkSync(join(extDir, f)); } catch { /* ignore */ }
     }
   }

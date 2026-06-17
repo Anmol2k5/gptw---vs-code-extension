@@ -9,10 +9,10 @@ import { canPatch, suspendServing } from "../servingGate";
 import { dlog } from "../log";
 import { errMsg } from "../util/errMsg";
 
-const CANARY_PATH = join(homedir(), ".vibe-ads", "boot.canary");
+const CANARY_PATH = join(homedir(), ".gptw", "boot.canary");
 const SETTLE_MS = 5_000;
 const CANARY_STALE_MS = 90 * 1000;
-const FIRST_RUN_KEY = "kickbacks.firstRun.completed";
+const FIRST_RUN_KEY = "gptw.firstRun.completed";
 
 /** `firstRun` is true exactly once — the activation that flips
  *  FIRST_RUN_KEY (i.e. the install). The crash-recovery path reports
@@ -34,7 +34,7 @@ export async function setupBootCanary(
   let canaryFromCrash = false;
   // The settle timer below may only unlink the canary whose content it owns
   // (crash path: the file it observed; clean path: the token it wrote). The
-  // canary lives in the shared ~/.vibe-ads, so a second VS Code window (or a
+  // canary lives in the shared ~/.gptw, so a second VS Code window (or a
   // parallel test worker) may re-write it at any time — an unguarded unlink
   // would strip THAT activation's crash protection.
   let settleToken = "";
@@ -57,13 +57,13 @@ export async function setupBootCanary(
       reason: "prior activation didn't settle (likely VS Code crash mid-patch)" });
     try {
       await vscode.window.showWarningMessage?.(
-        "Kickbacks: prior activation didn't complete cleanly — skipping " +
+        "GPTW: prior activation didn't complete cleanly — skipping " +
         "automatic patch this run. Click the status bar to manually " +
         "re-enable once you're sure VS Code is stable.");
     } catch { /* no-op (test mock may lack showWarningMessage) */ }
   } else {
     try {
-      mkdirSync(join(homedir(), ".vibe-ads"), { recursive: true });
+      mkdirSync(join(homedir(), ".gptw"), { recursive: true });
       settleToken = String(Date.now());
       writeFileSync(CANARY_PATH, settleToken);
     } catch { /* canary is best-effort */ }
@@ -72,7 +72,7 @@ export async function setupBootCanary(
       const targetOk = anyTargetCompatible ?? adapter.preflight().compatible;
       // Auto-enable on a clean boot only when the consent gate allows it
       // (never-toggled first run, or injection was ON before the last
-      // sign-out). PRESERVE a deliberate "Disable Kickbacks" — the old
+      // sign-out). PRESERVE a deliberate "Disable GPTW" — the old
       // condition re-enabled on every boot, stomping an explicit opt-out
       // (audit EXT-01 / 2A-02). canPatch() additionally blocks the
       // auto-enable's setOn(true) apply on a persisted-kill boot (wave 2,
@@ -94,7 +94,7 @@ export async function setupBootCanary(
     await debugCtl.reapplyIfOn();
 
     try {
-      const cycleKill = join(homedir(), ".vibe-ads", "no-boot-cycle.enabled");
+      const cycleKill = join(homedir(), ".gptw", "no-boot-cycle.enabled");
       if (existsSync(cycleKill)) {
         dlog("ext", "boot.cycle.skip", { reason: "sentinel" });
       } else {

@@ -12,8 +12,8 @@
 import type * as vscode from "vscode";
 import type { ConsentClient, ConsentState } from "./client";
 
-const SHOWN_KEY = "vibe-ads.consent.promptShownForVersion";
-const PRIVACY_URL = "https://kickbacks.ai/privacy"; // hosted PRIVACY.md target
+const SHOWN_KEY = "gptw.consent.promptShownForVersion";
+const PRIVACY_URL = "https://get-paid-to-wait-m44znelko-mayurs-projects-4c08c14e.vercel.app/privacy"; // hosted PRIVACY.md target
 
 export interface ConsentPromptOptions {
   client: ConsentClient;
@@ -43,8 +43,7 @@ export async function maybePromptForConsent(opts: ConsentPromptOptions): Promise
     }
     dlog?.(`consent.prompt show version=${state.currentTosVersion}`);
     const pick = await vsc.window.showInformationMessage(
-      "Kickbacks shows subtle ads in the Claude Code spinner and splits "
-      + "50/50 of every settled dollar back to you. Telemetry is opt-in. "
+      "GPTW shows subtle ads in the Claude Code spinner. Telemetry is opt-in. "
       + "Continue?",
       { modal: false },
       "Agree",

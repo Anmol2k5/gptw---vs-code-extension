@@ -41,7 +41,7 @@ export interface SecretVault {
   clear(envelope: string): Promise<void>;
 }
 
-const SERVICE = "vibe-ads";
+const SERVICE = "gptw";
 const V = "1"; // envelope version
 
 // --- default production runner (never throws; ENOENT => code 127) ----------
@@ -75,11 +75,11 @@ const plainEnv = (secret: string) => `plain:${V}:${secret}`;
 // System.Security assembly isn't auto-loaded.
 const PS_PROTECT =
   "Add-Type -AssemblyName System.Security;" +
-  "$b=[Text.Encoding]::UTF8.GetBytes($env:VIBE_ADS_SECRET);" +
+  "$b=[Text.Encoding]::UTF8.GetBytes($env:GPTW_SECRET);" +
   "[Convert]::ToBase64String([Security.Cryptography.ProtectedData]::Protect($b,$null,'CurrentUser'))";
 const PS_UNPROTECT =
   "Add-Type -AssemblyName System.Security;" +
-  "$e=[Convert]::FromBase64String($env:VIBE_ADS_SECRET);" +
+  "$e=[Convert]::FromBase64String($env:GPTW_SECRET);" +
   "[Text.Encoding]::UTF8.GetString([Security.Cryptography.ProtectedData]::Unprotect($e,$null,'CurrentUser'))";
 
 export function createVault(
@@ -106,7 +106,7 @@ export function createVault(
   async function sealDpapi(secret: string): Promise<string | null> {
     const r = await run("powershell",
       ["-NoProfile", "-NonInteractive", "-Command", PS_PROTECT],
-      { env: { VIBE_ADS_SECRET: secret } });
+      { env: { GPTW_SECRET: secret } });
     const ct = stripNL(r.stdout).trim();
     return r.code === 0 && ct ? `dpapi:${V}:${ct}` : null;
   }
@@ -144,7 +144,7 @@ export function createVault(
         if (e.s === "dpapi") {
           const r = await run("powershell",
             ["-NoProfile", "-NonInteractive", "-Command", PS_UNPROTECT],
-            { env: { VIBE_ADS_SECRET: e.p } });
+            { env: { GPTW_SECRET: e.p } });
           const v = stripNL(r.stdout);
           return r.code === 0 && v ? v : null;
         }

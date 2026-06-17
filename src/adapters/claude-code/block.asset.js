@@ -1,31 +1,31 @@
-/* VIBE-ADS-START */
+/* GPTW-START */
 (function () {
   "use strict";
-  var TIER = __VIBE_ADS_TIER__;
-  var AD = __VIBE_ADS_AD__;
-  var ICON_REF = __VIBE_ADS_ICON__;
-  var ICON_URL = __VIBE_ADS_ICON_URL__;
-  var PORT = __VIBE_ADS_PORT__;
-  var LBTOKEN = __VIBE_ADS_LBTOKEN__;
-  var CLICKTOKEN = __VIBE_ADS_CLICKTOKEN__;
+  var TIER = __GPTW_TIER__;
+  var AD = __GPTW_AD__;
+  var ICON_REF = __GPTW_ICON__;
+  var ICON_URL = __GPTW_ICON_URL__;
+  var PORT = __GPTW_PORT__;
+  var LBTOKEN = __GPTW_LBTOKEN__;
+  var CLICKTOKEN = __GPTW_CLICKTOKEN__;
   // Advertiser landing URL, rendered as the anchor's REAL href. Claude Code's
   // webview ships `default-src 'none'` with no connect-src, so an in-page
   // fetch/beacon to the loopback is CSP-blocked and postMessage only reaches
   // CC's own extension (not ours). A genuine http(s) href is the one click-out
   // that survives: the VS Code webview host itself opens it externally. The
   // loopback /click ping below is now ONLY the (best-effort) billing metric.
-  var CLICKURL = __VIBE_ADS_CLICKURL__;
+  var CLICKURL = __GPTW_CLICKURL__;
   // When true the injected block also renders the ad in the usage-limit banner
   // (mirror of the spinner ad; spec §3). False => no DOM scanning at all.
-  var BANNER_ON = __VIBE_ADS_BANNER_ON__;
+  var BANNER_ON = __GPTW_BANNER_ON__;
   // Correlation id (patch-time minted). Carried on the /click ping and every
   // relayed dlog line so the merged debug stream is greppable end-to-end.
-  var CORR = __VIBE_ADS_CORR__;
+  var CORR = __GPTW_CORR__;
   var AD_ID = CORR.substring(0, CORR.lastIndexOf("."));
   // Resolved by the extension via vscode.env.asExternalUri so the webview can
   // reach the loopback on VS Code Remote/Server (raw 127.0.0.1 there is the
   // CLIENT, not the extension host). Falls back to local 127.0.0.1.
-  var BASE = __VIBE_ADS_BASE__ || ("http://127.0.0.1:" + PORT + "/vibe-ads/" + LBTOKEN);
+  var BASE = __GPTW_BASE__ || ("http://127.0.0.1:" + PORT + "/gptw/" + LBTOKEN);
   function fmtElapsed(ms) { return (ms / 1000).toFixed(1) + "s"; }
   // 0..5 dots (6 frames). Advance is slowed via the render-loop cadence.
   function ellipsis(frame) {
@@ -84,7 +84,7 @@
     // text-decoration:underline => the ad reads as the clickable hyperlink it
     // is (was `none`, looked like inert label text).
     var A1 = '<a href="' + href + '" target="_blank" ' +
-      'rel="noopener noreferrer" data-vibe-ads-ad="1" style="color:';
+      'rel="noopener noreferrer" data-gptw-ad="1" style="color:';
     var FG = "var(--vscode-foreground,currentColor)";
     var DIM = "var(--vscode-descriptionForeground,currentColor)";
     // Animated dots live in a FIXED-WIDTH slot so their changing length
@@ -127,7 +127,7 @@
     return '<span style="display:inline-flex;align-items:center;gap:6px;' +
       'justify-content:flex-start">' + FAVICON +
       '<a href="' + href + '" target="_blank" rel="noopener noreferrer" ' +
-      'data-vibe-ads-ad="1" style="color:' + FG +
+      'data-gptw-ad="1" style="color:' + FG +
       ';text-decoration:underline">' + esc(ad) + "</a></span>";
   }
 
@@ -187,7 +187,7 @@
     var DEBUG = __VIBE_ADS_DEBUG__;
     var _seq = 0, _dlogFails = 0;
     // Relay a timestamped lifecycle line to the loopback (→ server-side
-    // ~/.vibe-ads/debug.log) so a headless agent can diagnose without a
+    // ~/.gptw/debug.log) so a headless agent can diagnose without a
     // screen. Gated; never disturbs the spinner. The first line arriving at
     // all is itself the proof the loopback is reachable on Remote.
     function dlog(evt, data) {
@@ -255,9 +255,9 @@
     // (baked into the block as __VIBE_ADS_VIEW_THRESHOLD_MS__; falls back
     // to 15_000 ms when the server didn't specify). Pure best-effort:
     // any throw is swallowed (prime directive).
-    var THRESHOLD_MS = (typeof __VIBE_ADS_VIEW_THRESHOLD_MS__ === "number"
-      && __VIBE_ADS_VIEW_THRESHOLD_MS__ > 0)
-      ? __VIBE_ADS_VIEW_THRESHOLD_MS__ : 15000;
+    var THRESHOLD_MS = (typeof __GPTW_VIEW_THRESHOLD_MS__ === "number"
+      && __GPTW_VIEW_THRESHOLD_MS__ > 0)
+      ? __GPTW_VIEW_THRESHOLD_MS__ : 15000;
     var TICK_MS = 5000;
     // MAX_SESSION_MS billing cap: fire `error_impression` at EVERY
     // multiple of this elapsed mark. Default 5 s, so a 30 s stuck
@@ -550,17 +550,17 @@
     document.addEventListener("click", function (ev) {
       var el = ev.target;
       while (el && el !== document) {
-        if (el.getAttribute && el.getAttribute("data-vibe-ads-ad")) {
+        if (el.getAttribute && el.getAttribute("data-gptw-ad")) {
           // Walk up to find which surface contains this anchor so the click
           // ping carries surface= (mirrors impression events).
           var surface = "overlay";
           var p = el;
           while (p && p !== document) {
             try {
-              if (p.getAttribute && p.getAttribute("data-vibe-ads-banner") === "1") {
+              if (p.getAttribute && p.getAttribute("data-gptw-banner") === "1") {
                 surface = "banner"; break;
               }
-              if (p.getAttribute && p.getAttribute("data-vibe-ads-overlay") === "1") {
+              if (p.getAttribute && p.getAttribute("data-gptw-overlay") === "1") {
                 surface = "overlay"; break;
               }
             } catch (e) { /* prime directive */ }
@@ -689,14 +689,14 @@
         if (!_bannerLogged) { _bannerLogged = true;
           dlog("banner.found", { len: (el.textContent || "").length }); }
         var html = buildBannerHtml(AD, CLICKURL);
-        if (el.getAttribute("data-vibe-ads-banner") === "1" &&
+        if (el.getAttribute("data-gptw-banner") === "1" &&
             _bannerLast === html) {
           // Still mounted + unchanged: ensure accumulator is running.
           try { viewShow(AD, "banner"); } catch (e) { /* prime directive */ }
           return;
         }
         el.innerHTML = html;
-        el.setAttribute("data-vibe-ads-banner", "1");
+        el.setAttribute("data-gptw-banner", "1");
         _bannerEl = el; _bannerLast = html;
         // W3: banner is now visible — start (or resume) accumulation.
         try { viewShow(AD, "banner"); } catch (e) { /* prime directive */ }
@@ -756,8 +756,8 @@
     function ensureOverlay(row) {
       if (overlay && overlay.parentNode) return overlay;
       overlay = document.createElement("div");
-      overlay.setAttribute("data-vibe-ads", String(TIER));
-      overlay.setAttribute("data-vibe-ads-overlay", "1");
+      overlay.setAttribute("data-gptw", String(TIER));
+      overlay.setAttribute("data-gptw-overlay", "1");
       // OPAQUE, theme-matched bg: it must cover CC's verb glyph behind it
       // (transparent => verb shows through and overlaps the ad). The
       // earlier "box flashes over the input" concern is solved separately
@@ -940,7 +940,7 @@
     // creative is never shown.
     function retargetDockedOverlay() {
       try {
-        var a = overlay && overlay.querySelector('a[data-vibe-ads-ad]');
+        var a = overlay && overlay.querySelector('a[data-gptw-ad]');
         var tn = a && a.firstChild;
         if (!a || !tn || tn.nodeType !== 3) {
           dlog("ad.dock_retarget_drop", {});
@@ -1265,4 +1265,4 @@
     }, 5000);
   } catch (e) { /* no-op */ }
 })();
-/* VIBE-ADS-END */
+/* GPTW-END */

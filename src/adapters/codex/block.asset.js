@@ -12,20 +12,20 @@
   // Codex's webview CSP blocks the loopback fetch (telemetry/billing only).
   // Any throw is swallowed and undefined returned — Codex must never break.
   try {
-    if (window.__vibeAdsCodexBoot) return undefined;   // one bootstrap / webview
-    window.__vibeAdsCodexBoot = 1;
+    if (window.__gptwCodexBoot) return undefined;   // one bootstrap / webview
+    window.__gptwCodexBoot = 1;
   } catch (e) { return undefined; }
   try {
-    var AD = __VIBE_ADS_AD__;
+    var AD = __GPTW_AD__;
     // Ad identity for the live /ad poll's change detection (see pollAd).
     // Patch-time bake carries no adId; the first poll response fills it in.
     var AD_ID = "";
-    var CLICKURL = __VIBE_ADS_CLICKURL__;
-    var CLICKTOKEN = __VIBE_ADS_CLICKTOKEN__;
-    var CORR = __VIBE_ADS_CORR__, DEBUG = __VIBE_ADS_DEBUG__;
-    var PORT = __VIBE_ADS_PORT__, LBTOKEN = __VIBE_ADS_LBTOKEN__;
-    var BASE = __VIBE_ADS_BASE__ ||
-      ("http://127.0.0.1:" + PORT + "/vibe-ads/" + LBTOKEN);
+    var CLICKURL = __GPTW_CLICKURL__;
+    var CLICKTOKEN = __GPTW_CLICKTOKEN__;
+    var CORR = __GPTW_CORR__, DEBUG = __GPTW_DEBUG__;
+    var PORT = __GPTW_PORT__, LBTOKEN = __GPTW_LBTOKEN__;
+    var BASE = __GPTW_BASE__ ||
+      ("http://127.0.0.1:" + PORT + "/gptw/" + LBTOKEN);
     var GRACE_MS = 1500;
 
     function esc(s) {
@@ -75,9 +75,9 @@
     // is server-overridable via /v1/portfolio.view_threshold_seconds, baked
     // into the block as __VIBE_ADS_VIEW_THRESHOLD_MS__ (fallback 15s). Pure
     // best-effort: any throw is swallowed.
-    var THRESHOLD_MS = (typeof __VIBE_ADS_VIEW_THRESHOLD_MS__ === "number"
-      && __VIBE_ADS_VIEW_THRESHOLD_MS__ > 0)
-      ? __VIBE_ADS_VIEW_THRESHOLD_MS__ : 15000;
+    var THRESHOLD_MS = (typeof __GPTW_VIEW_THRESHOLD_MS__ === "number"
+      && __GPTW_VIEW_THRESHOLD_MS__ > 0)
+      ? __GPTW_VIEW_THRESHOLD_MS__ : 15000;
     var TICK_MS = 5000;
     // MAX_SESSION_MS billing cap. Pinned to THRESHOLD_MS (was a hard 5000)
     // so the 15s `view_threshold_met` fires FIRST and becomes the billing
@@ -231,13 +231,13 @@
     function buildAd(dots, elapsed) {
       var href = /^https?:\/\//i.test(CLICKURL || "") ? esc(CLICKURL) : "#";
       // Favicon lives INSIDE the anchor (matches CC's adapter shape) so a
-      // probe like `[data-vibe-ads-ad] svg` finds it — the row 08 / 09
+      // probe like `[data-gptw-ad] svg` finds it — the row 08 / 09
       // adHasFavicon check used to fail because the SVG was a sibling of
       // the anchor, not a descendant. Visual is unchanged: favicon stays
       // immediately left of the ad text, just now part of the link
       // (clicking the favicon now navigates, which is the desired UX).
       var A = '<a href="' + href + '" target="_blank" rel="noopener noreferrer" ' +
-        'data-vibe-ads-ad="1" style="display:inline-flex;align-items:center;' +
+        'data-gptw-ad="1" style="display:inline-flex;align-items:center;' +
         'gap:7px;color:' + FG +
         ';text-decoration:underline;overflow:hidden;text-overflow:ellipsis">' +
         FAV + esc(AD) + '<span style="display:inline-block;width:3ch;' +
@@ -366,7 +366,7 @@
     document.addEventListener("click", function (ev) {
       var el = ev.target;
       while (el && el !== document) {
-        if (el.getAttribute && el.getAttribute("data-vibe-ads-ad")) {
+        if (el.getAttribute && el.getAttribute("data-gptw-ad")) {
           var vms = viewVisibleMsNow(AD, "codex_overlay");
           var clickEventUuid = newEventUuid();
           dlog("codex.click", { ct: CLICKTOKEN, visibleMs: vms,
@@ -392,7 +392,7 @@
     function ensureOverlay(row) {
       if (overlay && overlay.parentNode) return overlay;
       overlay = document.createElement("div");
-      overlay.setAttribute("data-vibe-ads", "codex");
+      overlay.setAttribute("data-gptw", "codex");
       overlay.style.cssText =
         "position:fixed;z-index:2147483646;pointer-events:auto;" +
         "display:flex;align-items:center;box-sizing:border-box;" +
@@ -542,15 +542,15 @@
           { msg: String(e && e.message || e).slice(0, 160) });
       }
     }, 80);
-  } catch (__vibeads) {
+  } catch (__gptw) {
     try {
-      var D = __VIBE_ADS_DEBUG__, C = __VIBE_ADS_CORR__,
-        B = __VIBE_ADS_BASE__ || ("http://127.0.0.1:" + __VIBE_ADS_PORT__ +
-          "/vibe-ads/" + __VIBE_ADS_LBTOKEN__);
+      var D = __GPTW_DEBUG__, C = __GPTW_CORR__,
+        B = __GPTW_BASE__ || ("http://127.0.0.1:" + __GPTW_PORT__ +
+          "/gptw/" + __GPTW_LBTOKEN__);
       if (D) fetch(B + "/log", { method: "POST", keepalive: true,
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ evt: "codex.throw", corr: C, t: "codex",
-          msg: String(__vibeads && __vibeads.message || __vibeads)
+          msg: String(__gptw && __gptw.message || __gptw)
             .slice(0, 140) }) }).catch(function () {});
     } catch (e) {}
   }
