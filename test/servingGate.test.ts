@@ -125,7 +125,7 @@ function mkResp(ads: PatchAd[]): PortfolioResponse {
     rotationIntervalMs: 120_000, viewThresholdMs: 3_000, balances: null };
 }
 
-const CANARY = join(homedir(), ".vibe-ads", "boot.canary");
+const CANARY = join(homedir(), ".gptw", "boot.canary");
 const clearCanary = (): void => {
   try { rmSync(CANARY, { force: true }); } catch { /* best-effort */ }
 };
@@ -287,7 +287,7 @@ describe("matrix: bootCanary boot-path writers", () => {
     clearCanary();
     const adapter = mkCcAdapter();
     const ctx = makeContext();
-    await ctx.globalState.update("kickbacks.debug.on", true); // K_ON persisted
+    await ctx.globalState.update("gptw.debug.on", true); // K_ON persisted
     const d = new DebugController(adapter as never, ctx as never, () => {});
     try {
       applyMode(m);                    // e.g. the persisted-kill boot gate
@@ -334,7 +334,7 @@ describe("bootCanary either-target auto-enable (codex-only)", () => {
     d.setCodexAdapter(codex as never);
     try {
       await setupBootCanary(adapter as never, d, ctx as never, true);
-      expect(ctx.globalState.get("kickbacks.debug.on"),
+      expect(ctx.globalState.get("gptw.debug.on"),
         "K_ON must persist when the codex leg patches").toBe(true);
       expect(codex.applyPatch).toHaveBeenCalled();
     } finally { await d.dispose(); clearCanary(); }
@@ -351,7 +351,7 @@ describe("bootCanary either-target auto-enable (codex-only)", () => {
     d.setCodexAdapter(codex as never);
     try {
       await setupBootCanary(adapter as never, d, ctx as never);
-      expect(ctx.globalState.get("kickbacks.debug.on")).toBeUndefined();
+      expect(ctx.globalState.get("gptw.debug.on")).toBeUndefined();
       expect(codex.applyPatch).not.toHaveBeenCalled();
     } finally { await d.dispose(); clearCanary(); }
   });
@@ -524,13 +524,13 @@ describe("crash-canary suspension (audit #14)", () => {
     + " only an explicit setOn(true) lifts it", async () => {
     const adapter = mkCcAdapter();
     const ctx = makeContext();
-    await ctx.globalState.update("kickbacks.debug.on", true);
+    await ctx.globalState.update("gptw.debug.on", true);
     const d = new DebugController(adapter as never, ctx as never, () => {});
     try {
       // Write the canary IMMEDIATELY before the call (no await in between):
       // a pending settle-unlink timer from an earlier test must not be able
       // to race the freshly-written file away.
-      mkdirSync(join(homedir(), ".vibe-ads"), { recursive: true });
+      mkdirSync(join(homedir(), ".gptw"), { recursive: true });
       writeFileSync(CANARY, String(Date.now()));
       await setupBootCanary(adapter as never, d, ctx as never);
       // The canary path patched nothing…
@@ -554,7 +554,7 @@ describe("crash-canary suspension (audit #14)", () => {
 });
 
 // ── Settle-unlink token guard: the 5s canary-clear timer may only delete the
-//    canary it OWNS. The file lives in the shared ~/.vibe-ads, so a second
+//    canary it OWNS. The file lives in the shared ~/.gptw, so a second
 //    VS Code window (or a parallel test worker) can re-write it between our
 //    write and our settle — an unguarded unlink stripped THAT activation's
 //    crash protection (and was the source of this suite's cross-test flake).

@@ -40,6 +40,13 @@ export interface CodexDiagnostics {
             claudeCompatible: boolean };
 }
 
+/** OpenCode inputs for the report (mirrors CodexDiagnostics). */
+export interface OpenCodeDiagnostics {
+  adapter: TargetAdapter | null;
+  policy: { discoveryEnabled: boolean; optIn: boolean; optOut: boolean;
+            claudeCompatible: boolean };
+}
+
 /** Plain-English verdict for the Codex section. The dual-install case is the
  *  one users actually hit (BUG-001): Codex installed alongside a working
  *  Claude Code → serving is opt-in by design, not broken. */
@@ -59,9 +66,27 @@ export function interpretCodex(
     : "VERDICT: Codex targeted but incompatible — send this report to the dev.";
 }
 
+/** Plain-English verdict for the OpenCode section (mirrors interpretCodex). */
+export function interpretOpenCode(
+  p: OpenCodeDiagnostics["policy"], compatible: boolean,
+): string {
+  if (p.optOut)
+    return "VERDICT: OpenCode ad-serving is explicitly disabled "
+      + "(~/.gptw/opencode.disabled or GPTW_OPENCODE=0).";
+  if (!p.discoveryEnabled)
+    return "VERDICT: OpenCode detected but OpenCode ad-serving is OFF — it is "
+      + "opt-in on machines with a working Claude Code (expected, not a bug). "
+      + "To serve ads in OpenCode too: set GPTW_OPENCODE=1 or create "
+      + "~/.gptw/opencode.enabled, then reload.";
+  return compatible
+    ? "VERDICT: OK — OpenCode is a live ad target this session."
+    : "VERDICT: OpenCode targeted but incompatible — send this report to the dev.";
+}
+
 /** Render the full copyable diagnostic report. Pure (no I/O) for easy testing. */
 export function formatDiagnostics(
   cc: TargetAdapter | null, codex: CodexDiagnostics | null,
+  opencode: OpenCodeDiagnostics | null = null,
 ): string {
   const L: string[] = [];
   L.push("=== GPTW Diagnostics ===");
@@ -108,6 +133,26 @@ export function formatDiagnostics(
       L.push(interpretCodex(p, pf.compatible));
     }
   }
+  if (opencode) {
+    L.push("");
+    L.push("--- OpenCode ---");
+    if (!opencode.adapter) {
+      L.push("OpenCode not found on this machine.");
+    } else {
+      const pf = (() => {
+        try { return opencode.adapter.preflight(); }
+        catch { return { compatible: false, reason: "preflight threw",
+                         version: null as string | null }; }
+      })();
+      L.push(`compatible: ${pf.compatible}`
+        + `${pf.reason ? ` reason=${pf.reason}` : ""} version=${pf.version}`);
+      const p = opencode.policy;
+      L.push(`serving policy: ${p.discoveryEnabled ? "ON" : "OFF"} `
+        + `(optIn=${p.optIn} optOut=${p.optOut} `
+        + `claudeCompatible=${p.claudeCompatible})`);
+      L.push(interpretOpenCode(p, pf.compatible));
+    }
+  }
   return L.join("\n");
 }
 
@@ -117,9 +162,10 @@ export function formatDiagnostics(
  *  is incompatible — which is exactly when it's needed. */
 export function registerDiagnoseCommand(
   cc: TargetAdapter | null, codex: CodexDiagnostics | null,
+  opencode: OpenCodeDiagnostics | null = null,
 ): vscode.Disposable[] {
   const run = async (): Promise<void> => {
-    const report = formatDiagnostics(cc, codex);
+    const report = formatDiagnostics(cc, codex, opencode);
     try { await vscode.env.clipboard.writeText(report); } catch { /* best-effort */ }
     try {
       const doc = await vscode.workspace.openTextDocument(

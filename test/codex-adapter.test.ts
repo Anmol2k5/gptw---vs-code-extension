@@ -12,7 +12,7 @@ const FIX = readFileSync(
 // Real Codex path shape:
 // .../openai.chatgpt-<ver>/webview/assets/thinking-shimmer-<hash>.js
 function tmpTarget(ver = "26.513.21555"): string {
-  const root = mkdtempSync(join(tmpdir(), "vibe-ads-codex-"));
+  const root = mkdtempSync(join(tmpdir(), "gptw-codex-"));
   const dir = join(root, `openai.chatgpt-${ver}`, "webview", "assets");
   mkdirSync(dir, { recursive: true });
   const p = join(dir, "thinking-shimmer-BcRunliI.js");
@@ -22,7 +22,7 @@ function tmpTarget(ver = "26.513.21555"): string {
 
 function tmpTargetWithCsp(ver = "26.513.21555"):
   { target: string; ext: string; pristineExt: string } {
-  const root = mkdtempSync(join(tmpdir(), "vibe-ads-codex-csp-"));
+  const root = mkdtempSync(join(tmpdir(), "gptw-codex-csp-"));
   const extRoot = join(root, `openai.chatgpt-${ver}`);
   const dir = join(extRoot, "webview", "assets");
   mkdirSync(dir, { recursive: true });
@@ -41,7 +41,7 @@ const params: PatchParams = {
   tier: 3, adText: "Ramp corporate cards & expense mgmt",
   iconRef: "icon.r", iconUrl: "", clickToken: "ck", clickUrl: "https://ramp.example/lp",
   corr: "ad1.tst", loopbackPort: 5555, loopbackToken: "lt",
-  loopbackBase: "http://127.0.0.1:5555/vibe-ads/lt", debug: false,
+  loopbackBase: "http://127.0.0.1:5555/gptw/lt", debug: false,
 };
 
 describe("CodexAdapter", () => {
@@ -89,7 +89,7 @@ describe("CodexAdapter", () => {
     expect(patched).toContain(
       "connect-src http://127.0.0.1:* http://localhost:* "
       + "${e.cspSource} ${rfe}");
-    expect(existsSync(ext + ".vibe-ads-backup")).toBe(true);
+    expect(existsSync(ext + ".gptw-backup")).toBe(true);
 
     a.applyPatch(params);
     expect((readFileSync(ext, "utf8").match(/http:\/\/127\.0\.0\.1:\*/g) || [])
@@ -100,14 +100,14 @@ describe("CodexAdapter", () => {
     const a = new CodexAdapter(target);
     expect(a.applyPatch(params).ok).toBe(true);
     const out1 = readFileSync(target, "utf8");
-    expect(existsSync(target + ".vibe-ads-backup")).toBe(true);
+    expect(existsSync(target + ".gptw-backup")).toBe(true);
     // Markers wrap the WHOLE arg= statement (OUTSIDE the wrapper) so a future
     // strip removes it entirely — no empty `e=()||e;` residue can remain.
-    expect(out1).toMatch(/function v\(e\)\{\/\* VIBE-ADS-START \*\/e=\(/);
-    expect(out1).toMatch(/\)\|\|e;\/\* VIBE-ADS-END \*\/\s*let /);
+    expect(out1).toMatch(/function v\(e\)\{\/\* GPTW-START \*\/e=\(/);
+    expect(out1).toMatch(/\)\|\|e;\/\* GPTW-END \*\/\s*let /);
     expect(out1).toContain(params.adText);
-    expect((out1.match(/VIBE-ADS-START/g) || []).length).toBe(1);
-    expect(out1).toContain('"http://127.0.0.1:5555/vibe-ads/lt"'); // loopbackBase substituted
+    expect((out1.match(/GPTW-START/g) || []).length).toBe(1);
+    expect(out1).toContain('"http://127.0.0.1:5555/gptw/lt"'); // loopbackBase substituted
     a.applyPatch(params);                        // idempotent (re-derived from pristine)
     expect(readFileSync(target, "utf8")).toBe(out1);
   });
@@ -120,9 +120,9 @@ describe("CodexAdapter", () => {
     // `e = <iife> || e` leaves Codex's component untouched). The arg is still
     // wrapped by the adapter; no JSX runtime is injected (DOM-only overlay).
     expect(out).toMatch(
-      /function v\(e\)\{\/\* VIBE-ADS-START \*\/e=\(.*\)\|\|e;\/\* VIBE-ADS-END \*\//s);
-    expect(out).toContain("data-vibe-ads"); // overlay element marker present
-    expect(out).not.toContain("__VIBE_ADS_");
+      /function v\(e\)\{\/\* GPTW-START \*\/e=\(.*\)\|\|e;\/\* GPTW-END \*\//s);
+    expect(out).toContain("data-gptw-ad"); // overlay element marker present
+    expect(out).not.toContain("__GPTW_AD__"); // no unresolved placeholder
   });
 
   it("self-heals every historical injection form (no e=()||e; residue)", () => {
@@ -133,7 +133,7 @@ describe("CodexAdapter", () => {
     const seeds = [
       FIX,                                                        // clean
       FIX.replace(/function v\(e\)\{/,
-        "function v(e){/* VIBE-ADS-START */e=((function(){return})())||e;/* VIBE-ADS-END */"), // new form
+        "function v(e){/* GPTW-START */e=((function(){return})())||e;/* GPTW-END */"), // new form
       FIX.replace(/function v\(e\)\{/,
         "function v(e){e=(/* VIBE-ADS-START */0/* VIBE-ADS-END */)||e;"), // legacy markers-inside
       FIX.replace(/function v\(e\)\{/, "function v(e){e=()||e;e=()||e;"), // accumulated residue
@@ -143,7 +143,7 @@ describe("CodexAdapter", () => {
       const a = new CodexAdapter(target);
       expect(a.applyPatch(params).ok).toBe(true);
       const o1 = readFileSync(target, "utf8");
-      expect((o1.match(/VIBE-ADS-START/g) || []).length).toBe(1);
+      expect((o1.match(/GPTW-START/g) || []).length).toBe(1);
       expect(o1).not.toMatch(/=\(\)\|\|/);                  // zero empty residue
       a.applyPatch(params);
       expect(readFileSync(target, "utf8")).toBe(o1);        // idempotent
@@ -199,7 +199,7 @@ describe("CodexAdapter", () => {
     expect(a.restore({ keepCsp: true }).restored).toBe(true);
     expect(readFileSync(cspTarget, "utf8")).toBe(FIX);
     expect(readFileSync(ext, "utf8")).toContain("connect-src http://127.0.0.1:*");
-    expect(existsSync(ext + ".vibe-ads-backup")).toBe(true);
+    expect(existsSync(ext + ".gptw-backup")).toBe(true);
   });
 
   it("restore() fully reverts the Codex CSP relaxation", () => {
@@ -219,7 +219,7 @@ describe("CodexAdapter", () => {
     const a = new CodexAdapter(cspTarget);
     expect(a.prime().ok).toBe(true);
     expect(readFileSync(ext, "utf8")).toContain("connect-src http://127.0.0.1:*");
-    expect(existsSync(ext + ".vibe-ads-backup")).toBe(true);
+    expect(existsSync(ext + ".gptw-backup")).toBe(true);
     expect(readFileSync(cspTarget, "utf8")).toBe(FIX);       // chunk untouched
     expect(a.isPatched()).toBe(false);                       // no block
   });

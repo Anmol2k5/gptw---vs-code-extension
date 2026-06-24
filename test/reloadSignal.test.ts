@@ -4,8 +4,8 @@ import { homedir } from "node:os";
 import { reloadSentinelPath, parseSentinel, decideReload } from "../src/reloadSignal";
 
 describe("reloadSignal", () => {
-  it("sentinel path is ~/.vibe-ads/reload", () => {
-    expect(reloadSentinelPath()).toBe(join(homedir(), ".vibe-ads", "reload"));
+  it("sentinel path is ~/.gptw/reload", () => {
+    expect(reloadSentinelPath()).toBe(join(homedir(), ".gptw", "reload"));
   });
 
   it("parses a valid payload", () => {

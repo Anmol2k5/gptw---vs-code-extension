@@ -45,7 +45,7 @@ describe("CapWarning", () => {
     cw.show({ scope: "hourly", capUsd: "10.00", resetSeconds: 22 * 60 });
     expect(item.text).toBe("$(clock) Hourly cap · 22m");
     expect(item.color).toBe(RED);
-    expect(item.command).toBe("kickbacks.debugMenu");
+    expect(item.command).toBe("gptw.debugMenu");
     expect(item.tooltip).toContain("$10.00/hr");
     expect(item.tooltip).toContain("top of the hour");
     expect(item.show).toHaveBeenCalled();

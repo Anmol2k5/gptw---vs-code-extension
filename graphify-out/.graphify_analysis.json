@@ -1,0 +1,955 @@
+{
+  "communities": {
+    "0": [
+      "kickbacks_brand_identity",
+      "kickbacks_green_gradient",
+      "kickbacks_ks_monogram",
+      "kickbacks_rounded_rect",
+      "logos_apple_touch_icon",
+      "logos_favicon_32",
+      "logos_favicon_svg",
+      "logos_icon_192",
+      "logos_icon_512",
+      "logos_kickbacks_128",
+      "logos_kickbacks_16",
+      "logos_kickbacks_180",
+      "logos_kickbacks_192",
+      "logos_kickbacks_256",
+      "logos_kickbacks_32",
+      "logos_kickbacks_48",
+      "logos_kickbacks_512",
+      "logos_kickbacks_64",
+      "logos_kickbacks_green_svg",
+      "logos_kickbacks_lockup",
+      "logos_kickbacks_svg",
+      "logos_kickbacks_white_svg",
+      "logos_og_logo",
+      "media_icon_logo_mark",
+      "media_logo_primary_svg"
+    ],
+    "1": [
+      "activation_adrotation_adrotationdeps",
+      "activation_clisync_clisyncdeps",
+      "activation_context_activationcontext",
+      "activation_desyncdetector_desyncstate",
+      "activation_webviewinjection_webviewinjectiondeps",
+      "adapters_types_patchparams",
+      "adapters_types_targetadapter",
+      "auth_client_authclient",
+      "claude_cli_adapter_claudeclistatuslineadapter",
+      "claude_code_adapter_claudecodeadapter",
+      "codex_adapter_codexadapter",
+      "codex_cli_adapter_codexcliwrapperadapter",
+      "portfolio_client_portfolioclient",
+      "portfolio_client_portfolioresponse",
+      "src_debug_debugcontroller",
+      "src_loopback_loopback",
+      "src_sessionstate_sessionsnapshot",
+      "src_sessionstate_sessionstate",
+      "src_testhooks_testhooks"
+    ],
+    "2": [
+      "kickbacks_ai_readme_extension_byte_exact_backups",
+      "kickbacks_ai_readme_extension_claude_code",
+      "kickbacks_ai_readme_extension_codex",
+      "kickbacks_ai_readme_extension_commands",
+      "kickbacks_ai_readme_extension_compatibility",
+      "kickbacks_ai_readme_extension_google_auth",
+      "kickbacks_ai_readme_extension_kickbacks",
+      "kickbacks_ai_readme_extension_passive_earning",
+      "kickbacks_ai_readme_extension_privacy",
+      "kickbacks_ai_readme_extension_revenue_share",
+      "kickbacks_ai_readme_extension_reversible_patching",
+      "kickbacks_ai_readme_extension_spinner_overlay",
+      "kickbacks_ai_readme_extension_spinner_verb",
+      "kickbacks_ai_readme_extension_status_bar_line",
+      "kickbacks_ai_readme_extension_status_bar_states",
+      "kickbacks_ai_readme_privacy_model"
+    ],
+    "3": [
+      "kickbacks_ai_readme_ad_auction_system",
+      "kickbacks_ai_readme_advertiser_inventory_purchasing",
+      "kickbacks_ai_readme_claude_code",
+      "kickbacks_ai_readme_codex",
+      "kickbacks_ai_readme_english_ascending_auction",
+      "kickbacks_ai_readme_fully_reversible_patching",
+      "kickbacks_ai_readme_google_authentication",
+      "kickbacks_ai_readme_kickbacks",
+      "kickbacks_ai_readme_real_time_balance",
+      "kickbacks_ai_readme_revenue_sharing_model",
+      "kickbacks_ai_readme_shiftkeys_inc",
+      "kickbacks_ai_readme_spinner_overlay",
+      "kickbacks_ai_readme_spinner_verb",
+      "kickbacks_ai_readme_status_bar_line",
+      "kickbacks_ai_readme_thinking_shimmer"
+    ],
+    "4": [
+      "activation_adrotation_adrotationstate",
+      "activation_clitick_clitickdeps",
+      "activation_statusbarad_statusbaraddeps",
+      "activity_logtail_logtail",
+      "metrics_client_metricsclient",
+      "portfolio_client_patchad",
+      "src_statusbar_sbstate",
+      "src_testhooks_statesnapshot",
+      "src_testhooks_testhookscontext"
+    ],
+    "5": [
+      "metrics_client_metricevent",
+      "src_loopback_loopbackhandlers",
+      "src_loopback_loopbackmetricpayload",
+      "src_testhooks_fireargs",
+      "src_testhooks_fireresult",
+      "types_surface_adsurface",
+      "viewtracking_timer_errorimpressionevent",
+      "viewtracking_timer_thresholdevent",
+      "viewtracking_timer_tickevent"
+    ],
+    "6": [
+      "adapters_types_opresult",
+      "adapters_types_preflightresult",
+      "adapters_types_restoreresult"
+    ],
+    "7": [
+      "activation_selfupdate_selfupdateresult",
+      "update_client_updateclient"
+    ],
+    "8": [
+      "consent_client_consentclient",
+      "consent_prompt_consentpromptoptions"
+    ],
+    "9": [
+      "activation_adrotation_adrotationhandle"
+    ],
+    "10": [
+      "activation_adrotation_clearadrotationonsignout"
+    ],
+    "11": [
+      "activation_adrotation_setupadrotation"
+    ],
+    "12": [
+      "activation_bootcanary_setupbootcanary"
+    ],
+    "13": [
+      "activation_clisync_clisynchandle"
+    ],
+    "14": [
+      "activation_clisync_locatecodexclishim"
+    ],
+    "15": [
+      "activation_clisync_setupclisync"
+    ],
+    "16": [
+      "activation_clitick_setupclitick"
+    ],
+    "17": [
+      "activation_codexfallback_codexdiscoveryenabled"
+    ],
+    "18": [
+      "activation_commands_registercommands"
+    ],
+    "19": [
+      "activation_commands_restorecodexsafe"
+    ],
+    "20": [
+      "activation_context_createactivationcontext"
+    ],
+    "21": [
+      "activation_desyncdetector_desyncdeps"
+    ],
+    "22": [
+      "activation_desyncdetector_setupdesyncdetector"
+    ],
+    "23": [
+      "activation_diagnose_formatdiagnostics"
+    ],
+    "24": [
+      "activation_diagnose_interpret"
+    ],
+    "25": [
+      "activation_diagnose_registerdiagnosecommand"
+    ],
+    "26": [
+      "activation_earningsrefresh_earningsrefreshresult"
+    ],
+    "27": [
+      "activation_earningsrefresh_setupearningsrefresh"
+    ],
+    "28": [
+      "activation_incompatnotice_notifyincompatible"
+    ],
+    "29": [
+      "activation_outdatedclinotice_notifyoutdatedcli"
+    ],
+    "30": [
+      "activation_reloadnudge_showinstallreloadnudge"
+    ],
+    "31": [
+      "activation_reloadnudge_showsigninreloadnudge"
+    ],
+    "32": [
+      "activation_selfupdate_setupselfupdate"
+    ],
+    "33": [
+      "activation_statusbarad_setupstatusbarad"
+    ],
+    "34": [
+      "activation_webviewinjection_applymissstatus"
+    ],
+    "35": [
+      "activation_webviewinjection_setupwebviewinjection"
+    ],
+    "36": [
+      "activation_webviewinjection_webviewinjectionresult"
+    ],
+    "37": [
+      "activity_logtail_activity"
+    ],
+    "38": [
+      "adapters_registry_discover"
+    ],
+    "39": [
+      "adapters_registry_locatecodextarget"
+    ],
+    "40": [
+      "adapters_registry_targetentry"
+    ],
+    "41": [
+      "adapters_types_adapterdiagnostics"
+    ],
+    "42": [
+      "auth_vault_createvault"
+    ],
+    "43": [
+      "auth_vault_run"
+    ],
+    "44": [
+      "auth_vault_runresult"
+    ],
+    "45": [
+      "auth_vault_secretvault"
+    ],
+    "46": [
+      "auth_vault_vaultscheme"
+    ],
+    "47": [
+      "claude_cli_adapter_resolvestatuslineasset"
+    ],
+    "48": [
+      "claude_cli_cliad_cliad"
+    ],
+    "49": [
+      "claude_cli_cliad_cliadpath"
+    ],
+    "50": [
+      "claude_cli_cliad_clisessionactive"
+    ],
+    "51": [
+      "claude_cli_cliad_readcliadcache"
+    ],
+    "52": [
+      "claude_cli_cliad_shouldcountcliimpression"
+    ],
+    "53": [
+      "claude_cli_cliad_shouldcountspinnerimpression"
+    ],
+    "54": [
+      "claude_cli_cliad_stripcontrolchars"
+    ],
+    "55": [
+      "claude_cli_cliad_vibeadsdir"
+    ],
+    "56": [
+      "claude_cli_cliad_writecliadcache"
+    ],
+    "57": [
+      "claude_cli_cliversion_detectclaudeclispinnersupport"
+    ],
+    "58": [
+      "claude_cli_cliversion_detectclaudecliversion"
+    ],
+    "59": [
+      "claude_cli_cliversion_gte"
+    ],
+    "60": [
+      "claude_cli_cliversion_parseclaudecliversion"
+    ],
+    "61": [
+      "claude_cli_cliversion_semver"
+    ],
+    "62": [
+      "claude_cli_cliversion_spinnersupport"
+    ],
+    "63": [
+      "claude_cli_cliversion_supportsspinnerverbs"
+    ],
+    "64": [
+      "claude_cli_settingsedit_parseable"
+    ],
+    "65": [
+      "claude_cli_settingsedit_removespinnerverbs"
+    ],
+    "66": [
+      "claude_cli_settingsedit_removetoplevel"
+    ],
+    "67": [
+      "claude_cli_settingsedit_upsertspinnerverbs"
+    ],
+    "68": [
+      "claude_cli_settingsedit_upsertstatusline"
+    ],
+    "69": [
+      "claude_code_adapter_resolveblockasset"
+    ],
+    "70": [
+      "codex_adapter_isthinkingmessage"
+    ],
+    "71": [
+      "codex_adapter_resolvecodexblockasset"
+    ],
+    "72": [
+      "codex_cli_adapter_resolvewrapperasset"
+    ],
+    "73": [
+      "consent_client_consentstate"
+    ],
+    "74": [
+      "consent_prompt_maybepromptforconsent"
+    ],
+    "75": [
+      "earnings_client_earnings"
+    ],
+    "76": [
+      "earnings_client_earningsauthrecovery"
+    ],
+    "77": [
+      "earnings_client_earningsclient"
+    ],
+    "78": [
+      "killswitch_client_killstate"
+    ],
+    "79": [
+      "killswitch_client_killswitchclient"
+    ],
+    "80": [
+      "metrics_client_newmetriceventuuid"
+    ],
+    "81": [
+      "metrics_client_notemetricssignout"
+    ],
+    "82": [
+      "metrics_dedupe_impressiondedupe"
+    ],
+    "83": [
+      "mocks_vscode_eventemitter"
+    ],
+    "84": [
+      "mocks_vscode_extensioncontext"
+    ],
+    "85": [
+      "mocks_vscode_makecontext"
+    ],
+    "86": [
+      "mocks_vscode_themecolor"
+    ],
+    "87": [
+      "portfolio_client_demofallbackauth"
+    ],
+    "88": [
+      "portfolio_client_fetchportfoliowithdemofallback"
+    ],
+    "89": [
+      "portfolio_client_portfoliobalances"
+    ],
+    "90": [
+      "scripts_brand_loadchromium"
+    ],
+    "91": [
+      "scripts_brand_marksvg"
+    ],
+    "92": [
+      "scripts_brand_renderassets"
+    ],
+    "93": [
+      "scripts_brand_toico"
+    ],
+    "94": [
+      "scripts_package_versionedvsixname"
+    ],
+    "95": [
+      "src_banner_banneroverride"
+    ],
+    "96": [
+      "src_banner_resolvebanneron"
+    ],
+    "97": [
+      "src_buildflags_adminurl"
+    ],
+    "98": [
+      "src_buildflags_codexbuildoptin"
+    ],
+    "99": [
+      "src_buildflags_developermode"
+    ],
+    "100": [
+      "src_buildflags_siteurl"
+    ],
+    "101": [
+      "src_buildflags_testhooksbuildoptin"
+    ],
+    "102": [
+      "src_buildflags_verbosebuild"
+    ],
+    "103": [
+      "src_buildinfo_buildlabel"
+    ],
+    "104": [
+      "src_buildinfo_buildversion"
+    ],
+    "105": [
+      "src_buildinfo_humanage"
+    ],
+    "106": [
+      "src_config_configdir"
+    ],
+    "107": [
+      "src_config_configpath"
+    ],
+    "108": [
+      "src_config_ensureconfigfile"
+    ],
+    "109": [
+      "src_config_readconfig"
+    ],
+    "110": [
+      "src_config_resolvebackendbase"
+    ],
+    "111": [
+      "src_config_resolveupdatebase"
+    ],
+    "112": [
+      "src_config_vibeadsconfig"
+    ],
+    "113": [
+      "src_debug_authhook"
+    ],
+    "114": [
+      "src_debug_debugmetricsender"
+    ],
+    "115": [
+      "src_extension_activate"
+    ],
+    "116": [
+      "src_extension_deactivate"
+    ],
+    "117": [
+      "src_extension_wirefortest"
+    ],
+    "118": [
+      "src_locate_globclaudecode"
+    ],
+    "119": [
+      "src_locate_locateclaudeclilog"
+    ],
+    "120": [
+      "src_locate_locateclaudecode"
+    ],
+    "121": [
+      "src_locate_locateclaudecodelog"
+    ],
+    "122": [
+      "src_locate_transcriptentrypoint"
+    ],
+    "123": [
+      "src_log_codexclienabled"
+    ],
+    "124": [
+      "src_log_codexdisabled"
+    ],
+    "125": [
+      "src_log_codexenabled"
+    ],
+    "126": [
+      "src_log_debugenabled"
+    ],
+    "127": [
+      "src_log_debugicondatauri"
+    ],
+    "128": [
+      "src_log_dlog"
+    ],
+    "129": [
+      "src_log_dlograw"
+    ],
+    "130": [
+      "src_log_forcetrimlogfortest"
+    ],
+    "131": [
+      "src_log_islifecycleevent"
+    ],
+    "132": [
+      "src_log_log_path"
+    ],
+    "133": [
+      "src_log_testhooksenabled"
+    ],
+    "134": [
+      "src_loopback_loopbackadpayload"
+    ],
+    "135": [
+      "src_loopback_loopbackmetrickind"
+    ],
+    "136": [
+      "src_loopback_loopbackstartopts"
+    ],
+    "137": [
+      "src_loopback_resolveloopbackbase"
+    ],
+    "138": [
+      "src_modes_banneroverride"
+    ],
+    "139": [
+      "src_modes_climode"
+    ],
+    "140": [
+      "src_modes_setbanneroverride"
+    ],
+    "141": [
+      "src_modes_setclimode"
+    ],
+    "142": [
+      "src_modes_setwebviewmode"
+    ],
+    "143": [
+      "src_modes_webviewmode"
+    ],
+    "144": [
+      "src_reassert_desyncaction"
+    ],
+    "145": [
+      "src_reassert_desyncdecision"
+    ],
+    "146": [
+      "src_reassert_shouldreassert"
+    ],
+    "147": [
+      "src_reloadsignal_decidereload"
+    ],
+    "148": [
+      "src_reloadsignal_parsesentinel"
+    ],
+    "149": [
+      "src_reloadsignal_reloaddecision"
+    ],
+    "150": [
+      "src_reloadsignal_reloadsentinel"
+    ],
+    "151": [
+      "src_reloadsignal_reloadsentinelpath"
+    ],
+    "152": [
+      "src_servinggate_canpatch"
+    ],
+    "153": [
+      "src_servinggate_canserveads"
+    ],
+    "154": [
+      "src_servinggate_clearservingsuspension"
+    ],
+    "155": [
+      "src_servinggate_killposture"
+    ],
+    "156": [
+      "src_servinggate_resetservinggate"
+    ],
+    "157": [
+      "src_servinggate_servinggatesnapshot"
+    ],
+    "158": [
+      "src_servinggate_servingsuspended"
+    ],
+    "159": [
+      "src_servinggate_servingverdict"
+    ],
+    "160": [
+      "src_servinggate_setkillposture"
+    ],
+    "161": [
+      "src_servinggate_suspendserving"
+    ],
+    "162": [
+      "src_servinggate_wireservinggateenabled"
+    ],
+    "163": [
+      "src_statusbar_statusbar"
+    ],
+    "164": [
+      "types_surface_parseadsurface"
+    ],
+    "165": [
+      "update_client_vsixurlallowed"
+    ],
+    "166": [
+      "util_asset_resolveasset"
+    ],
+    "167": [
+      "util_claudecodeversion_compareclaudecodeinstall"
+    ],
+    "168": [
+      "util_crypto_sha256"
+    ],
+    "169": [
+      "util_errmsg_errmsg"
+    ],
+    "170": [
+      "util_http_timeoutfetch"
+    ],
+    "171": [
+      "util_loopback_isloopbackbase"
+    ],
+    "172": [
+      "util_loopbackboot_bootloopback"
+    ],
+    "173": [
+      "util_loopbackboot_loopbackbootopts"
+    ],
+    "174": [
+      "util_loopbackboot_loopbackbootresult"
+    ],
+    "175": [
+      "util_loopbackboot_resetsharedloopbackfortest"
+    ],
+    "176": [
+      "viewtracking_timer_viewtimer"
+    ],
+    "177": [
+      "viewtracking_timer_viewtimeroptions"
+    ]
+  },
+  "cohesion": {
+    "0": 0.10666666666666667,
+    "1": 0.1871345029239766,
+    "2": 0.125,
+    "3": 0.14285714285714285,
+    "4": 0.2777777777777778,
+    "5": 0.2222222222222222,
+    "6": 0.6666666666666666,
+    "7": 1.0,
+    "8": 1.0,
+    "9": 1.0,
+    "10": 1.0,
+    "11": 1.0,
+    "12": 1.0,
+    "13": 1.0,
+    "14": 1.0,
+    "15": 1.0,
+    "16": 1.0,
+    "17": 1.0,
+    "18": 1.0,
+    "19": 1.0,
+    "20": 1.0,
+    "21": 1.0,
+    "22": 1.0,
+    "23": 1.0,
+    "24": 1.0,
+    "25": 1.0,
+    "26": 1.0,
+    "27": 1.0,
+    "28": 1.0,
+    "29": 1.0,
+    "30": 1.0,
+    "31": 1.0,
+    "32": 1.0,
+    "33": 1.0,
+    "34": 1.0,
+    "35": 1.0,
+    "36": 1.0,
+    "37": 1.0,
+    "38": 1.0,
+    "39": 1.0,
+    "40": 1.0,
+    "41": 1.0,
+    "42": 1.0,
+    "43": 1.0,
+    "44": 1.0,
+    "45": 1.0,
+    "46": 1.0,
+    "47": 1.0,
+    "48": 1.0,
+    "49": 1.0,
+    "50": 1.0,
+    "51": 1.0,
+    "52": 1.0,
+    "53": 1.0,
+    "54": 1.0,
+    "55": 1.0,
+    "56": 1.0,
+    "57": 1.0,
+    "58": 1.0,
+    "59": 1.0,
+    "60": 1.0,
+    "61": 1.0,
+    "62": 1.0,
+    "63": 1.0,
+    "64": 1.0,
+    "65": 1.0,
+    "66": 1.0,
+    "67": 1.0,
+    "68": 1.0,
+    "69": 1.0,
+    "70": 1.0,
+    "71": 1.0,
+    "72": 1.0,
+    "73": 1.0,
+    "74": 1.0,
+    "75": 1.0,
+    "76": 1.0,
+    "77": 1.0,
+    "78": 1.0,
+    "79": 1.0,
+    "80": 1.0,
+    "81": 1.0,
+    "82": 1.0,
+    "83": 1.0,
+    "84": 1.0,
+    "85": 1.0,
+    "86": 1.0,
+    "87": 1.0,
+    "88": 1.0,
+    "89": 1.0,
+    "90": 1.0,
+    "91": 1.0,
+    "92": 1.0,
+    "93": 1.0,
+    "94": 1.0,
+    "95": 1.0,
+    "96": 1.0,
+    "97": 1.0,
+    "98": 1.0,
+    "99": 1.0,
+    "100": 1.0,
+    "101": 1.0,
+    "102": 1.0,
+    "103": 1.0,
+    "104": 1.0,
+    "105": 1.0,
+    "106": 1.0,
+    "107": 1.0,
+    "108": 1.0,
+    "109": 1.0,
+    "110": 1.0,
+    "111": 1.0,
+    "112": 1.0,
+    "113": 1.0,
+    "114": 1.0,
+    "115": 1.0,
+    "116": 1.0,
+    "117": 1.0,
+    "118": 1.0,
+    "119": 1.0,
+    "120": 1.0,
+    "121": 1.0,
+    "122": 1.0,
+    "123": 1.0,
+    "124": 1.0,
+    "125": 1.0,
+    "126": 1.0,
+    "127": 1.0,
+    "128": 1.0,
+    "129": 1.0,
+    "130": 1.0,
+    "131": 1.0,
+    "132": 1.0,
+    "133": 1.0,
+    "134": 1.0,
+    "135": 1.0,
+    "136": 1.0,
+    "137": 1.0,
+    "138": 1.0,
+    "139": 1.0,
+    "140": 1.0,
+    "141": 1.0,
+    "142": 1.0,
+    "143": 1.0,
+    "144": 1.0,
+    "145": 1.0,
+    "146": 1.0,
+    "147": 1.0,
+    "148": 1.0,
+    "149": 1.0,
+    "150": 1.0,
+    "151": 1.0,
+    "152": 1.0,
+    "153": 1.0,
+    "154": 1.0,
+    "155": 1.0,
+    "156": 1.0,
+    "157": 1.0,
+    "158": 1.0,
+    "159": 1.0,
+    "160": 1.0,
+    "161": 1.0,
+    "162": 1.0,
+    "163": 1.0,
+    "164": 1.0,
+    "165": 1.0,
+    "166": 1.0,
+    "167": 1.0,
+    "168": 1.0,
+    "169": 1.0,
+    "170": 1.0,
+    "171": 1.0,
+    "172": 1.0,
+    "173": 1.0,
+    "174": 1.0,
+    "175": 1.0,
+    "176": 1.0,
+    "177": 1.0
+  },
+  "gods": [
+    {
+      "id": "kickbacks_ai_readme_kickbacks",
+      "label": "Kickbacks",
+      "degree": 15
+    },
+    {
+      "id": "kickbacks_ai_readme_extension_kickbacks",
+      "label": "Kickbacks",
+      "degree": 14
+    },
+    {
+      "id": "activation_webviewinjection_webviewinjectiondeps",
+      "label": "WebviewInjectionDeps",
+      "degree": 13
+    },
+    {
+      "id": "adapters_types_targetadapter",
+      "label": "TargetAdapter",
+      "degree": 9
+    },
+    {
+      "id": "src_debug_debugcontroller",
+      "label": "DebugController",
+      "degree": 8
+    },
+    {
+      "id": "portfolio_client_patchad",
+      "label": "PatchAd",
+      "degree": 8
+    },
+    {
+      "id": "activation_adrotation_adrotationdeps",
+      "label": "AdRotationDeps",
+      "degree": 7
+    },
+    {
+      "id": "activation_context_activationcontext",
+      "label": "ActivationContext",
+      "degree": 7
+    },
+    {
+      "id": "activation_clisync_clisyncdeps",
+      "label": "CliSyncDeps",
+      "degree": 6
+    },
+    {
+      "id": "types_surface_adsurface",
+      "label": "AdSurface",
+      "degree": 5
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Kickbacks",
+      "target": "Kickbacks",
+      "source_files": [
+        "README.md",
+        "readme_extension.md"
+      ],
+      "confidence": "INFERRED",
+      "relation": "conceptually_related_to",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "Privacy Model",
+      "target": "Privacy",
+      "source_files": [
+        "README.md",
+        "readme_extension.md"
+      ],
+      "confidence": "INFERRED",
+      "relation": "conceptually_related_to",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "WebviewInjectionDeps",
+      "target": "SbState",
+      "source_files": [
+        "src/activation/webviewInjection.ts",
+        "src/statusbar.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "bridges separate communities; peripheral node `SbState` unexpectedly reaches hub `WebviewInjectionDeps`"
+    },
+    {
+      "source": "AdRotationDeps",
+      "target": "PatchParams",
+      "source_files": [
+        "src/activation/adRotation.ts",
+        "src/adapters/types.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "peripheral node `PatchParams` unexpectedly reaches hub `AdRotationDeps`"
+    },
+    {
+      "source": "AdRotationDeps",
+      "target": "PatchAd",
+      "source_files": [
+        "src/activation/adRotation.ts",
+        "src/portfolio/client.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "bridges separate communities"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `Kickbacks` connect `Community 3` to `Community 2`?",
+      "why": "High betweenness centrality (0.009) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Kickbacks` connect `Community 2` to `Community 3`?",
+      "why": "High betweenness centrality (0.009) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `WebviewInjectionDeps` connect `Community 1` to `Community 4`?",
+      "why": "High betweenness centrality (0.005) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 16 inferred relationships involving `Kickbacks.ai brand identity (VS Code extension)` (e.g. with `Apple touch icon 180x180 (K$ brand mark)` and `Favicon 32x32 (K$ brand mark)`) actually correct?",
+      "why": "`Kickbacks.ai brand identity (VS Code extension)` has 16 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `loadChromium`, `renderAssets`, `markSVG` to the rest of the system?",
+      "why": "228 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.10666666666666667 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 2` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.125 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

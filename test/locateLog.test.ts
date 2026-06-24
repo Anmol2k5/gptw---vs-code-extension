@@ -15,7 +15,7 @@ import { locateClaudeCodeLog, locateClaudeCliLog,
          transcriptEntrypoint } from "../src/locate";
 
 function freshHome(): string {
-  h.home = mkdtempSync(join(tmpdir(), "vibe-ads-locate-"));
+  h.home = mkdtempSync(join(tmpdir(), "gptw-locate-"));
   return h.home;
 }
 function projDir(home: string, name = "p1"): string {

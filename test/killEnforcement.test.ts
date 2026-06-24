@@ -23,7 +23,7 @@ const mkAdapter = () => ({
 // Guarantee the clean-boot canary branch (a recent canary from a parallel
 // test worker would otherwise flip the run into the crash-suspension path).
 const clearBootCanary = (): void => {
-  try { rmSync(join(homedir(), ".vibe-ads", "boot.canary"), { force: true }); }
+  try { rmSync(join(homedir(), ".gptw", "boot.canary"), { force: true }); }
   catch { /* best-effort */ }
 };
 
@@ -78,7 +78,7 @@ describe("kill-switch enforcement (production-path silence + hook callability)",
     __wireForTest({ adapter, statusBar, killed: true });
     const fetched = stubFetch();
     const ctx = makeContext();
-    await ctx.secrets.store("kickbacks.access", "AT-KILL");
+    await ctx.secrets.store("gptw.access", "AT-KILL");
     try {
       await activate(ctx as never);
       // Allow checkKill's async branch to settle.
@@ -102,21 +102,21 @@ describe("kill-switch enforcement (production-path silence + hook callability)",
     __wireForTest({ adapter, statusBar, killed: true });
     const fetched = stubFetch();
     const ctx = makeContext();
-    await ctx.secrets.store("kickbacks.access", "AT-KILL2");
+    await ctx.secrets.store("gptw.access", "AT-KILL2");
     try {
       await activate(ctx as never);
       await new Promise((r) => setTimeout(r, 30));
       // Hooks are registered iff testHooksEnabled() (the global setup mock
       // returns true). getState must reflect killed=true.
       const snap = await commands.executeCommand(
-        "kickbacks.test.getState") as
+        "gptw.test.getState") as
         { killed: boolean; ad: { adId: string } | null };
       expect(snap.killed).toBe(true);
       // No ad was wired to the production loopback branch (it short-
       // circuited on killed=true). But fireImpressionRendered with an
       // explicit ad override should still send.
       const r = await commands.executeCommand(
-        "kickbacks.test.fireImpressionRendered",
+        "gptw.test.fireImpressionRendered",
         { adId: "ad-kill", campaignId: "camp-kill" }) as { ok: boolean };
       expect(r.ok).toBe(true);
       const metricsPosts = fetched.calls.filter(
@@ -140,7 +140,7 @@ describe("kill-switch enforcement (production-path silence + hook callability)",
     __wireForTest({ adapter, statusBar });  // no test-override of killed
     const fetched = stubFetch({ killedFromBackend: true });
     const ctx = makeContext();
-    await ctx.secrets.store("kickbacks.access", "AT-KILL3");
+    await ctx.secrets.store("gptw.access", "AT-KILL3");
     try {
       await activate(ctx as never);
       await new Promise((r) => setTimeout(r, 30));
@@ -168,7 +168,7 @@ describe("kill hysteresis (wave 2)", () => {
     __wireForTest({ adapter, statusBar });
     stubFetch({ killswitchDown: true });
     const ctx = makeContext();
-    await ctx.secrets.store("kickbacks.access", "AT-OFFLINE");
+    await ctx.secrets.store("gptw.access", "AT-OFFLINE");
     clearBootCanary();
     try {
       await activate(ctx as never);
@@ -188,7 +188,7 @@ describe("kill hysteresis (wave 2)", () => {
       expect(statusBar.set).toHaveBeenCalledWith(
         expect.objectContaining({ kind: "offline" }));
       // And it must NOT persist the boot-gating confirmed-kill flag.
-      expect(ctx.globalState.get("kickbacks.kill.confirmed")).toBeUndefined();
+      expect(ctx.globalState.get("gptw.kill.confirmed")).toBeUndefined();
     } finally { await deactivate(); }
   });
 
@@ -199,14 +199,14 @@ describe("kill hysteresis (wave 2)", () => {
     __wireForTest({ adapter, statusBar });
     stubFetch({ killedFromBackend: true });
     const ctx = makeContext();
-    await ctx.secrets.store("kickbacks.access", "AT-PERSIST");
+    await ctx.secrets.store("gptw.access", "AT-PERSIST");
     clearBootCanary();
     try {
       await activate(ctx as never);
       await new Promise((r) => setTimeout(r, 30));
       expect(adapter.restore).toHaveBeenCalled();
       // The confirmed kill is persisted for the next boot's gate.
-      expect(ctx.globalState.get("kickbacks.kill.confirmed")).toBe(true);
+      expect(ctx.globalState.get("gptw.kill.confirmed")).toBe(true);
     } finally { await deactivate(); }
 
     // ── Second boot, SAME globalState (K_ON=true persisted by the first
@@ -234,12 +234,12 @@ describe("kill hysteresis (wave 2)", () => {
     __wireForTest({ adapter, statusBar });
     stubFetch({ killedFromBackend: true });
     const ctx = makeContext();
-    await ctx.secrets.store("kickbacks.access", "AT-RECOVER");
+    await ctx.secrets.store("gptw.access", "AT-RECOVER");
     clearBootCanary();
     try {
       await activate(ctx as never);
       await new Promise((r) => setTimeout(r, 30));
-      expect(ctx.globalState.get("kickbacks.kill.confirmed")).toBe(true);
+      expect(ctx.globalState.get("gptw.kill.confirmed")).toBe(true);
     } finally { await deactivate(); }
 
     // Backend recovers: killswitch now answers killed:false.
@@ -252,7 +252,7 @@ describe("kill hysteresis (wave 2)", () => {
       await activate(ctx as never);
       await new Promise((r) => setTimeout(r, 30));
       // The persisted flag is consumed by the healthy verdict…
-      expect(ctx.globalState.get("kickbacks.kill.confirmed")).toBeUndefined();
+      expect(ctx.globalState.get("gptw.kill.confirmed")).toBeUndefined();
       // …and the production webview apply ran again (writes resumed).
       expect(adapter.applyPatch).toHaveBeenCalled();
     } finally { await deactivate(); }

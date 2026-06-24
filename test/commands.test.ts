@@ -20,7 +20,7 @@ import { join } from "node:path";
 vi.mock("../src/log", () => ({ debugEnabled: () => false, dlog: () => {},
   dlogRaw: () => {}, debugIconDataUri: () => "",
   codexEnabled: () => false, codexDisabled: () => false,
-  codexCliEnabled: () => false, testHooksEnabled: () => false,
+  codexCliEnabled: () => false, testHooksEnabled: () => !!(process.env.GPTW_TEST_HOOKS || process.env.KICKBACKS_TEST_HOOKS || process.env.VIBE_ADS_TEST_HOOKS),
   LOG_PATH: "/tmp/test-log" }));
 
 import { activate, deactivate, __wireForTest } from "../src/extension";
@@ -83,7 +83,7 @@ const stubFetch = () => {
 };
 
 /** Boot the extension hermetically. Returns the cleanup hook. The HOME
- *  redirect is non-optional: AuthClient writes ~/.kickbacks/auth.json, and
+ *  redirect is non-optional: AuthClient writes ~/.gptw/auth.json, and
  *  we will NOT touch the real user's auth file from a test. */
 async function boot(opts: { codex?: boolean } = {}) {
   const home = mkdtempSync(join(tmpdir(), "kb-cmds-"));
@@ -131,17 +131,14 @@ afterEach(() => { vi.unstubAllGlobals(); });
 // ---------------------------------------------------------------------------
 describe("contributed commands → registered handlers", () => {
   const CONTRIBUTED = [
-    "kickbacks.signIn",
-    "kickbacks.signOut",
-    "kickbacks.restore",
-    "kickbacks.status",
-    "kickbacks.debugMenu",
-    "kickbacks.editConfig",
-    "vibe-ads.signIn",
-    "vibe-ads.signOut",
-    "vibe-ads.restore",
-    "vibe-ads.status",
-    "vibe-ads.debugMenu",
+    "gptw.signIn",
+    "gptw.signOut",
+    "gptw.restore",
+    "gptw.status",
+    "gptw.debugMenu",
+    "gptw.editConfig",
+    "gptw.diagnose",
+    "gptw.settings",
   ];
 
   it("registers every contributed command id", async () => {
@@ -165,69 +162,41 @@ describe("contributed commands → registered handlers", () => {
       expect(t.fetched.calls.some((u) => u.includes("codex%2F"))).toBe(false);
     } finally { await t.dispose(); }
   });
-
-  it("every legacy vibe-ads.* alias points to the SAME closure as its kickbacks.* twin", async () => {
-    const t = await boot();
-    try {
-      // Shared-closure parity: a user keybinding on a legacy id should fire
-      // the exact same code path, never a drifted copy. Reference equality
-      // is the strongest assertion we can make at this layer.
-      const pairs: [string, string][] = [
-        ["kickbacks.signIn",    "vibe-ads.signIn"],
-        ["kickbacks.signOut",   "vibe-ads.signOut"],
-        ["kickbacks.restore",   "vibe-ads.restore"],
-        ["kickbacks.status",    "vibe-ads.status"],
-        ["kickbacks.debugMenu", "vibe-ads.debugMenu"],
-      ];
-      for (const [a, b] of pairs) {
-        expect(commands._handlers.get(a), `alias drift: ${a} vs ${b}`)
-          .toBe(commands._handlers.get(b));
-      }
-    } finally { await t.dispose(); }
-  });
 });
 
 // ---------------------------------------------------------------------------
-// kickbacks.signIn → opens the broker URL in the system browser AND
+// gptw.signIn → opens the broker URL in the system browser AND
 // stores the returned tokens. This is the regression class the user is
 // most worried about ("did clicking the button actually trigger a browser").
 // ---------------------------------------------------------------------------
-describe("kickbacks.signIn", () => {
+describe("gptw.signIn", () => {
   it("opens the broker URL via vscode.env.openExternal", async () => {
     const t = await boot();
     try {
-      await commands.executeCommand("kickbacks.signIn");
+      await commands.executeCommand("gptw.signIn");
       expect(_opened.some((u) => u.includes("https://broker.test/auth"))).toBe(true);
       // And the access token landed in secrets — the round-trip happened.
-      expect(await t.ctx.secrets.get("kickbacks.access")).toBe("AT-INT");
-    } finally { await t.dispose(); }
-  });
-
-  it("the legacy vibe-ads.signIn alias also opens the broker URL", async () => {
-    const t = await boot();
-    try {
-      await commands.executeCommand("vibe-ads.signIn");
-      expect(_opened.some((u) => u.includes("https://broker.test/auth"))).toBe(true);
+      expect(await t.ctx.secrets.get("gptw.access")).toBe("AT-INT");
     } finally { await t.dispose(); }
   });
 });
 
 // ---------------------------------------------------------------------------
-// kickbacks.signOut → clears the in-process token, restores Claude Code,
+// gptw.signOut → clears the in-process token, restores Claude Code,
 // and shows the "signed out" toast.
 // ---------------------------------------------------------------------------
-describe("kickbacks.signOut", () => {
+describe("gptw.signOut", () => {
   it("clears the access token, calls adapter.restore, and toasts", async () => {
     const t = await boot();
     try {
       // First sign in so signOut has something to clear.
-      await commands.executeCommand("kickbacks.signIn");
-      expect(await t.ctx.secrets.get("kickbacks.access")).toBe("AT-INT");
+      await commands.executeCommand("gptw.signIn");
+      expect(await t.ctx.secrets.get("gptw.access")).toBe("AT-INT");
       t.adapter.restore.mockClear();
 
-      await commands.executeCommand("kickbacks.signOut");
+      await commands.executeCommand("gptw.signOut");
 
-      expect(await t.ctx.secrets.get("kickbacks.access")).toBeUndefined();
+      expect(await t.ctx.secrets.get("gptw.access")).toBeUndefined();
       expect(t.adapter.restore).toHaveBeenCalled();
       expect(_shown.some((s) =>
         s.kind === "info" && /signed out/i.test(s.text))).toBe(true);
@@ -246,7 +215,7 @@ describe("kickbacks.signOut", () => {
 // rotation tick re-patched CC right after the restore, and metrics misrouted
 // the real session tokens to /v1/metrics/demo.
 // ---------------------------------------------------------------------------
-describe("kickbacks.signOut → ad-rotation clear", () => {
+describe("gptw.signOut → ad-rotation clear", () => {
   const mkAd = (adId: string): PatchAd => ({
     adId, campaignId: "c-" + adId, adText: "Ad " + adId, iconRef: "i",
     iconUrl: "", clickUrl: "https://x.test", bannerEnabled: false,
@@ -259,7 +228,7 @@ describe("kickbacks.signOut → ad-rotation clear", () => {
     const t = await boot();
     const timers: NodeJS.Timeout[] = [];
     try {
-      await commands.executeCommand("kickbacks.signIn");
+      await commands.executeCommand("gptw.signIn");
       // Stand up a live rotation holding REAL ads. The hermetic boot serves
       // no ad (stub portfolio is empty) so activation never created one —
       // this registers as THE live rotation the sign-out command must reach.
@@ -281,7 +250,7 @@ describe("kickbacks.signOut → ad-rotation clear", () => {
       const handle = setupAdRotation(deps, mkResp(ads));
       expect(handle.rotationTimer).not.toBeNull();
 
-      await commands.executeCommand("kickbacks.signOut");
+      await commands.executeCommand("gptw.signOut");
 
       // The command path must clear the rotation: queue gone, timer disarmed,
       // shared ad refs nulled — no surface can keep serving the real ad
@@ -309,29 +278,29 @@ describe("sign-out → sign-in re-enables injection", () => {
     const t = await boot();
     try {
       // First sign-in: first-run default-on patches the binary.
-      await commands.executeCommand("kickbacks.signIn");
+      await commands.executeCommand("gptw.signIn");
       expect(t.adapter.applyPatch).toHaveBeenCalled();
 
       // Sign out: injection forced off, binary restored.
-      await commands.executeCommand("kickbacks.signOut");
+      await commands.executeCommand("gptw.signOut");
       t.adapter.applyPatch.mockClear();
 
       // Sign back in: injection must come back on its own (Tier 2).
-      await commands.executeCommand("kickbacks.signIn");
+      await commands.executeCommand("gptw.signIn");
       expect(t.adapter.applyPatch).toHaveBeenCalled();
     } finally { await t.dispose(); }
   });
 });
 
 // ---------------------------------------------------------------------------
-// kickbacks.restore → byte-exact revert of the patched binary(s).
+// gptw.restore → byte-exact revert of the patched binary(s).
 // ---------------------------------------------------------------------------
-describe("kickbacks.restore", () => {
+describe("gptw.restore", () => {
   it("calls adapter.restore() exactly once", async () => {
     const t = await boot();
     try {
       t.adapter.restore.mockClear();
-      await commands.executeCommand("kickbacks.restore");
+      await commands.executeCommand("gptw.restore");
       expect(t.adapter.restore).toHaveBeenCalledTimes(1);
     } finally { await t.dispose(); }
   });
@@ -341,7 +310,7 @@ describe("kickbacks.restore", () => {
     try {
       t.adapter.restore.mockClear();
       t.codex!.restore.mockClear();
-      await commands.executeCommand("kickbacks.restore");
+      await commands.executeCommand("gptw.restore");
       expect(t.adapter.restore).toHaveBeenCalledTimes(1);
       expect(t.codex!.restore).toHaveBeenCalled();
     } finally { await t.dispose(); }
@@ -349,29 +318,29 @@ describe("kickbacks.restore", () => {
 });
 
 // ---------------------------------------------------------------------------
-// kickbacks.status → information toast carrying the live state. The exact
+// gptw.status → information toast carrying the live state. The exact
 // wording is not a contract; the regression we lock in is "the toast fires
 // AND mentions the signed-in/out state."
 // ---------------------------------------------------------------------------
-describe("kickbacks.status", () => {
+describe("gptw.status", () => {
   it("shows an info toast that reflects signed-out state", async () => {
     const t = await boot();
     try {
       _shown.length = 0; // ignore any activation-time toasts
-      await commands.executeCommand("kickbacks.status");
+      await commands.executeCommand("gptw.status");
       const last = _shown.filter((s) => s.kind === "info").pop();
       expect(last, "no info toast fired").toBeDefined();
       expect(last!.text).toMatch(/signed out/i);
-      expect(last!.text).toMatch(/kickbacks/i);
+      expect(last!.text).toMatch(/gptw/i);
     } finally { await t.dispose(); }
   });
 
   it("shows 'signed in' once a token is held", async () => {
     const t = await boot();
     try {
-      await commands.executeCommand("kickbacks.signIn");
+      await commands.executeCommand("gptw.signIn");
       _shown.length = 0;
-      await commands.executeCommand("kickbacks.status");
+      await commands.executeCommand("gptw.status");
       const last = _shown.filter((s) => s.kind === "info").pop();
       expect(last!.text).toMatch(/signed in/i);
     } finally { await t.dispose(); }
@@ -379,11 +348,11 @@ describe("kickbacks.status", () => {
 });
 
 // ---------------------------------------------------------------------------
-// kickbacks.debugMenu → opens the QuickPick. We assert the menu actually
+// gptw.debugMenu → opens the QuickPick. We assert the menu actually
 // asks the user for input AND surfaces every must-have row. The individual
 // row → command routing is already covered by debug.test.ts.
 // ---------------------------------------------------------------------------
-describe("kickbacks.debugMenu", () => {
+describe("gptw.debugMenu", () => {
   it("opens a QuickPick containing every documented menu row", async () => {
     const t = await boot();
     try {
@@ -392,7 +361,7 @@ describe("kickbacks.debugMenu", () => {
         async (items: unknown) => {
           captured = items as { id?: string }[]; return undefined;
         });
-      await commands.executeCommand("kickbacks.debugMenu");
+      await commands.executeCommand("gptw.debugMenu");
       // Assert BEFORE mockRestore — vitest's restore clears the spy's call
       // history alongside removing it (caught the hard way: spy fired but
       // the post-restore expect saw zero calls). Lesson preserved in-line
@@ -409,18 +378,16 @@ describe("kickbacks.debugMenu", () => {
 });
 
 // ---------------------------------------------------------------------------
-// kickbacks.editConfig → materialises ~/.vibe-ads/config.json if missing
+// gptw.editConfig → materialises ~/.gptw/config.json if missing
 // and opens it in the editor. The observable side effect we assert on is
 // workspace.openTextDocument being called with a config-shaped path.
 // ---------------------------------------------------------------------------
-describe("kickbacks.editConfig", () => {
+describe("gptw.editConfig", () => {
   it("opens the config file in the editor", async () => {
     const t = await boot();
     try {
       _openedDocs.length = 0;
-      await commands.executeCommand("kickbacks.editConfig");
-      // ensureConfigFile() resolves to either ~/.kickbacks/config.json or
-      // ~/.vibe-ads/config.json depending on which exists; match either.
+      await commands.executeCommand("gptw.editConfig");
       expect(_openedDocs.some((p) => /config\.json$/.test(p)),
         `openTextDocument was not called with a config path; saw: ${JSON.stringify(_openedDocs)}`
       ).toBe(true);

@@ -17,7 +17,7 @@ import { upsertStatusLine, upsertSpinnerVerbs, removeTopLevel, parseable }
 const FIX = readFileSync(join(__dirname, "fixtures/synthetic-index.js"), "utf8");
 
 function tmpTarget(): string {
-  const d = mkdtempSync(join(tmpdir(), "vibe-ads-bsafe-"));
+  const d = mkdtempSync(join(tmpdir(), "gptw-bsafe-"));
   const p = join(d, "index.js");
   writeFileSync(p, FIX, "utf8");
   return p;
@@ -36,7 +36,7 @@ const params = {
 describe("ClaudeCodeAdapter taint guard (audit #12/#18)", () => {
   let target: string;
   let bak: string;
-  beforeEach(() => { target = tmpTarget(); bak = target + ".kickbacks-backup"; });
+  beforeEach(() => { target = tmpTarget(); bak = target + ".gptw-backup"; });
 
   it("ensureBackup REFUSES to capture a patched live file: applyPatch is"
     + " success-no-write, no tainted backup is minted", () => {
@@ -91,7 +91,7 @@ describe("ClaudeCodeAdapter taint guard (audit #12/#18)", () => {
     expect(r.ok).toBe(true);
     expect(r.restored).toBe(true);
     const after = readFileSync(target, "utf8");
-    expect(after).not.toContain("VIBE-ADS-START");  // ad block NOT reinstated
+    expect(after).not.toContain("GPTW-START");  // ad block NOT reinstated
     expect(after).toContain('"Discombobulating"');  // verb array intact
     expect(a.isPatched()).toBe(false);
     expect(existsSync(bak)).toBe(false);            // consumed after verify
@@ -200,7 +200,7 @@ describe("ClaudeCliStatuslineAdapter key-scoped restore (audit #13)", () => {
     writeFileSync(settings, "{}\n", "utf8");
     const a = new ClaudeCliStatuslineAdapter(settings);
     a.applyPatch(P);
-    const script = join(home, ".vibe-ads", "vibe-ads-statusline.mjs");
+    const script = join(home, ".gptw", "vibe-ads-statusline.mjs");
     const old = (Date.now() - 3_600_000) / 1000;
     utimesSync(script, old, old);
     const before = statSync(script).mtimeMs;

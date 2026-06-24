@@ -8,15 +8,16 @@ import vm from "node:vm";
 function load() {
   let src = readFileSync(join(__dirname, "../src/adapters/claude-code/block.asset.js"), "utf8");
   const subs: Record<string,string> = {
-    __VIBE_ADS_TIER__: "3", __VIBE_ADS_AD__: JSON.stringify("Acme deploys faster than your CI"),
-    __VIBE_ADS_ICON__: JSON.stringify("icon.a"), __VIBE_ADS_PORT__: "5555",
-    __VIBE_ADS_LBTOKEN__: JSON.stringify("lt"), __VIBE_ADS_CLICKTOKEN__: JSON.stringify("ck"),
-    __VIBE_ADS_BASE__: JSON.stringify("http://127.0.0.1:5555/vibe-ads/lt"),
-    __VIBE_ADS_DEBUG__: "false",
-    __VIBE_ADS_ICON_URL__: JSON.stringify(""),
-    __VIBE_ADS_CLICKURL__: JSON.stringify("https://acme.example/lp?ck"),
-    __VIBE_ADS_BANNER_ON__: "true",
-    __VIBE_ADS_CORR__: JSON.stringify("ad1.abcd"),
+    __GPTW_TIER__: "3", __GPTW_AD__: JSON.stringify("Acme deploys faster than your CI"),
+    __GPTW_ICON__: JSON.stringify("icon.a"), __GPTW_PORT__: "5555",
+    __GPTW_LBTOKEN__: JSON.stringify("lt"), __GPTW_CLICKTOKEN__: JSON.stringify("ck"),
+    __GPTW_BASE__: JSON.stringify("http://127.0.0.1:5555/gptw/lt"),
+    __GPTW_DEBUG__: "false",
+    __GPTW_ICON_URL__: JSON.stringify(""),
+    __GPTW_CLICKURL__: JSON.stringify("https://acme.example/lp?ck"),
+    __GPTW_BANNER_ON__: "true",
+    __GPTW_CORR__: JSON.stringify("ad1.abcd"),
+    __GPTW_THEME_KIND__: JSON.stringify("dark"),
   };
   for (const [k,v] of Object.entries(subs)) src = src.split(k).join(v);
   const mod = { exports: {} as any };
@@ -36,7 +37,7 @@ describe("block.asset", () => {
   it("buildAdHtml tier<=1 is a bare anchor with theme token color", () => {
     const h = load().buildAdHtml(1, { ad: "Acme", dots: "", elapsed: "" });
     expect(h).toContain("var(--vscode-foreground");
-    expect(h).toContain("data-vibe-ads-ad");
+    expect(h).toContain("data-gptw-ad");
     expect(h).not.toContain("flex");
   });
   it("buildAdHtml tier 3: favicon + LEFT-justified underlined ad + dim right",
@@ -59,15 +60,15 @@ describe("block.asset", () => {
     // (the render loop, not the builder, decides whether to render at all).
     const h = b.buildAdHtml(3, { ad: "Acme", done: true });
     expect(h).not.toContain("Continue");
-    expect(h).not.toContain("data-vibe-ads-continue");
-    expect(h).not.toContain("data-vibe-ads-done");
+    expect(h).not.toContain("data-gptw-continue");
+    expect(h).not.toContain("data-gptw-done");
     expect(h).toContain("Acme");                 // still the ad
-    expect(h).toContain("data-vibe-ads-ad");     // still the ad-URL click
+    expect(h).toContain("data-gptw-ad");     // still the ad-URL click
     // and the asset source itself carries none of the removed plumbing
     const src = readFileSync(
       join(__dirname, "../src/adapters/claude-code/block.asset.js"), "utf8");
     for (const sym of ["injectContinue", "ensureContinuePill",
-      "removeContinuePill", "data-vibe-ads-continue", "data-vibe-ads-done"])
+      "removeContinuePill", "data-gptw-continue", "data-gptw-done"])
       expect(src.includes(sym)).toBe(false);
   });
   describe("looksLikeUsageBanner (usage-banner rewrite prototype)", () => {
@@ -98,7 +99,7 @@ describe("block.asset", () => {
     it("is a clickable, escaped ad anchor carrying the shared click hook", () => {
       const b = load();
       const h = b.buildBannerHtml("Acme & Co <ad>", "https://acme.example/lp?a=1&b=2");
-      expect(h).toContain('data-vibe-ads-ad="1"');
+      expect(h).toContain('data-gptw-ad="1"');
       expect(h).toContain('target="_blank"');
       expect(h).toContain('rel="noopener noreferrer"');
       expect(h).toContain("href=\"https://acme.example/lp?a=1&amp;b=2\"");
@@ -121,7 +122,7 @@ describe("block.asset", () => {
   it("block carries corr in the click ping and relayed dlog", () => {
     const src = readFileSync(
       join(__dirname, "../src/adapters/claude-code/block.asset.js"), "utf8");
-    expect(src).toContain("__VIBE_ADS_CORR__");
+    expect(src).toContain("__GPTW_CORR__");
     expect(src).toContain("&corr=");
     expect(src).toContain("corr: CORR");
   });

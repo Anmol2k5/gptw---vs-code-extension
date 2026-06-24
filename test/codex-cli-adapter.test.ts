@@ -47,8 +47,8 @@ describe("CodexCliWrapperAdapter — Windows .cmd shim", () => {
     mkdirSync(shimDir, { recursive: true });
     const shim = join(shimDir, "codex.cmd");
     writeFileSync(shim, content);
-    return { home, shim, backup: join(shimDir, "codex.vibe-ads-orig.cmd"),
-             adFile: join(home, ".vibe-ads", "codex-cli-ad.txt") };
+    return { home, shim, backup: join(shimDir, "codex.gptw-orig.cmd"),
+             adFile: join(home, ".gptw", "codex-cli-ad.txt") };
   }
 
   it("preflight: compatible on a plausibly-npm-shim", () => {
@@ -82,7 +82,7 @@ describe("CodexCliWrapperAdapter — Windows .cmd shim", () => {
     const r = a.applyPatch(patchParams());
     expect(r.ok).toBe(true);
     const wrapper = readFileSync(shim, "utf8");
-    expect(wrapper).toContain("VIBE-ADS-CODEX-CLI");
+    expect(wrapper).toContain("GPTW-CODEX-CLI");
     // The wrapper should delegate to the backup we just saved
     expect(wrapper).toContain(backup);
     expect(existsSync(backup)).toBe(true);
@@ -135,7 +135,7 @@ describe("CodexCliWrapperAdapter — Windows .cmd shim", () => {
     const { home, shim, adFile } = setup();
     const a = new CodexCliWrapperAdapter(shim, home);
     a.applyPatch(patchParams({ adText: "\u001b\u0007" }));
-    expect(readFileSync(adFile, "utf8")).toBe("Earning Kickback\n");
+    expect(readFileSync(adFile, "utf8")).toBe("Earning GPTW\n");
   });
 
   it("restore: byte-exact restoration of the npm shim", () => {
@@ -168,8 +168,8 @@ describe("CodexCliWrapperAdapter — Windows .cmd shim", () => {
     expect(wrapper).toContain(adFile);
     expect(wrapper).toContain(backup);
     // No raw template placeholders should leak through
-    expect(wrapper).not.toContain("__VIBE_ADS_AD_PATH__");
-    expect(wrapper).not.toContain("__VIBE_ADS_BACKUP__");
+    expect(wrapper).not.toContain("__GPTW_AD_PATH__");
+    expect(wrapper).not.toContain("__GPTW_BACKUP__");
   });
 });
 
@@ -180,8 +180,8 @@ describe("CodexCliWrapperAdapter — POSIX shim", () => {
     mkdirSync(shimDir, { recursive: true });
     const shim = join(shimDir, "codex");
     writeFileSync(shim, content);
-    return { home, shim, backup: join(shimDir, "codex.vibe-ads-orig"),
-             adFile: join(home, ".vibe-ads", "codex-cli-ad.txt") };
+    return { home, shim, backup: join(shimDir, "codex.gptw-orig"),
+             adFile: join(home, ".gptw", "codex-cli-ad.txt") };
   }
 
   it("preflight: compatible on a JS-shebang npm shim", () => {
@@ -196,7 +196,7 @@ describe("CodexCliWrapperAdapter — POSIX shim", () => {
     const r = a.applyPatch(patchParams());
     expect(r.ok).toBe(true);
     const wrapper = readFileSync(shim, "utf8");
-    expect(wrapper).toContain("VIBE-ADS-CODEX-CLI");
+    expect(wrapper).toContain("GPTW-CODEX-CLI");
     expect(wrapper).toMatch(/^#!\/bin\/sh/);
     expect(wrapper).toContain('exec "' + backup + '"');
     expect(wrapper).toContain(adFile);

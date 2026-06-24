@@ -273,6 +273,8 @@ export class DebugController {
           description: on ? "currently ON" : "currently OFF" },
         { id: "config", label: "$(json) Edit GPTW config…",
           description: "~/.gptw/config.json" },
+        { id: "settings", label: "$(settings-gear) GPTW Settings…",
+          description: "Open the settings panel" },
         { id: "reapply", label: "$(sync) Re-apply patch now",
           description: "Claude Code + Codex" },
         { id: "checkupdates", label: "$(cloud-download) Check for updates",
@@ -293,6 +295,8 @@ export class DebugController {
           vscode.Uri.parse("https://get-paid-to-wait-m44znelko-mayurs-projects-4c08c14e.vercel.app/"));
       else if (pick.id === "toggle") await this.setOn(!on);
       else if (pick.id === "config") await this.editConfig();
+      else if (pick.id === "settings")
+        await vscode.commands.executeCommand("gptw.settings");
       else if (pick.id === "restore") await this.doRestore();
       else if (pick.id === "signin")
         await vscode.commands.executeCommand("gptw.signIn");

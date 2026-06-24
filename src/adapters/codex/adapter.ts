@@ -122,8 +122,8 @@ export class CodexAdapter implements TargetAdapter {
       if (!changed) return { ok: false, reason: "anchor-missing" };
       const bak = this.existingExtBackupPath(ext) || this.extBackupPath(ext);
       if (!existsSync(bak))
-        writeFileSync(bak, Buffer.from(src, "utf8"));
-      writeFileSync(ext, Buffer.from(patched, "utf8"));
+        writeFileSync(bak, new Uint8Array(Buffer.from(src, "utf8")));
+      writeFileSync(ext, new Uint8Array(Buffer.from(patched, "utf8")));
       return { ok: true };
     } catch {
       return { ok: false, reason: "io-err" };
@@ -145,7 +145,7 @@ export class CodexAdapter implements TargetAdapter {
       const bak = this.existingExtBackupPath(ext) || this.extBackupPath(ext);
       if (!bak || !existsSync(bak)) return;
       const pristine = readFileSync(bak);
-      writeFileSync(ext, pristine);
+      writeFileSync(ext, new Uint8Array(pristine));
       if (sha256(readFileSync(ext)) === sha256(pristine))
         rmSync(bak);
     } catch { /* best-effort */ }
@@ -226,6 +226,7 @@ export class CodexAdapter implements TargetAdapter {
       __GPTW_VIEW_THRESHOLD_MS__: String(
         typeof p.viewThresholdMs === "number" && p.viewThresholdMs > 0
           ? p.viewThresholdMs : 15000),
+      __GPTW_THEME_KIND__: JSON.stringify(p.themeKind ?? "dark"),
     };
     for (const [k, v] of Object.entries(subs)) src = src.split(k).join(v);
     return src;
@@ -252,7 +253,7 @@ export class CodexAdapter implements TargetAdapter {
       // snapshot (the old ensureBackup stored raw live bytes, which is how a
       // backup itself could become poisoned).
       if (!bak)
-        writeFileSync(this.backupPath(), Buffer.from(pristine, "utf8"));
+        writeFileSync(this.backupPath(), new Uint8Array(Buffer.from(pristine, "utf8")));
       const block = this.renderBlock(p, loc.arg, jsx);
       // Inject as the entry's first statement, BEFORE the props destructure +
       // React-Compiler memo cache. Markers wrap the WHOLE `arg=(IIFE)||arg;`
@@ -265,7 +266,7 @@ export class CodexAdapter implements TargetAdapter {
         BLOCK_END + pristine.slice(loc.at);
       const buf = Buffer.from(out, "utf8");
       if (sha256(buf) !== sha256(readFileSync(this.target)))
-        writeFileSync(this.target, buf);
+        writeFileSync(this.target, new Uint8Array(buf));
       this.patchCspWithReason();
       return { ok: true };
     } catch (e) {
@@ -284,7 +285,7 @@ export class CodexAdapter implements TargetAdapter {
         return { ok: true, restored: false, reason: "no backup present" };
       }
       const pristine = readFileSync(bak);
-      writeFileSync(this.target, pristine);
+      writeFileSync(this.target, new Uint8Array(pristine));
       if (sha256(readFileSync(this.target)) !== sha256(pristine))
         return { ok: false, restored: false,
                  reason: "sha256 mismatch after restore" };

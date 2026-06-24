@@ -81,7 +81,8 @@ function readTranscriptEntrypoint(path: string): string | null {
     let text: string;
     try {
       const buf = Buffer.alloc(16 * 1024);
-      const n = readSync(fd, buf, 0, buf.length, 0);
+      const view = new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength);
+      const n = readSync(fd, view, 0, view.length, 0);
       text = buf.toString("utf8", 0, n);
     } finally { closeSync(fd); }
     for (const ln of text.split("\n")) {

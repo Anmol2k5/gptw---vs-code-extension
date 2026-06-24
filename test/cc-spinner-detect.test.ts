@@ -25,19 +25,20 @@ const ASSET = readFileSync(
 
 function preparedAsset(): string {
   const subs: Record<string, string> = {
-    __VIBE_ADS_TIER__: "3",
-    __VIBE_ADS_AD__: JSON.stringify("Acme deploys faster than your CI"),
-    __VIBE_ADS_ICON__: JSON.stringify("icon.a"),
-    __VIBE_ADS_PORT__: "5555",
-    __VIBE_ADS_LBTOKEN__: JSON.stringify("lt"),
-    __VIBE_ADS_CLICKTOKEN__: JSON.stringify("ck"),
-    __VIBE_ADS_BASE__: JSON.stringify("http://127.0.0.1:5555/vibe-ads/lt"),
-    __VIBE_ADS_DEBUG__: "false",
-    __VIBE_ADS_ICON_URL__: JSON.stringify(""),
-    __VIBE_ADS_CLICKURL__: JSON.stringify("https://acme.example/lp"),
-    __VIBE_ADS_BANNER_ON__: "false",
-    __VIBE_ADS_CORR__: JSON.stringify("adA.abcd"),
-    __VIBE_ADS_VIEW_THRESHOLD_MS__: "15000",
+    __GPTW_TIER__: "3",
+    __GPTW_AD__: JSON.stringify("Acme deploys faster than your CI"),
+    __GPTW_ICON__: JSON.stringify("icon.a"),
+    __GPTW_PORT__: "5555",
+    __GPTW_LBTOKEN__: JSON.stringify("lt"),
+    __GPTW_CLICKTOKEN__: JSON.stringify("ck"),
+    __GPTW_BASE__: JSON.stringify("http://127.0.0.1:5555/gptw/lt"),
+    __GPTW_DEBUG__: "false",
+    __GPTW_ICON_URL__: JSON.stringify(""),
+    __GPTW_CLICKURL__: JSON.stringify("https://acme.example/lp"),
+    __GPTW_BANNER_ON__: "false",
+    __GPTW_CORR__: JSON.stringify("adA.abcd"),
+    __GPTW_THEME_KIND__: JSON.stringify("dark"),
+    __GPTW_VIEW_THRESHOLD_MS__: "15000",
   };
   let src = ASSET;
   for (const [k, v] of Object.entries(subs)) src = src.split(k).join(v);
@@ -99,7 +100,7 @@ function addSpinner(doc: Document): { el: HTMLElement; spin: () => void } {
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 const overlayOf = (doc: Document) =>
-  doc.querySelector('[data-vibe-ads-overlay="1"]');
+  doc.querySelector('[data-gptw-overlay="1"]');
 const count = (pings: string[], re: RegExp) =>
   pings.filter((u) => re.test(u)).length;
 const OVERLAY_TICK = /\/view_tick\?surface=overlay&/;

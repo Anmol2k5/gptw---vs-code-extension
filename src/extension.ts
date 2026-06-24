@@ -5,10 +5,16 @@ import { existsSync, unlinkSync } from "node:fs";
 import { locateClaudeCode, locateClaudeCodeLog, locateClaudeCliLog } from "./locate";
 import { ClaudeCodeAdapter } from "./adapters/claude-code/adapter";
 import { CodexAdapter } from "./adapters/codex/adapter";
+import { OpenCodeAdapter } from "./adapters/opencode/adapter";
 import { ClaudeCliStatuslineAdapter } from "./adapters/claude-cli/adapter";
-import { locateCodexTarget } from "./adapters/registry";
+import { locateCodexTarget, locateOpenCodeTarget } from "./adapters/registry";
 import type { TargetAdapter, PatchParams } from "./adapters/types";
 import { StatusBar } from "./statusbar";
+import { loadSettings, saveSettings, type GptwSettings } from "./settings/index";
+import { SettingsPanel } from "./settings/settingsPanel";
+import { checkMilestones } from "./earnings/milestones";
+import { onDidChangeTheme, detectThemeKind } from "./util/theme";
+import { detectLocale, t } from "./util/i18n";
 import { CapWarning } from "./activation/capWarning";
 import { LogTail } from "./activity/logTail";
 import { PortfolioClient, fetchPortfolioWithDemoFallback } from "./portfolio/client";
@@ -41,8 +47,10 @@ import { resetServingGate, wireServingGateEnabled, setKillPosture,
 import { TestHooks } from "./testHooks";
 import { buildLabel, buildVersion } from "./buildinfo";
 import { dlog, debugEnabled, codexEnabled, codexDisabled, codexCliEnabled,
+         opencodeEnabled, opencodeDisabled,
          testHooksEnabled } from "./log";
 import { codexDiscoveryEnabled } from "./activation/codexFallback";
+import { opencodeDiscoveryEnabled } from "./activation/opencodeFallback";
 import { webviewMode } from "./modes";
 import { SessionState } from "./sessionState";
 import { watchFile as nodeWatchFile, readFileSync, statSync } from "node:fs";
@@ -89,6 +97,7 @@ function clientEnv(): Record<string, unknown> {
 interface Wiring {
   adapter: TargetAdapter;
   codexAdapter?: TargetAdapter | null;
+  opencodeAdapter?: TargetAdapter | null;
   statusBar: { set: (s: unknown) => void; dispose: () => void };
   capWarning: { show: (c: unknown) => void; hide: () => void; dispose: () => void };
   watchFileFn: typeof import("node:fs").watchFile;
@@ -152,8 +161,30 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<void> {
     const codexPf = (() => {
       try { return codexAdapter?.preflight() ?? null; } catch { return null; }
     })();
+    // Resolve the optional OpenCode target. Discovery = the explicit opt-in
+    // (opencodeEnabled) OR the claude-incompatible FALLBACK: with no
+    // compatible Claude Code here there is nothing of ours to crash, and
+    // without the fallback an OpenCode-only install is dead weight. Explicit
+    // opt-out (opencodeDisabled) beats both. See activation/opencodeFallback.ts.
+    const opencodeDiscovery = opencodeDiscoveryEnabled({
+      optIn: opencodeEnabled(), optOut: opencodeDisabled(),
+      claudeCompatible: pf.compatible });
+    actx.opencodeAdapter = override
+      ? (override.opencodeAdapter ?? null)
+      : (opencodeDiscovery
+          ? (() => {
+              try {
+                return locateOpenCodeTarget() ? new OpenCodeAdapter() : null;
+              } catch { return null; }
+            })()
+          : null);
+    const opencodeAdapter = actx.opencodeAdapter;
+    const opencodePf = (() => {
+      try { return opencodeAdapter?.preflight() ?? null; } catch { return null; }
+    })();
     const claudeOk = pf.compatible;
     const codexOk = codexPf?.compatible === true;
+    const opencodeOk = opencodePf?.compatible === true;
     const statusBar = override?.statusBar ?? new StatusBar();
     // Owned by the extension context: disposing with it is the only teardown
     // path that reaches the bar item — deactivate() works off actx and never
@@ -168,6 +199,20 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<void> {
     ctx.subscriptions.push(capWarning);
 
     const session = new SessionState();
+
+    // Settings — load user preferences, wire the settings panel.
+    const userSettings = loadSettings(ctx);
+    let settingsPanel: SettingsPanel | undefined;
+    const openSettings = (): void => {
+      if (!settingsPanel) {
+        settingsPanel = new SettingsPanel(ctx, userSettings, (s) => {
+          Object.assign(userSettings, s);
+          saveSettings(ctx, s);
+        });
+        ctx.subscriptions.push(settingsPanel);
+      }
+      settingsPanel.show();
+    };
 
     // Manual admin/debug override.
     actx.debugCtl = new DebugController(adapter, ctx,
@@ -215,6 +260,14 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<void> {
         })(),
         policy: { discoveryEnabled: codexDiscovery, optIn: codexEnabled(),
                   optOut: codexDisabled(), claudeCompatible: pf.compatible },
+      }, {
+        adapter: opencodeAdapter ?? (() => {
+          try {
+            return locateOpenCodeTarget() ? new OpenCodeAdapter() : null;
+          } catch { return null; }
+        })(),
+        policy: { discoveryEnabled: opencodeDiscovery, optIn: opencodeEnabled(),
+                  optOut: opencodeDisabled(), claudeCompatible: pf.compatible },
       }),
     );
 
@@ -319,15 +372,18 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<void> {
       debug: debugEnabled() });
 
     // Boot canary. `anyTargetCompatible` widens the clean-boot auto-enable
-    // to Codex-only machines (their K_ON would otherwise never persist).
+    // to Codex/OpenCode-only machines (their K_ON would otherwise never persist).
     const { firstRun } = await setupBootCanary(adapter, debugCtl, ctx,
-      claudeOk || codexOk);
+      claudeOk || codexOk || opencodeOk);
 
     dlog("ext", "preflight",
       { compatible: pf.compatible, version: pf.version, reason: pf.reason,
         codexCompatible: codexOk, codexVersion: codexPf?.version ?? null,
-        codexFallback: codexDiscovery && !codexEnabled() });
-    if (!claudeOk && !codexOk) {
+        codexFallback: codexDiscovery && !codexEnabled(),
+        opencodeCompatible: opencodeOk,
+        opencodeVersion: opencodePf?.version ?? null,
+        opencodeFallback: opencodeDiscovery && !opencodeEnabled() });
+    if (!claudeOk && !codexOk && !opencodeOk) {
       statusBar.set({ kind: "incompatible", version: pf.version ?? "unknown" });
       notifyIncompatible(ctx, adapter, pf);
       // Audit #22: this early return used to strand a previously-patched
@@ -355,6 +411,16 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<void> {
         if (ct) {
           const r = new CodexAdapter(ct).restore();
           dlog("ext", "codex.strandRestore", { restored: r.restored });
+        }
+      } catch { /* best-effort; never disturb the early return */ }
+      // OpenCode strand restore (symmetric): a previously-injected plugin
+      // in opencode.jsonc gets stranded if this machine turns all-incompatible.
+      // restore() is a no-op without our marker. opencodeAdapter is null when
+      // discovery is off, so construct fresh from detection.
+      try {
+        if (locateOpenCodeTarget()) {
+          const r = new OpenCodeAdapter().restore();
+          dlog("ext", "opencode.strandRestore", { restored: r.restored });
         }
       } catch { /* best-effort; never disturb the early return */ }
       return;
@@ -433,6 +499,18 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<void> {
       // `undefined` keeps isAdShowing's default; capWarning is the new arg.
       auth, earningsClient, session, statusBar, ccVersion, ctx, undefined,
       capWarning, fleetSignals);
+
+    // Helper to check earnings milestones from either fleet signals or API.
+    const checkEarningsMilestones = (): void => {
+      const snap = fleetSignals?.earningsSnapshot();
+      const raw = snap?.lifetimeUsd;
+      if (raw) {
+        const n = parseFloat(raw.replace(/[^0-9.]/g, ""));
+        if (!isNaN(n)) checkMilestones(n, ctx, userSettings.language);
+      }
+    };
+    // Run milestone check on the first earnings refresh.
+    void checkEarningsMilestones();
 
     // ─── Portfolio ──────────────────────────────────────────────────
     // Signed in → the real, user-crediting portfolio. Signed out (incl. a
@@ -650,6 +728,7 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<void> {
         try { adapter.prime?.(); } catch { /* prime directive */ }
       }
       try { codexAdapter?.prime?.(); } catch { /* prime directive */ }
+      try { opencodeAdapter?.prime?.(); } catch { /* prime directive */ }
     }
 
     // ─── CLI sync ───────────────────────────────────────────────────
@@ -694,6 +773,7 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<void> {
     actx.timers.push(setInterval(checkKill, 30_000));
     actx.timers.push(setInterval(() => void showActive(), 30_000));
     actx.timers.push(setInterval(() => void debugCtl?.reassertTick(), 60_000));
+    actx.timers.push(setInterval(() => checkEarningsMilestones(), 120_000));
 
     // Tiered desync self-heal. The drift-only reasserts above can't see a
     // "patched file but webview cached the pre-patch module" desync; this
@@ -803,6 +883,8 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<void> {
     // ─── Command registration ───────────────────────────────────────
     registerCommands(ctx, adapter, codexAdapter, auth, debugCtl, statusBar,
       session, updater, ccVersion, showActive);
+    ctx.subscriptions.push(
+      vscode.commands.registerCommand("gptw.settings", openSettings));
 
     // ─── E2E test hooks ─────────────────────────────────────────────
     if (testHooksEnabled()) {
@@ -866,6 +948,10 @@ export async function deactivate(): Promise<void> {
         const ct = locateCodexTarget();
         if (ct) new CodexAdapter(ct).restore({ keepCsp: true });
       }
+    } catch { /* ignore */ }
+    try {
+      if (actx.opencodeAdapter) actx.opencodeAdapter.restore({ keepCsp: true });
+      else if (locateOpenCodeTarget()) new OpenCodeAdapter().restore();
     } catch { /* ignore */ }
   }
   // Loopback stops LAST, each time-bounded so deactivate always completes.

@@ -22,19 +22,20 @@ const ASSET = readFileSync(
   "utf8");
 
 const SUBS: Record<string, string> = {
-  __VIBE_ADS_TIER__: "3",
-  __VIBE_ADS_AD__: JSON.stringify("Ramp - Save time & money"),
-  __VIBE_ADS_ICON__: JSON.stringify("icon.r"),
-  __VIBE_ADS_PORT__: "5555",
-  __VIBE_ADS_LBTOKEN__: JSON.stringify("lt"),
-  __VIBE_ADS_CLICKTOKEN__: JSON.stringify("ctok-abc123"),
-  __VIBE_ADS_BASE__: JSON.stringify("http://127.0.0.1:5555/vibe-ads/lt"),
-  __VIBE_ADS_DEBUG__: "false",
-  __VIBE_ADS_CLICKURL__: JSON.stringify("https://ramp.example/lp?utm=ck"),
-  __VIBE_ADS_BANNER_ON__: "true",
-  __VIBE_ADS_CORR__: JSON.stringify("corr.xyz789"),
-  __VIBE_ADS_VIEW_THRESHOLD_MS__: "15000",
-  __VIBE_ADS_ICON_URL__: JSON.stringify(""),
+  __GPTW_TIER__: "3",
+  __GPTW_AD__: JSON.stringify("Ramp - Save time & money"),
+  __GPTW_ICON__: JSON.stringify("icon.r"),
+  __GPTW_PORT__: "5555",
+  __GPTW_LBTOKEN__: JSON.stringify("lt"),
+  __GPTW_CLICKTOKEN__: JSON.stringify("ctok-abc123"),
+  __GPTW_BASE__: JSON.stringify("http://127.0.0.1:5555/gptw/lt"),
+  __GPTW_DEBUG__: "false",
+  __GPTW_CLICKURL__: JSON.stringify("https://ramp.example/lp?utm=ck"),
+  __GPTW_BANNER_ON__: "true",
+  __GPTW_CORR__: JSON.stringify("corr.xyz789"),
+    __GPTW_THEME_KIND__: JSON.stringify("dark"),
+  __GPTW_VIEW_THRESHOLD_MS__: "15000",
+  __GPTW_ICON_URL__: JSON.stringify(""),
 };
 
 function preparedAsset(): string {
@@ -99,10 +100,10 @@ function bootBlock(dom: JSDOM): void {
 function makeAd(doc: Document, opts: { surface?: "overlay" | "banner" } = {}):
   HTMLAnchorElement {
   const wrap = doc.createElement("div");
-  if (opts.surface === "banner") wrap.setAttribute("data-vibe-ads-banner", "1");
-  else if (opts.surface === "overlay") wrap.setAttribute("data-vibe-ads-overlay", "1");
+  if (opts.surface === "banner") wrap.setAttribute("data-gptw-banner", "1");
+  else if (opts.surface === "overlay") wrap.setAttribute("data-gptw-overlay", "1");
   const a = doc.createElement("a");
-  a.setAttribute("data-vibe-ads-ad", "1");
+  a.setAttribute("data-gptw-ad", "1");
   a.setAttribute("href", "https://ramp.example/lp?utm=ck");
   a.textContent = "Ramp - Save time & money";
   wrap.appendChild(a);
@@ -128,7 +129,7 @@ describe("CC click-through telemetry — sendBeacon-first, fetch fallback",
     expect(h.beacons).toHaveLength(1);
     expect(h.fetches).toHaveLength(0);     // fallback NOT used
     const u = new URL(h.beacons[0].url);
-    expect(u.pathname).toBe("/vibe-ads/lt/click");
+    expect(u.pathname).toBe("/gptw/lt/click");
     expect(u.searchParams.get("ct")).toBe("ctok-abc123");
     expect(u.searchParams.get("corr")).toBe("corr.xyz789");
     expect(u.searchParams.get("surface")).toBe("overlay");
@@ -147,7 +148,7 @@ describe("CC click-through telemetry — sendBeacon-first, fetch fallback",
     expect((h.fetches[0].init as unknown as { keepalive: boolean }).keepalive)
       .toBe(true);
     const u = new URL(h.fetches[0].url);
-    expect(u.pathname).toBe("/vibe-ads/lt/click");
+    expect(u.pathname).toBe("/gptw/lt/click");
     expect(u.searchParams.get("ct")).toBe("ctok-abc123");
     expect(u.searchParams.get("surface")).toBe("overlay");
     expect(u.searchParams.get("event_uuid")).toMatch(UUID_RE);
@@ -162,10 +163,10 @@ describe("CC click-through telemetry — sendBeacon-first, fetch fallback",
     await flushMicrotasks();
     expect(h.beacons).toHaveLength(1);     // attempted
     expect(h.fetches).toHaveLength(1);     // and fell through
-    expect(new URL(h.fetches[0].url).pathname).toBe("/vibe-ads/lt/click");
+    expect(new URL(h.fetches[0].url).pathname).toBe("/gptw/lt/click");
   });
 
-  it("surface=banner when the click target is INSIDE a data-vibe-ads-banner "
+  it("surface=banner when the click target is INSIDE a data-gptw-banner "
     + "wrapper (ledger attribution must distinguish spinner vs banner)",
     async () => {
     const h = makeHarness({ beacon: true });
@@ -183,7 +184,7 @@ describe("CC click-through telemetry — sendBeacon-first, fetch fallback",
     bootBlock(h.dom);
     // Ad anchor with no banner/overlay wrapper at all.
     const a = h.dom.window.document.createElement("a");
-    a.setAttribute("data-vibe-ads-ad", "1");
+    a.setAttribute("data-gptw-ad", "1");
     a.setAttribute("href", "https://x.example");
     h.dom.window.document.body.appendChild(a);
     a.click();
@@ -252,7 +253,7 @@ describe("CC click-through telemetry — sendBeacon-first, fetch fallback",
       const { port, token } = await lb.start();
       expect(port).toBeGreaterThan(0);
       const res = await fetch(
-        `http://127.0.0.1:${port}/vibe-ads/${token}/click${u.search}`,
+        `http://127.0.0.1:${port}/gptw/${token}/click${u.search}`,
         { method: "POST" });
       expect(res.status).toBe(204);
     } finally {
@@ -265,7 +266,7 @@ describe("CC click-through telemetry — sendBeacon-first, fetch fallback",
 
   it("clicks on a CHILD element of the ad anchor still attribute correctly "
     + "(the favicon SVG, animated dots span — every child must walk up to "
-    + "the [data-vibe-ads-ad] ancestor)", async () => {
+    + "the [data-gptw-ad] ancestor)", async () => {
     const h = makeHarness({ beacon: true });
     bootBlock(h.dom);
     const a = makeAd(h.dom.window.document, { surface: "overlay" });

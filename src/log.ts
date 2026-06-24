@@ -101,6 +101,32 @@ export function codexDisabled(): boolean {
   } catch { return false; }
 }
 
+// OpenCode target opt-in. PRODUCTION DEFAULT IS OFF — the adapter is
+// fully wired but OpenCode discovery is gated behind an explicit flip:
+// GPTW_OPENCODE=1 (or legacy KICKBACKS_OPENCODE=1) OR a
+// ~/.gptw/opencode.enabled sentinel for headless toggling. Mirrors the
+// codexEnabled() gate pattern. Never throws.
+const OPENCODE_SENTINEL = join(DIR, "opencode.enabled");
+export function opencodeEnabled(): boolean {
+  try {
+    if (process.env.GPTW_OPENCODE === "1"
+        || process.env.KICKBACKS_OPENCODE === "1") return true;
+    return existsSync(OPENCODE_SENTINEL);
+  } catch { return false; }
+}
+
+// Explicit local opt-OUT for OpenCode targeting. Beats the opt-in above
+// and the claude-incompatible fallback. GPTW_OPENCODE=0, or a
+// ~/.gptw/opencode.disabled sentinel. Never throws.
+const OPENCODE_DISABLED_SENTINEL = join(DIR, "opencode.disabled");
+export function opencodeDisabled(): boolean {
+  try {
+    if (process.env.GPTW_OPENCODE === "0"
+        || process.env.KICKBACKS_OPENCODE === "0") return true;
+    return existsSync(OPENCODE_DISABLED_SENTINEL);
+  } catch { return false; }
+}
+
 // Codex CLI wrapper opt-in. PRODUCTION DEFAULT IS OFF — replacing the
 // npm-generated codex.cmd is reversible but high-blast-radius (every
 // `codex` invocation on the box) so it must be flipped on explicitly:

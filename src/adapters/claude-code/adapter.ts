@@ -46,14 +46,15 @@ export function resolveBlockAsset(baseDir: string): string {
 // so the worst case stays the prior behavior, not a refusal to write.
 function atomicWriteFile(target: string, data: Buffer): void {
   const tmp = target + ".gptw-tmp-" + process.pid + "-" + Date.now();
+  const view = new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
   try {
-    writeFileSync(tmp, data);
+    writeFileSync(tmp, view);
     renameSync(tmp, target);
   } catch {
     // best-effort cleanup of the temp; then fall back to a direct write
     // so we don't fail-closed on systems where rename semantics differ.
     try { unlinkSync(tmp); } catch { /* ignore */ }
-    writeFileSync(target, data);
+    writeFileSync(target, view);
   }
 }
 
@@ -133,12 +134,12 @@ export class ClaudeCodeAdapter implements TargetAdapter {
       if (!m) return { ok: false, reason: "anchor-missing" };
       const extBak = this.existingExtBackupPath() || this.extBackupPath();
       if (!existsSync(extBak))
-        writeFileSync(extBak, Buffer.from(src, "utf8")); // pristine
+        writeFileSync(extBak, new Uint8Array(Buffer.from(src, "utf8"))); // pristine
       // m[1] is the template variable token (e.g. "${q}" or "${U}"); preserve
       // it so the rest of CC's CSP template renders identically.
       const replaced = src.replace(this.CSP_ANCHOR_RE,
         this.CSP_INSERT_PREFIX + m[1]);
-      writeFileSync(ext, Buffer.from(replaced, "utf8"));
+      writeFileSync(ext, new Uint8Array(Buffer.from(replaced, "utf8")));
       return { ok: true };
     } catch { return { ok: false, reason: "io-err" }; }
   }
@@ -167,7 +168,7 @@ export class ClaudeCodeAdapter implements TargetAdapter {
       const bak = this.existingExtBackupPath() || this.extBackupPath();
       if (!bak || !existsSync(bak)) return;
       const pristine = readFileSync(bak);
-      writeFileSync(this.extTarget(), pristine);
+      writeFileSync(this.extTarget(), new Uint8Array(pristine));
       if (sha256(readFileSync(this.extTarget())) === sha256(pristine))
         rmSync(bak);
     } catch { /* best-effort */ }
@@ -338,7 +339,7 @@ export class ClaudeCodeAdapter implements TargetAdapter {
         { reason: "live file already patched" }); } catch { /* ignore */ }
       return null;
     }
-    writeFileSync(this.backupPath(), raw);
+    writeFileSync(this.backupPath(), new Uint8Array(raw));
     return raw; // pristine
   }
 
@@ -363,6 +364,7 @@ export class ClaudeCodeAdapter implements TargetAdapter {
       __GPTW_VIEW_THRESHOLD_MS__:
         String(typeof p.viewThresholdMs === "number"
           && p.viewThresholdMs > 0 ? p.viewThresholdMs : 15000),
+      __GPTW_THEME_KIND__: JSON.stringify(p.themeKind ?? "dark"),
     };
     for (const [k, v] of Object.entries(subs))
       src = src.split(k).join(v);
@@ -450,7 +452,7 @@ export class ClaudeCodeAdapter implements TargetAdapter {
         out = Buffer.from(
           pristine.toString("utf8").replace(BLOCK_RE, ""), "utf8");
       }
-      writeFileSync(this.target, out);
+      writeFileSync(this.target, new Uint8Array(out));
       const now = sha256(readFileSync(this.target));
       if (now !== sha256(out))
         return { ok: false, restored: false, reason: "sha256 mismatch after restore" };

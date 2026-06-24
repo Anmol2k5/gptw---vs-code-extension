@@ -43,6 +43,10 @@
         "title": "GPTW: Edit Config"
       },
       {
+        "command": "gptw.settings",
+        "title": "GPTW: Open Settings"
+      },
+      {
         "command": "gptw.diagnose",
         "title": "GPTW: Diagnose"
       },
@@ -164,6 +168,43 @@
           "minimum": 1,
           "maximum": 600,
           "description": "Seconds of cumulative visible time an ad must accumulate before it counts as 'shown' and is credited."
+        },
+        "gptw.adEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable ad display across all surfaces."
+        },
+        "gptw.frequency": {
+          "type": "number",
+          "default": 1,
+          "minimum": 0.5,
+          "maximum": 5,
+          "description": "Ad rotation frequency multiplier (higher = more frequent rotation)."
+        },
+        "gptw.surfaceOverlay": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show ads in the Claude Code spinner overlay."
+        },
+        "gptw.surfaceBanner": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show ads in the Claude Code usage-limit banner."
+        },
+        "gptw.surfaceCodex": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show ads in the Codex thinking-shimmer overlay."
+        },
+        "gptw.surfaceStatusline": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show ads in the Claude CLI statusline spinner verb."
+        },
+        "gptw.surfaceStatusbar": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show ad text in the VS Code status bar during AI turns."
         }
       }
     }

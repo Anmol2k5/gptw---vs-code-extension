@@ -2,14 +2,14 @@
 export const secrets = new Map<string, string>();
 export const _opened: string[] = [];
 // _shown: every showInformationMessage / showErrorMessage call, in order.
-// Lets commands.test.ts assert that `kickbacks.status` produced the expected
+// Lets commands.test.ts assert that `gptw.status` produced the expected
 // toast without having to spy() each handler individually.
 export const _shown: { kind: "info" | "error"; text: string }[] = [];
 // _warned: every showWarningMessage call, in order. Kept separate from _shown
 // so adding warning capture never perturbs a test asserting on _shown counts.
 export const _warned: string[] = [];
 // _opened docs: every workspace.openTextDocument(path) call. Used to verify
-// that `kickbacks.editConfig` actually opened the config file.
+// that `gptw.editConfig` actually opened the config file.
 export const _openedDocs: string[] = [];
 export const window = {
   createStatusBarItem: () => ({
@@ -39,6 +39,14 @@ export const workspace = {
     _openedDocs.push(path);
     return { uri: { fsPath: path }, getText: () => "" };
   },
+  // Minimal config-section stub: loadSettings() reads gptw.* config keys
+  // that no test sets, so get() always falls through to the supplied default.
+  getConfiguration: (_section?: string) => ({
+    get: <T>(_key: string, fallback: T): T => fallback,
+    has: (_key: string): boolean => false,
+    update: async (_key: string, _value: unknown): Promise<void> => {},
+    inspect: () => undefined,
+  }),
 };
 export const env = {
   openExternal: async (u: { toString(): string }) => { _opened.push(u.toString()); return true; },
@@ -52,7 +60,7 @@ export const env = {
 export const commands = {
   _handlers: new Map<string, (...a: unknown[]) => unknown>(),
   // Every executeCommand call, in order. Useful when a handler delegates
-  // (e.g. the debug menu's "Sign in" item executes "kickbacks.signIn").
+  // (e.g. the debug menu's "Sign in" item executes "gptw.signIn").
   _executed: [] as { id: string; args: unknown[] }[],
   registerCommand(id: string, h: (...a: unknown[]) => unknown) {
     this._handlers.set(id, h); return { dispose() {} };

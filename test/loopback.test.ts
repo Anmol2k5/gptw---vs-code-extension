@@ -15,7 +15,7 @@ describe("Loopback", () => {
       getCurrentAd: () => null,
     });
     const { port, token } = await lb.start();
-    const base = `http://127.0.0.1:${port}/vibe-ads/${token}`;
+    const base = `http://127.0.0.1:${port}/gptw/${token}`;
 
     expect((await fetch(`${base}/impression_rendered`, { method: "POST" })).status).toBe(204);
     expect((await fetch(`${base}/click?ct=abc`, { method: "POST" })).status).toBe(204);
@@ -24,7 +24,7 @@ describe("Loopback", () => {
     expect(events).toContain("impression_rendered");
     expect(clicked).toBe("abc");
 
-    const bad = await fetch(`http://127.0.0.1:${port}/vibe-ads/WRONG/activity`);
+    const bad = await fetch(`http://127.0.0.1:${port}/gptw/WRONG/activity`);
     expect(bad.status).toBe(404);
   });
 
@@ -41,7 +41,7 @@ describe("Loopback", () => {
       getCurrentAd: () => null,
     });
     const { port, token } = await lb.start();
-    const base = `http://127.0.0.1:${port}/vibe-ads/${token}`;
+    const base = `http://127.0.0.1:${port}/gptw/${token}`;
     const r = await fetch(`${base}/click?ct=ck&corr=debug.973525`,
       { method: "POST" });
     expect(r.status).toBe(204);
@@ -63,7 +63,7 @@ describe("Loopback", () => {
       getCurrentAd: () => null,
     });
     const { port, token } = await lb.start();
-    const base = `http://127.0.0.1:${port}/vibe-ads/${token}`;
+    const base = `http://127.0.0.1:${port}/gptw/${token}`;
     const eventUuid = "123e4567-e89b-42d3-a456-426614174000";
 
     const r = await fetch(`${base}/click?ct=ck&event_uuid=${eventUuid}`,
@@ -88,7 +88,7 @@ describe("Loopback", () => {
       getCurrentAd: () => null,
     });
     const { port, token } = await lb.start();
-    const base = `http://127.0.0.1:${port}/vibe-ads/${token}`;
+    const base = `http://127.0.0.1:${port}/gptw/${token}`;
     for (const s of ["overlay", "banner", "codex_overlay", "statusline"]) {
       const r = await fetch(`${base}/click?ct=ck&corr=cx&surface=${s}`,
         { method: "POST" });
@@ -113,7 +113,7 @@ describe("Loopback", () => {
       getCurrentAd: () => null,
     });
     const { port, token } = await lb.start();
-    const base = `http://127.0.0.1:${port}/vibe-ads/${token}`;
+    const base = `http://127.0.0.1:${port}/gptw/${token}`;
     const r = await fetch(`${base}/click?ct=ck&surface=javascript:alert(1)`,
       { method: "POST" });
     expect(r.status).toBe(204);
@@ -131,7 +131,7 @@ describe("Loopback", () => {
       getCurrentAd: () => null,
     });
     const { port, token } = await lb.start();
-    const base = `http://127.0.0.1:${port}/vibe-ads/${token}`;
+    const base = `http://127.0.0.1:${port}/gptw/${token}`;
 
     const r = await fetch(
       `${base}/view_threshold_met?surface=overlay&visible_ms=15100&session=session123&event_uuid=123e4567-e89b-42d3-a456-426614174000`,
@@ -156,7 +156,7 @@ describe("Loopback", () => {
   it("answers the CORS preflight so the vscode-webview origin can POST", async () => {
     lb = new Loopback({ onEvent: () => {}, onClick: () => {}, getActivity: () => ({}), getCurrentAd: () => null });
     const { port, token } = await lb.start();
-    const base = `http://127.0.0.1:${port}/vibe-ads/${token}`;
+    const base = `http://127.0.0.1:${port}/gptw/${token}`;
 
     // The block's dlog POST sends content-type: application/json, which makes
     // the webview fire an OPTIONS preflight first. It must succeed with ACAO.
@@ -175,14 +175,14 @@ describe("Loopback", () => {
       getCurrentAd: () => null,
     });
     const { port, token } = await lb.start();
-    const base = `http://127.0.0.1:${port}/vibe-ads/${token}`;
+    const base = `http://127.0.0.1:${port}/gptw/${token}`;
 
     const act = await fetch(`${base}/activity`);
     expect(act.headers.get("access-control-allow-origin")).toBe("*");
     const imp = await fetch(`${base}/impression_rendered`, { method: "POST" });
     expect(imp.headers.get("access-control-allow-origin")).toBe("*");
     // even a 404 must carry it (a preflight to an unknown path still needs it)
-    const miss = await fetch(`http://127.0.0.1:${port}/vibe-ads/WRONG/x`);
+    const miss = await fetch(`http://127.0.0.1:${port}/gptw/WRONG/x`);
     expect(miss.status).toBe(404);
     expect(miss.headers.get("access-control-allow-origin")).toBe("*");
   });
@@ -205,7 +205,7 @@ describe("Loopback", () => {
         iconUrl: "", adId: "a", campaignId: "a" }),
     });
     const { port, token } = await lb.start();
-    const base = `http://127.0.0.1:${port}/vibe-ads/${token}`;
+    const base = `http://127.0.0.1:${port}/gptw/${token}`;
     expect((await (await fetch(`${base}/ad`)).json()).adId).toBe("a");
     lb.setHandlers({
       onEvent: (k) => seen.push(`b:${k}`),

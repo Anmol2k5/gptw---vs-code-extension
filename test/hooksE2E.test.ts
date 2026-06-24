@@ -1,6 +1,6 @@
 // Hook-driven end-to-end: spins up the real activate() pipeline (auth →
 // portfolio → ad → loopback → CC adapter → timers → CLI sync), then drives
-// `kickbacks.test.*` through the mock vscode dispatcher to exercise the
+// `gptw.test.*` through the mock vscode dispatcher to exercise the
 // whole metric/click/state surface. Hermetic: every network call is captured
 // by the fetch stub, every command goes through the real registerCommand /
 // executeCommand path on the mock. No real install touched.
@@ -11,10 +11,22 @@ import { join } from "node:path";
 
 // The global setup mock at test/setup.ts already returns testHooksEnabled:
 // true, debugEnabled: false. That gives the test hooks a register-and-fire
-// path without polluting the developer's ~/.vibe-ads/debug.log.
+// path without polluting the developer's ~/.gptw/debug.log.
 import { activate, deactivate, __wireForTest } from "../src/extension";
-import { makeContext, secrets, _opened, _shown, _openedDocs, commands }
+import { makeContext, secrets, _opened, _shown, _openedDocs }
   from "./mocks/vscode";
+
+let activateFn = activate;
+let deactivateFn = deactivate;
+let wireForTestFn = __wireForTest;
+let vsc: any = { commands: { _handlers: new Map(), _executed: [] } };
+
+const proxyCommands = {
+  get _handlers() { return vsc.commands._handlers; },
+  get _executed() { return vsc.commands._executed; },
+  executeCommand(id: string, ...args: any[]) { return vsc.commands.executeCommand(id, ...args); }
+};
+const commands = proxyCommands;
 
 const AD = {
   ad_id: "ad-e2e", campaign_id: "camp-e2e", title_text: "Acme - faster CI",
@@ -90,22 +102,22 @@ async function boot(opts: { viewThresholdSeconds?: number;
   process.env.USERPROFILE = home;
   const adapter = mkAdapter();
   const statusBar = { set: vi.fn(), dispose: vi.fn() };
-  __wireForTest({ adapter, statusBar });
+  wireForTestFn({ adapter, statusBar });
   const fetched = stubFetch(opts);
-  const ctx = makeContext();
+  const ctx = vsc.makeContext();
   // Pre-seed an access token via the ext-host secret store. AuthClient's
   // loadCached() reads ctx.secrets first; this gets us "signed in" without
   // driving the broker poll loop and keeps every test ≤ a few hundred ms.
-  await ctx.secrets.store("kickbacks.access", "AT-E2E");
-  await ctx.secrets.store("kickbacks.refresh", "RT-E2E");
-  await ctx.secrets.store("kickbacks.clientId", "CID-E2E");
-  await activate(ctx as never);
+  await ctx.secrets.store("gptw.access", "AT-E2E");
+  await ctx.secrets.store("gptw.refresh", "RT-E2E");
+  await ctx.secrets.store("gptw.clientId", "CID-E2E");
+  await activateFn(ctx as never);
   return {
     home, adapter, statusBar, ctx, fetched,
     metricsPosts: () => fetched.calls.filter(
       (c) => c.url.endsWith("/v1/metrics")),
     async dispose() {
-      await deactivate();
+      await deactivateFn();
       if (prevHome !== undefined) process.env.HOME = prevHome;
       else delete process.env.HOME;
       if (prevUser !== undefined) process.env.USERPROFILE = prevUser;
@@ -115,19 +127,25 @@ async function boot(opts: { viewThresholdSeconds?: number;
   };
 }
 
-beforeEach(() => {
-  secrets.clear();
-  commands._handlers.clear();
-  commands._executed.length = 0;
-  _opened.length = 0;
-  _shown.length = 0;
-  _openedDocs.length = 0;
-  __wireForTest({});
+beforeEach(async () => {
+  vi.resetModules();
+  const ext = await import("../src/extension");
+  activateFn = ext.activate;
+  deactivateFn = ext.deactivate;
+  wireForTestFn = ext.__wireForTest;
+  vsc = await import("./mocks/vscode");
+  vsc.secrets.clear();
+  vsc.commands._handlers.clear();
+  vsc.commands._executed.length = 0;
+  vsc._opened.length = 0;
+  vsc._shown.length = 0;
+  vsc._openedDocs.length = 0;
+  wireForTestFn({});
 });
 
 afterEach(() => { vi.unstubAllGlobals(); });
 
-describe("hooks E2E — every kickbacks.test.* command drives the real lifecycle",
+describe("hooks E2E — every gptw.test.* command drives the real lifecycle",
   () => {
 
   it("fireImpressionRendered → one POST /v1/metrics with the loaded ad,"
@@ -136,7 +154,7 @@ describe("hooks E2E — every kickbacks.test.* command drives the real lifecycle
       const env = await boot();
       try {
         const r = await commands.executeCommand(
-          "kickbacks.test.fireImpressionRendered") as { ok: boolean; sent: unknown };
+          "gptw.test.fireImpressionRendered") as { ok: boolean; sent: unknown };
         expect(r.ok).toBe(true);
         const metricPosts = env.metricsPosts();
         expect(metricPosts).toHaveLength(1);
@@ -149,7 +167,7 @@ describe("hooks E2E — every kickbacks.test.* command drives the real lifecycle
         });
         expect(metricPosts[0].headers["X-Vibe-Corr"]).toBeTypeOf("string");
         const snap = await commands.executeCommand(
-          "kickbacks.test.getState") as { lastEvents: { event: string }[] };
+          "gptw.test.getState") as { lastEvents: { event: string }[] };
         expect(snap.lastEvents.some((e) => e.event === "impression_rendered")).toBe(true);
       } finally { await env.dispose(); }
     });
@@ -162,10 +180,10 @@ describe("hooks E2E — every kickbacks.test.* command drives the real lifecycle
         const surfaces = ["overlay", "banner", "codex_overlay", "statusline"] as const;
         for (const surface of surfaces) {
           await commands.executeCommand(
-            "kickbacks.test.fireImpressionRendered", { surface });
+            "gptw.test.fireImpressionRendered", { surface });
           await commands.executeCommand(
-            "kickbacks.test.fireImpressionViewable", { surface });
-          await commands.executeCommand("kickbacks.test.fireClick", { surface });
+            "gptw.test.fireImpressionViewable", { surface });
+          await commands.executeCommand("gptw.test.fireClick", { surface });
         }
         const posts = env.metricsPosts();
         expect(posts).toHaveLength(12);
@@ -185,7 +203,7 @@ describe("hooks E2E — every kickbacks.test.* command drives the real lifecycle
       const env = await boot({ viewThresholdSeconds: 20 });
       try {
         const r = await commands.executeCommand(
-          "kickbacks.test.fireViewThresholdMet") as { ok: boolean };
+          "gptw.test.fireViewThresholdMet") as { ok: boolean };
         expect(r.ok).toBe(true);
         const post = env.metricsPosts()[0];
         expect(post.body).toMatchObject({
@@ -204,8 +222,8 @@ describe("hooks E2E — every kickbacks.test.* command drives the real lifecycle
     async () => {
       const env = await boot();
       try {
-        await commands.executeCommand("kickbacks.test.fireImpressionRendered");
-        await commands.executeCommand("kickbacks.test.fireImpressionRendered");
+        await commands.executeCommand("gptw.test.fireImpressionRendered");
+        await commands.executeCommand("gptw.test.fireImpressionRendered");
         expect(env.metricsPosts()).toHaveLength(2);
       } finally { await env.dispose(); }
     });
@@ -214,7 +232,7 @@ describe("hooks E2E — every kickbacks.test.* command drives the real lifecycle
     const env = await boot();
     try {
       const s = await commands.executeCommand(
-        "kickbacks.test.getState") as {
+        "gptw.test.getState") as {
           enabled: boolean; signedIn: boolean; killed: boolean;
           ad: { adId: string } | null; loopback: { port: number } | null;
           viewThresholdMs: number };
@@ -236,16 +254,16 @@ describe("hooks E2E — every kickbacks.test.* command drives the real lifecycle
     async () => {
       const env = await boot();
       try {
-        await commands.executeCommand("kickbacks.test.fireImpressionRendered");
-        await commands.executeCommand("kickbacks.test.fireImpressionViewable");
-        await commands.executeCommand("kickbacks.test.fireClick");
-        await commands.executeCommand("kickbacks.test.clearEventLog");
+        await commands.executeCommand("gptw.test.fireImpressionRendered");
+        await commands.executeCommand("gptw.test.fireImpressionViewable");
+        await commands.executeCommand("gptw.test.fireClick");
+        await commands.executeCommand("gptw.test.clearEventLog");
         const before = await commands.executeCommand(
-          "kickbacks.test.getState") as { lastEvents: unknown[] };
+          "gptw.test.getState") as { lastEvents: unknown[] };
         expect(before.lastEvents).toHaveLength(0);
-        await commands.executeCommand("kickbacks.test.fireViewTick");
+        await commands.executeCommand("gptw.test.fireViewTick");
         const after = await commands.executeCommand(
-          "kickbacks.test.getState") as { lastEvents: { event: string }[] };
+          "gptw.test.getState") as { lastEvents: { event: string }[] };
         expect(after.lastEvents).toHaveLength(1);
         expect(after.lastEvents[0].event).toBe("view_tick");
       } finally { await env.dispose(); }
@@ -258,7 +276,7 @@ describe("hooks E2E — every kickbacks.test.* command drives the real lifecycle
         const before = env.fetched.calls.filter(
           (c) => c.url.includes("/v1/portfolio")).length;
         const got = await commands.executeCommand(
-          "kickbacks.test.refreshPortfolio") as { adId: string } | null;
+          "gptw.test.refreshPortfolio") as { adId: string } | null;
         expect(got?.adId).toBe("ad-e2e");
         const after = env.fetched.calls.filter(
           (c) => c.url.includes("/v1/portfolio")).length;
@@ -271,7 +289,7 @@ describe("hooks E2E — every kickbacks.test.* command drives the real lifecycle
       const env = await boot();
       try {
         const e = await commands.executeCommand(
-          "kickbacks.test.refreshEarnings") as
+          "gptw.test.refreshEarnings") as
           { lifetimeUsd: string; todayUsd: string } | null;
         expect(e).toEqual({ lifetimeUsd: "42.00", todayUsd: "1.50" });
       } finally { await env.dispose(); }
@@ -283,11 +301,11 @@ describe("hooks E2E — every kickbacks.test.* command drives the real lifecycle
       const env = await boot({ adOverride: null });
       try {
         const noAd = await commands.executeCommand(
-          "kickbacks.test.fireImpressionRendered") as { ok: boolean; reason?: string };
+          "gptw.test.fireImpressionRendered") as { ok: boolean; reason?: string };
         expect(noAd.ok).toBe(false);
         expect(noAd.reason).toMatch(/no ad/i);
         const withOverride = await commands.executeCommand(
-          "kickbacks.test.fireImpressionRendered",
+          "gptw.test.fireImpressionRendered",
           { adId: "ad-X", campaignId: "camp-X" }) as { ok: boolean };
         expect(withOverride.ok).toBe(true);
         const post = env.metricsPosts()[0];

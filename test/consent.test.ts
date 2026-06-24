@@ -93,7 +93,7 @@ describe("maybePromptForConsent", () => {
   it("does not re-prompt if globalState already marked shown for this version", async () => {
     const client = new ConsentClient("http://x", () => "tok", makeFetch({ ok: true, json: async () => baseState }));
     const vsc = makeVsc();
-    const ctx = makeCtx({ "vibe-ads.consent.promptShownForVersion": "2026-05-17" });
+    const ctx = makeCtx({ "gptw.consent.promptShownForVersion": "2026-05-17" });
     await maybePromptForConsent({ client, ctx, vsc });
     expect(vsc.window.showInformationMessage).not.toHaveBeenCalled();
   });
@@ -105,7 +105,7 @@ describe("maybePromptForConsent", () => {
     await maybePromptForConsent({ client, ctx, vsc });
     expect(vsc.window.showInformationMessage).toHaveBeenCalledOnce();
     // dismissed by default → globalState marks shown for this version
-    expect(ctx._store.get("vibe-ads.consent.promptShownForVersion")).toBe("2026-05-17");
+    expect(ctx._store.get("gptw.consent.promptShownForVersion")).toBe("2026-05-17");
   });
 
   it("Agree path POSTs and marks shown only after success", async () => {
@@ -117,7 +117,7 @@ describe("maybePromptForConsent", () => {
     vsc.window.showInformationMessage = vi.fn(async () => "Agree") as any;
     const ctx = makeCtx();
     await maybePromptForConsent({ client, ctx, vsc });
-    expect(ctx._store.get("vibe-ads.consent.promptShownForVersion")).toBe("2026-05-17");
+    expect(ctx._store.get("gptw.consent.promptShownForVersion")).toBe("2026-05-17");
   });
 
   it("Privacy Policy path opens URL and does NOT mark shown", async () => {
@@ -128,6 +128,6 @@ describe("maybePromptForConsent", () => {
     await maybePromptForConsent({ client, ctx, vsc });
     expect(vsc.env.openExternal).toHaveBeenCalledOnce();
     // Not marked — so next session re-surfaces (gentle, not pushy)
-    expect(ctx._store.has("vibe-ads.consent.promptShownForVersion")).toBe(false);
+    expect(ctx._store.has("gptw.consent.promptShownForVersion")).toBe(false);
   });
 });

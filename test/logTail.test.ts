@@ -13,7 +13,7 @@ const asst = (blocks: object[], stop: string | null) => ({
   type: "assistant", timestamp: "2026-05-16T22:54:24.104Z",
   message: { role: "assistant", stop_reason: stop, content: blocks },
 });
-const tmp = () => join(mkdtempSync(join(tmpdir(), "vibe-ads-log-")), "s.jsonl");
+const tmp = () => join(mkdtempSync(join(tmpdir(), "gptw-log-")), "s.jsonl");
 
 describe("LogTail (JSONL)", () => {
   it("returns null when no log file (best-effort, never throws)", () => {
@@ -118,7 +118,7 @@ function backdate(f: string, ms: number): void {
 // .jsonl while the pinned one merely goes quiet. The pin must not be forever.
 describe("LogTail re-resolution (new-session adoption)", () => {
   it("adopts a newer transcript once the pinned one goes idle-stale", () => {
-    const dir = mkdtempSync(join(tmpdir(), "vibe-ads-log-"));
+    const dir = mkdtempSync(join(tmpdir(), "gptw-log-"));
     const a = join(dir, "old-session.jsonl");
     const b = join(dir, "new-session.jsonl");
     writeFileSync(a, jsonl([

@@ -26,6 +26,7 @@
   // reach the loopback on VS Code Remote/Server (raw 127.0.0.1 there is the
   // CLIENT, not the extension host). Falls back to local 127.0.0.1.
   var BASE = __GPTW_BASE__ || ("http://127.0.0.1:" + PORT + "/gptw/" + LBTOKEN);
+  var THEME_KIND = __GPTW_THEME_KIND__;
   function fmtElapsed(ms) { return (ms / 1000).toFixed(1) + "s"; }
   // 0..5 dots (6 frames). Advance is slowed via the render-loop cadence.
   function ellipsis(frame) {
@@ -763,11 +764,14 @@
       // earlier "box flashes over the input" concern is solved separately
       // by visibility:hidden until the FIRST placeOverlay sets real coords
       // — so opaque is safe AND the flash is gone.
+      var themeBorder = THEME_KIND === "highContrast"
+        ? "border:1px solid var(--vscode-focusBorder,#6fc3df);"
+        : "border:1px solid transparent;";
       overlay.style.cssText =
         "position:fixed;z-index:2147483646;pointer-events:auto;" +
         "display:flex;align-items:center;box-sizing:border-box;" +
-        "overflow:hidden;white-space:nowrap;visibility:hidden;background:" +
-        surfaceBg(row);
+        "overflow:hidden;white-space:nowrap;visibility:hidden;" +
+        themeBorder + "background:" + surfaceBg(row);
       try { (document.body || document.documentElement).appendChild(overlay); }
       catch (e) { /* body not ready yet — retried next tick */ }
       return overlay;

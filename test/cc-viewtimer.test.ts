@@ -31,19 +31,20 @@ const ASSET = readFileSync(
 
 function preparedAsset(opts: { bannerOn: boolean }): string {
   const subs: Record<string, string> = {
-    __VIBE_ADS_TIER__: "3",
-    __VIBE_ADS_AD__: JSON.stringify("Acme deploys faster than your CI"),
-    __VIBE_ADS_ICON__: JSON.stringify("icon.a"),
-    __VIBE_ADS_PORT__: "5555",
-    __VIBE_ADS_LBTOKEN__: JSON.stringify("lt"),
-    __VIBE_ADS_CLICKTOKEN__: JSON.stringify("ck"),
-    __VIBE_ADS_BASE__: JSON.stringify("http://127.0.0.1:5555/vibe-ads/lt"),
-    __VIBE_ADS_DEBUG__: "false",
-    __VIBE_ADS_ICON_URL__: JSON.stringify(""),
-    __VIBE_ADS_CLICKURL__: JSON.stringify("https://acme.example/lp"),
-    __VIBE_ADS_BANNER_ON__: opts.bannerOn ? "true" : "false",
-    __VIBE_ADS_CORR__: JSON.stringify("ad1.abcd"),
-    __VIBE_ADS_VIEW_THRESHOLD_MS__: "15000",
+    __GPTW_TIER__: "3",
+    __GPTW_AD__: JSON.stringify("Acme deploys faster than your CI"),
+    __GPTW_ICON__: JSON.stringify("icon.a"),
+    __GPTW_PORT__: "5555",
+    __GPTW_LBTOKEN__: JSON.stringify("lt"),
+    __GPTW_CLICKTOKEN__: JSON.stringify("ck"),
+    __GPTW_BASE__: JSON.stringify("http://127.0.0.1:5555/gptw/lt"),
+    __GPTW_DEBUG__: "false",
+    __GPTW_ICON_URL__: JSON.stringify(""),
+    __GPTW_CLICKURL__: JSON.stringify("https://acme.example/lp"),
+    __GPTW_BANNER_ON__: opts.bannerOn ? "true" : "false",
+    __GPTW_CORR__: JSON.stringify("ad1.abcd"),
+    __GPTW_THEME_KIND__: JSON.stringify("dark"),
+    __GPTW_VIEW_THRESHOLD_MS__: "15000",
   };
   let src = ASSET;
   for (const [k, v] of Object.entries(subs)) src = src.split(k).join(v);
@@ -126,7 +127,7 @@ describe("CC view-timer billing fixes (audit #8/#15/#23)", () => {
     const h = makeHarness({ bannerOn: false });
     const sp = addSpinner(h.doc);
     await sleep(400);                       // evaluate() paints + viewShow
-    expect(h.doc.querySelector('[data-vibe-ads-overlay="1"]')).toBeTruthy();
+    expect(h.doc.querySelector('[data-gptw-overlay="1"]')).toBeTruthy();
 
     h.advance(5_100); sp.spin();            // cross one tick boundary, active
     await sleep(500);
@@ -137,7 +138,7 @@ describe("CC view-timer billing fixes (audit #8/#15/#23)", () => {
     // row goes stale past GRACE_MS.
     h.advance(2_000);
     await sleep(500);
-    expect(h.doc.querySelector('[data-vibe-ads-overlay="1"]')).toBeNull();
+    expect(h.doc.querySelector('[data-gptw-overlay="1"]')).toBeNull();
     const ticksAtDrop = count(h.pings, OVERLAY_TICK);
     const errsAtDrop = count(h.pings, ERROR);
 
@@ -153,7 +154,7 @@ describe("CC view-timer billing fixes (audit #8/#15/#23)", () => {
     // visible_ms=5000, not a carried-over total.
     sp.spin();
     await sleep(400);
-    expect(h.doc.querySelector('[data-vibe-ads-overlay="1"]')).toBeTruthy();
+    expect(h.doc.querySelector('[data-gptw-overlay="1"]')).toBeTruthy();
     h.advance(5_100); sp.spin();
     await sleep(500);
     const ticks = h.pings.filter((u) => OVERLAY_TICK.test(u));
@@ -168,7 +169,7 @@ describe("CC view-timer billing fixes (audit #8/#15/#23)", () => {
     const h = makeHarness({ bannerOn: true });
     addBanner(h.doc);
     await sleep(1_300);                     // banner loop is 1s
-    expect(h.doc.querySelector('[data-vibe-ads-banner="1"]')).toBeTruthy();
+    expect(h.doc.querySelector('[data-gptw-banner="1"]')).toBeTruthy();
 
     // Visible-at-idle billing is BY DESIGN and must keep working.
     h.advance(5_100);
@@ -179,7 +180,7 @@ describe("CC view-timer billing fixes (audit #8/#15/#23)", () => {
     const sp = addSpinner(h.doc);
     await sleep(1_300);                     // ≥1 banner tick: hide + end
     const bEl = h.doc.querySelector(
-      '[data-vibe-ads-banner="1"]') as HTMLElement;
+      '[data-gptw-banner="1"]') as HTMLElement;
     expect(bEl.style.display).toBe("none");
     const hiddenAt = count(h.pings, BANNER_TICK);
 

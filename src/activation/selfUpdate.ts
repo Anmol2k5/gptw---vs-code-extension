@@ -88,7 +88,7 @@ export function setupSelfUpdate(
 
   const installVsix = async (vsix: ArrayBuffer): Promise<void> => {
     const p = join(tmpdir(), `gptw-update-${Date.now()}.vsix`);
-    writeFileSync(p, Buffer.from(vsix));
+    writeFileSync(p, new Uint8Array(Buffer.from(vsix)));
     await vscode.commands.executeCommand(
       "workbench.extensions.installExtension", vscode.Uri.file(p));
     // Re-arm injection for the new build, but PRESERVE a deliberate user
@@ -172,7 +172,7 @@ export function setupSelfUpdate(
     recordLkg: (v, vsix) => {
       try {
         const lkgPath = join(tmpdir(), `gptw-lkg-${v}.vsix`);
-        writeFileSync(lkgPath, vsix);
+        writeFileSync(lkgPath, new Uint8Array(vsix));
         void ctx.globalState.update("gptw.update.lkg", { v, path: lkgPath });
       } catch { /* best-effort */ }
     },

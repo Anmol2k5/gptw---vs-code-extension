@@ -42,7 +42,7 @@ describe("SecretVault — OS-native at-rest with a universal plaintext floor", (
     const run: Run = vi.fn(async (cmd, _args, opts) => {
       expect(/powershell|pwsh/i.test(cmd)).toBe(true);
       const script = _args.join(" ");
-      const inp = opts?.env?.VIBE_ADS_SECRET ?? "";
+      const inp = opts?.env?.GPTW_SECRET ?? "";
       // PS_UNPROTECT runs FromBase64String first, so order matters: a value
       // that is valid base64 is treated as ciphertext to decrypt.
       if (/Unprotect/.test(script)) {

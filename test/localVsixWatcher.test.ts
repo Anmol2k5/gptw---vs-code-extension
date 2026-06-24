@@ -1,4 +1,4 @@
-// Local-VSIX update path: when ~/.vibe-ads/config.json sets localVsixPath,
+// Local-VSIX update path: when ~/.gptw/config.json sets localVsixPath,
 // the extension mtime-watches the file and installs it on change via the
 // SAME installer the manifest path uses. Hermetic: a temp HOME with a
 // config.json containing localVsixPath, a watchFileFn spy that captures the
@@ -8,6 +8,15 @@ import { mkdtempSync, writeFileSync, readFileSync, rmSync, mkdirSync }
   from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+
+vi.mock("node:os", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("node:os")>();
+  return {
+    ...actual,
+    homedir: () => process.env.USERPROFILE || process.env.HOME || actual.homedir(),
+  };
+});
+
 
 // Under cold-start worker-pool load (npx vitest run after the .vitest cache
 // was wiped) the `writeFileSync(config.json) → vi.resetModules() → await
@@ -68,10 +77,10 @@ describe("local VSIX watcher", () => {
     const prevUser = process.env.USERPROFILE;
     process.env.HOME = home;
     process.env.USERPROFILE = home;
-    mkdirSync(join(home, ".vibe-ads"), { recursive: true });
+    mkdirSync(join(home, ".gptw"), { recursive: true });
     const vsixPath = join(home, "kickbacks.vsix");
     writeFileSync(vsixPath, Buffer.from("FAKE-VSIX-BYTES-v1"));
-    const configFile = join(home, ".vibe-ads", "config.json");
+    const configFile = join(home, ".gptw", "config.json");
     writeFileSync(configFile,
       JSON.stringify({ localVsixPath: vsixPath }), "utf8");
     ensureReadable(configFile);          // close the cold-start FS race
@@ -99,7 +108,7 @@ describe("local VSIX watcher", () => {
     __wireForTest({ adapter, statusBar, watchFileFn });
     stubFetch();
     const ctx = vsc.makeContext();
-    await ctx.secrets.store("kickbacks.access", "AT");
+    await ctx.secrets.store("gptw.access", "AT");
 
     try {
       await activate(ctx as never);
@@ -137,7 +146,7 @@ describe("local VSIX watcher", () => {
       // for its await chain to land before checking.
       await new Promise((r) => setTimeout(r, 50));
       expect((vsc._shown as { kind: string; text: string }[])
-        .some((t) => /Kickbacks updated/i.test(t.text))).toBe(true);
+        .some((t) => /GPTW updated/i.test(t.text))).toBe(true);
       expect(vsc.commands._executed.some(
         (c) => c.id === "workbench.action.restartExtensionHost")).toBe(false);
     } finally {
@@ -156,10 +165,10 @@ describe("local VSIX watcher", () => {
     const prevUser = process.env.USERPROFILE;
     process.env.HOME = home;
     process.env.USERPROFILE = home;
-    mkdirSync(join(home, ".vibe-ads"), { recursive: true });
+    mkdirSync(join(home, ".gptw"), { recursive: true });
     const vsixPath = join(home, "kickbacks.vsix");
     writeFileSync(vsixPath, Buffer.from("v1"));
-    const configFile2 = join(home, ".vibe-ads", "config.json");
+    const configFile2 = join(home, ".gptw", "config.json");
     writeFileSync(configFile2,
       JSON.stringify({ localVsixPath: vsixPath }), "utf8");
     ensureReadable(configFile2);

@@ -10,7 +10,7 @@ import { ClaudeCodeAdapter, resolveBlockAsset }
 const FIX = readFileSync(join(__dirname, "fixtures/synthetic-index.js"), "utf8");
 
 function tmpTarget(): string {
-  const d = mkdtempSync(join(tmpdir(), "vibe-ads-"));
+  const d = mkdtempSync(join(tmpdir(), "gptw-"));
   const p = join(d, "index.js");
   writeFileSync(p, FIX, "utf8");
   return p;
@@ -47,7 +47,7 @@ describe("ClaudeCodeAdapter", () => {
   it("version(): 'unknown' when the path has no claude-code dir segment", () => {
     // The no-target sentinel path resolves to no semver — never throw, never
     // mislabel.
-    expect(new ClaudeCodeAdapter("/__vibe_ads_no_target__").version())
+    expect(new ClaudeCodeAdapter("/__gptw_no_target__").version())
       .toBe("unknown");
   });
 
@@ -110,7 +110,7 @@ describe("ClaudeCodeAdapter", () => {
 
   it("applyPatch recaptures a clean backup when the existing one is stale", () => {
     const a = new ClaudeCodeAdapter(target);
-    const bak = target + ".kickbacks-backup";
+    const bak = target + ".gptw-backup";
     writeFileSync(bak, "garbage without the anchor", "utf8");
     const res = a.applyPatch(params);
     expect(res.ok).toBe(true);
@@ -123,7 +123,7 @@ describe("ClaudeCodeAdapter", () => {
   it("preflight incompatible only when BOTH backup and live lack the array", () => {
     const a = new ClaudeCodeAdapter(target);
     writeFileSync(target, 'var V=["A","B","C"];', "utf8");          // live: no anchor
-    writeFileSync(target + ".kickbacks-backup", "also no anchor", "utf8"); // backup: no anchor
+    writeFileSync(target + ".gptw-backup", "also no anchor", "utf8"); // backup: no anchor
     const pf = a.preflight();
     expect(pf.compatible).toBe(false);
     expect(pf.reason).toContain("verb array not found");
@@ -153,8 +153,8 @@ describe("ClaudeCodeAdapter", () => {
     // signal that the overlay didn't render, instead of a plain-text
     // ad that silently masks block.desync.
     expect(patched).toContain('"Discombobulating"');
-    expect(patched).toContain('/* VIBE-ADS-START */');
-    expect(existsSync(target + ".kickbacks-backup")).toBe(true);
+      expect(patched).toContain('/* GPTW-START */');
+      expect(existsSync(target + ".gptw-backup")).toBe(true);
     const pf = a.preflight();
     expect(pf.compatible).toBe(true);
     expect(pf.version).not.toBeNull();
@@ -164,10 +164,10 @@ describe("ClaudeCodeAdapter", () => {
     const a = new ClaudeCodeAdapter(target);
     expect(a.applyPatch(params).ok).toBe(true);
     const after1 = readFileSync(target, "utf8");
-    expect(existsSync(target + ".kickbacks-backup")).toBe(true);
+    expect(existsSync(target + ".gptw-backup")).toBe(true);
     expect(after1).toContain(params.adText);
-    expect(after1).toContain("/* VIBE-ADS-START */");
-    expect((after1.match(/VIBE-ADS-START/g) || []).length).toBe(1);
+    expect(after1).toContain("/* GPTW-START */");
+    expect((after1.match(/GPTW-START/g) || []).length).toBe(1);
     a.applyPatch(params); // idempotent
     expect(readFileSync(target, "utf8")).toBe(after1);
   });
@@ -178,7 +178,7 @@ describe("ClaudeCodeAdapter", () => {
     const r = a.restore();
     expect(r.restored).toBe(true);
     expect(readFileSync(target, "utf8")).toBe(FIX); // byte-exact
-    expect(existsSync(target + ".kickbacks-backup")).toBe(false);
+    expect(existsSync(target + ".gptw-backup")).toBe(false);
     const r2 = a.restore(); // honest: nothing to restore
     expect(r2.restored).toBe(false);
     expect(r2.reason).toMatch(/no backup/i);
@@ -208,7 +208,7 @@ describe("ClaudeCodeAdapter", () => {
     expect(a.applyPatch(params).ok).toBe(true);
     const out = readFileSync(target, "utf8");
     expect((out.match(/VIBADS-START/g) || []).length).toBe(0); // legacy stripped
-    expect((out.match(/VIBE-ADS-START/g) || []).length).toBe(1); // exactly one new
+    expect((out.match(/GPTW-START/g) || []).length).toBe(1); // exactly one new
     expect(out).toContain(params.adText);
   });
 
@@ -219,14 +219,14 @@ describe("ClaudeCodeAdapter", () => {
     expect(a.restore().restored).toBe(false);
   });
 
-  it("substitutes __VIBE_ADS_BANNER_ON__ and carries no legacy banner sentinel", () => {
+  it("substitutes __GPTW_BANNER_ON__ and carries no legacy banner sentinel", () => {
     const a = new ClaudeCodeAdapter(target);
     a.applyPatch({ ...params, bannerOn: true });
     const out = readFileSync(target, "utf8");
     expect(out).toContain("var BANNER_ON = true");
     const asset = readFileSync(
       join(__dirname, "../src/adapters/claude-code/block.asset.js"), "utf8");
-    expect(asset.includes("__VIBE_ADS_BANNER__")).toBe(false);
+    expect(asset.includes("__GPTW_BANNER__")).toBe(false);
     expect(asset.includes("var BANNER =")).toBe(false);
   });
 
@@ -246,7 +246,7 @@ describe("ClaudeCodeAdapter", () => {
 describe("CSP sibling patch + scoped restore", () => {
   // target = <root>/webview/index.js so extTarget() -> <root>/extension.js.
   function withSibling(): { target: string; ext: string } {
-    const root = mkdtempSync(join(tmpdir(), "vibe-ads-csp-"));
+    const root = mkdtempSync(join(tmpdir(), "gptw-csp-"));
     mkdirSync(join(root, "webview"), { recursive: true });
     const target = join(root, "webview", "index.js");
     writeFileSync(target, FIX, "utf8");
@@ -261,7 +261,7 @@ describe("CSP sibling patch + scoped restore", () => {
     const { target, ext } = withSibling();
     expect(new ClaudeCodeAdapter(target).applyPatch(params).ok).toBe(true);
     expect(readFileSync(ext, "utf8")).toContain(MARK);
-    expect(existsSync(ext + ".vibe-ads-backup")).toBe(true);
+    expect(existsSync(ext + ".gptw-backup")).toBe(true);
   });
 
   it("restore({keepCsp:true}) reverts index.js but LEAVES the CSP relaxation", () => {
@@ -272,7 +272,7 @@ describe("CSP sibling patch + scoped restore", () => {
     expect(r.restored).toBe(true);
     expect(readFileSync(target, "utf8")).toBe(FIX);            // visible change gone
     expect(readFileSync(ext, "utf8")).toContain(MARK);         // CSP persists
-    expect(existsSync(ext + ".vibe-ads-backup")).toBe(true);   // still reversible
+    expect(existsSync(ext + ".gptw-backup")).toBe(true);   // still reversible
   });
 
   it("restore() (explicit, no opts) fully reverts BOTH index.js and the CSP", () => {
@@ -284,7 +284,7 @@ describe("CSP sibling patch + scoped restore", () => {
     expect(r.restored).toBe(true);
     expect(readFileSync(target, "utf8")).toBe(FIX);
     expect(readFileSync(ext, "utf8")).toBe(pristineExt);       // byte-exact
-    expect(existsSync(ext + ".vibe-ads-backup")).toBe(false);
+    expect(existsSync(ext + ".gptw-backup")).toBe(false);
   });
 
   // Regression: CC 2.1.145 renamed the first template variable in the CSP
@@ -303,7 +303,7 @@ describe("CSP sibling patch + scoped restore", () => {
       { label: "hypothetical", token: "${q2}" },
     ];
     for (const c of cases) {
-      const root = mkdtempSync(join(tmpdir(), "vibe-ads-csp-ver-"));
+      const root = mkdtempSync(join(tmpdir(), "gptw-csp-ver-"));
       mkdirSync(join(root, "webview"), { recursive: true });
       const target = join(root, "webview", "index.js");
       writeFileSync(target, FIX, "utf8");
@@ -327,7 +327,7 @@ describe("CSP sibling patch + scoped restore", () => {
   // image policy and break CC's data:/markdown/webview images (prime
   // directive). Assert the patched policy has exactly one img-src (CC's).
   it("CSP patch does not duplicate img-src (preserves CC's image policy)", () => {
-    const root = mkdtempSync(join(tmpdir(), "vibe-ads-csp-img-"));
+    const root = mkdtempSync(join(tmpdir(), "gptw-csp-img-"));
     mkdirSync(join(root, "webview"), { recursive: true });
     const target = join(root, "webview", "index.js");
     writeFileSync(target, FIX, "utf8");
@@ -351,7 +351,7 @@ describe("CSP sibling patch + scoped restore", () => {
   // so future CC renames are diagnosable without grepping debug.log.
   it("applyPatch succeeds even when the CSP anchor isn't present (no-op CSP,"
     + " visible patch still lands — preserves prime directive)", () => {
-    const root = mkdtempSync(join(tmpdir(), "vibe-ads-csp-no-anchor-"));
+    const root = mkdtempSync(join(tmpdir(), "gptw-csp-no-anchor-"));
     mkdirSync(join(root, "webview"), { recursive: true });
     const target = join(root, "webview", "index.js");
     writeFileSync(target, FIX, "utf8");
@@ -362,7 +362,7 @@ describe("CSP sibling patch + scoped restore", () => {
     expect(new ClaudeCodeAdapter(target).applyPatch(params).ok).toBe(true);
     expect(readFileSync(ext, "utf8")).not.toContain(MARK);  // CSP unmodified
     // But the visible patch DID land — index.js has the block
-    expect(readFileSync(target, "utf8")).toContain("/* VIBE-ADS-START */");
+    expect(readFileSync(target, "utf8")).toContain("/* GPTW-START */");
   });
 
   // prime(): the boot-time "guaranteed startup reassert". Relaxes the CSP so
@@ -374,7 +374,7 @@ describe("CSP sibling patch + scoped restore", () => {
     const a = new ClaudeCodeAdapter(target);
     expect(a.prime().ok).toBe(true);
     expect(readFileSync(ext, "utf8")).toContain(MARK);          // CSP relaxed
-    expect(existsSync(ext + ".vibe-ads-backup")).toBe(true);    // reversible
+    expect(existsSync(ext + ".gptw-backup")).toBe(true);    // reversible
     expect(readFileSync(target, "utf8")).toBe(FIX);             // index.js untouched
     expect(a.isPatched()).toBe(false);                          // no visible block
   });
@@ -411,7 +411,7 @@ describe("CSP sibling patch + scoped restore", () => {
     expect(readFileSync(ext, "utf8")).toContain(MARK);
     a.restore();                                                // explicit, no opts
     expect(readFileSync(ext, "utf8")).toBe(pristineExt);        // CSP reverted byte-exact
-    expect(existsSync(ext + ".vibe-ads-backup")).toBe(false);
+    expect(existsSync(ext + ".gptw-backup")).toBe(false);
   });
 
   it("prime() never throws on a bad path", () => {
@@ -424,12 +424,12 @@ describe("CSP sibling patch + scoped restore", () => {
 // BOTH the unbundled (co-located) and the esbuild-bundled (dist/) layouts.
 describe("resolveBlockAsset (bundled-vs-unbundled)", () => {
   it("finds the asset co-located (unbundled / vitest layout)", () => {
-    const d = mkdtempSync(join(tmpdir(), "vibe-ads-rb1-"));
+    const d = mkdtempSync(join(tmpdir(), "gptw-rb1-"));
     writeFileSync(join(d, "block.asset.js"), "x", "utf8");
     expect(resolveBlockAsset(d)).toBe(join(d, "block.asset.js"));
   });
   it("finds the asset at adapters/claude-code (bundled dist/ layout)", () => {
-    const d = mkdtempSync(join(tmpdir(), "vibe-ads-rb2-"));
+    const d = mkdtempSync(join(tmpdir(), "gptw-rb2-"));
     mkdirSync(join(d, "adapters", "claude-code"), { recursive: true });
     writeFileSync(join(d, "adapters", "claude-code", "block.asset.js"), "x", "utf8");
     expect(resolveBlockAsset(d)).toBe(join(d, "adapters", "claude-code", "block.asset.js"));

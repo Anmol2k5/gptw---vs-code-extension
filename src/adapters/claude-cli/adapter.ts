@@ -45,14 +45,14 @@ export class ClaudeCliStatuslineAdapter implements TargetAdapter {
   spinnerVerbsSupported = true;
 
   /** @param settingsPath absolute path to ~/.claude/settings.json. The home
-   *  dir (for ~/.vibe-ads) is its grandparent (<home>/.claude/settings.json). */
+   *  dir (for ~/.gptw) is its grandparent (<home>/.claude/settings.json). */
   constructor(settingsPath: string) {
     this.settings = resolve(settingsPath);
     this.home = dirname(dirname(this.settings));
   }
 
   private backupPath(): string { return this.settings + ".vibe-ads-backup"; }
-  private vibeDir(): string { return join(this.home, ".vibe-ads"); }
+  private vibeDir(): string { return join(this.home, ".gptw"); }
   private scriptPath(): string { return join(this.vibeDir(), SCRIPT_NAME); }
   private cachePath(): string { return join(this.vibeDir(), "cli-ad.json"); }
   private prevPath(): string { return join(this.vibeDir(), PREV_NAME); }

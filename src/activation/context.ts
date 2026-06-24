@@ -16,6 +16,7 @@ export interface ActivationContext {
   codexCliStatus: CodexCliWrapperAdapter | null;
   ccAdapter: TargetAdapter | null;
   codexAdapter: TargetAdapter | null;
+  opencodeAdapter: TargetAdapter | null;
   lastCliAdId: string | null;
   lastCliSpinnerAdId: string | null;
 }
@@ -31,6 +32,7 @@ export function createActivationContext(): ActivationContext {
     codexCliStatus: null,
     ccAdapter: null,
     codexAdapter: null,
+    opencodeAdapter: null,
     lastCliAdId: null,
     lastCliSpinnerAdId: null,
   };

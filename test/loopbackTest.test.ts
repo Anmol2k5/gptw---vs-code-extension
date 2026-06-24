@@ -1,5 +1,5 @@
 // /test/<name> driver routes on the loopback: lets external scripts (curl,
-// CI runners) fire every kickbacks.test.* hook against a running extension
+// CI runners) fire every gptw.test.* hook against a running extension
 // without going through VS Code's command dispatcher. The extension wires
 // these up in activate() (extension.ts) by passing `onTestRoute` to the
 // Loopback constructor; this suite drives the contract directly against a
@@ -68,7 +68,7 @@ async function makeServer(hooks: TestHooks): Promise<string> {
     onTestRoute: (n, p) => hooks.handleTestRoute(n, p),
   });
   const { port, token } = await lb.start();
-  return `http://127.0.0.1:${port}/vibe-ads/${token}`;
+  return `http://127.0.0.1:${port}/gptw/${token}`;
 }
 
 describe("loopback /test/<name> driver routes", () => {
@@ -178,7 +178,7 @@ describe("loopback /test/<name> driver routes", () => {
       });
       const { port, token } = await lb.start();
       const r = await fetch(
-        `http://127.0.0.1:${port}/vibe-ads/${token}/test/fireClick`);
+        `http://127.0.0.1:${port}/gptw/${token}/test/fireClick`);
       expect(r.status).toBe(404);
     });
 
@@ -200,7 +200,7 @@ describe("loopback /test/* gated off", () => {
       vi.resetModules();
       vi.doMock("../src/log", () => ({
         debugEnabled: () => false, dlog: () => {}, dlogRaw: () => {},
-        codexEnabled: () => false, testHooksEnabled: () => false,
+        codexEnabled: () => false, testHooksEnabled: () => !!(process.env.GPTW_TEST_HOOKS || process.env.KICKBACKS_TEST_HOOKS || process.env.VIBE_ADS_TEST_HOOKS),
         LOG_PATH: "/tmp/test-log",
       }));
       const { Loopback: L } = await import("../src/loopback");
@@ -223,7 +223,7 @@ describe("loopback /test/* gated off", () => {
       });
       const { port, token } = await lb.start();
       const r = await fetch(
-        `http://127.0.0.1:${port}/vibe-ads/${token}/test/fireClick`);
+        `http://127.0.0.1:${port}/gptw/${token}/test/fireClick`);
       expect(r.status).toBe(403);
       const body = await r.json() as { ok: boolean; reason: string };
       expect(body.ok).toBe(false);

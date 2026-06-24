@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { JSDOM, VirtualConsole } from "jsdom";
 
 // Regression coverage for the codex "frozen ads" fix (2026-06-11): the baked
-// __VIBE_ADS_AD__ was frozen for the life of the webview — rotation re-patched
+// __GPTW_AD__ was frozen for the life of the webview — rotation re-patched
 // the bundle on disk but a running Codex panel never re-read it, so users sat
 // on one creative (or the pre-inventory "Your ad here" placeholder) until a
 // full VS Code reload. The block now polls the loopback /ad every 10s with
@@ -28,19 +28,20 @@ const PAYLOAD_B = { adText: AD_B, clickUrl: URL_B, iconUrl: "",
 
 function preparedAsset(): string {
   const subs: Record<string, string> = {
-    __VIBE_ADS_AD__: JSON.stringify(AD_A),
-    __VIBE_ADS_PORT__: "5555",
-    __VIBE_ADS_LBTOKEN__: JSON.stringify("lt"),
-    __VIBE_ADS_BASE__: JSON.stringify("http://127.0.0.1:5555/vibe-ads/lt"),
-    __VIBE_ADS_CLICKTOKEN__: JSON.stringify("ck"),
-    __VIBE_ADS_CLICKURL__: JSON.stringify(URL_A),
-    __VIBE_ADS_CORR__: JSON.stringify("test.codex.poll"),
-    __VIBE_ADS_DEBUG__: "false",
+    __GPTW_AD__: JSON.stringify(AD_A),
+    __GPTW_PORT__: "5555",
+    __GPTW_LBTOKEN__: JSON.stringify("lt"),
+    __GPTW_BASE__: JSON.stringify("http://127.0.0.1:5555/gptw/lt"),
+    __GPTW_CLICKTOKEN__: JSON.stringify("ck"),
+    __GPTW_CLICKURL__: JSON.stringify(URL_A),
+    __GPTW_CORR__: JSON.stringify("test.codex.poll"),
+    __GPTW_THEME_KIND__: JSON.stringify("dark"),
+    __GPTW_DEBUG__: "false",
     // Large threshold so only the 5s view_tick cadence drives billing
     // assertions (threshold_met never fires inside these windows).
-    __VIBE_ADS_VIEW_THRESHOLD_MS__: "15000",
-    __VIBE_ADS_ARG__: "e",
-    __VIBE_ADS_JSX__: "d",
+    __GPTW_VIEW_THRESHOLD_MS__: "15000",
+    __GPTW_ARG__: "e",
+    __GPTW_JSX__: "d",
   };
   let src = ASSET;
   for (const [k, v] of Object.entries(subs)) src = src.split(k).join(v);
@@ -135,9 +136,9 @@ const TICK = /\/view_tick\?/;
 const RENDERED = /\/impression_rendered\?/;
 const ERROR = /\/error_impression\?/;
 const overlayOf = (doc: Document) =>
-  doc.querySelector('[data-vibe-ads="codex"]');
+  doc.querySelector('[data-gptw="codex"]');
 const anchorOf = (doc: Document) =>
-  doc.querySelector('[data-vibe-ads="codex"] a[data-vibe-ads-ad]') as
+  doc.querySelector('[data-gptw="codex"] a[data-gptw-ad]') as
     HTMLAnchorElement | null;
 
 describe("codex pollAd — live rotation adoption (frozen-ads fix)", () => {

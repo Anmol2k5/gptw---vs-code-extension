@@ -10,8 +10,31 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { activate, deactivate, __wireForTest } from "../src/extension";
 import { ConsentClient } from "../src/consent/client";
-import { makeContext, secrets, _opened, _shown, _openedDocs, commands, window }
+import { makeContext, secrets, _opened, _shown, _openedDocs }
   from "./mocks/vscode";
+
+let activateFn = activate;
+let deactivateFn = deactivate;
+let wireForTestFn = __wireForTest;
+let vsc: any = { window: { showInformationMessage: () => {} } };
+
+beforeEach(async () => {
+  vi.resetModules();
+  const ext = await import("../src/extension");
+  activateFn = ext.activate;
+  deactivateFn = ext.deactivate;
+  wireForTestFn = ext.__wireForTest;
+  vsc = await import("./mocks/vscode");
+  vsc.secrets.clear();
+  vsc.commands._handlers.clear();
+  vsc.commands._executed.length = 0;
+  vsc._opened.length = 0;
+  vsc._shown.length = 0;
+  vsc._openedDocs.length = 0;
+  wireForTestFn({});
+});
+
+afterEach(() => { vi.unstubAllGlobals(); });
 
 const mkAdapter = () => ({
   name: "claude-code" as const,
@@ -52,17 +75,6 @@ function stubFetch(opts: { hasAccepted?: boolean;
   return { f, calls };
 }
 
-beforeEach(() => {
-  secrets.clear();
-  commands._handlers.clear();
-  commands._executed.length = 0;
-  _opened.length = 0;
-  _shown.length = 0;
-  _openedDocs.length = 0;
-});
-
-afterEach(() => { vi.unstubAllGlobals(); });
-
 describe("consent flow — activate() wires maybePromptForConsent end-to-end", () => {
 
   it("user with stale tos_accepted_version sees the prompt and, on Agree,"
@@ -73,22 +85,22 @@ describe("consent flow — activate() wires maybePromptForConsent end-to-end", (
     process.env.HOME = home; process.env.USERPROFILE = home;
     const adapter = mkAdapter();
     const statusBar = { set: vi.fn(), dispose: vi.fn() };
-    __wireForTest({ adapter, statusBar });
+    wireForTestFn({ adapter, statusBar });
     const fetched = stubFetch({ hasAccepted: false });
     // Force the prompt to resolve to "Agree" without showing anything to a
     // real human. Restore the default in afterEach via vi.restoreAllMocks
     // is not needed — the mock module is process-shared and beforeEach
     // resets the _shown ring buffer.
-    const origShow = window.showInformationMessage;
-    window.showInformationMessage = (async (msg: unknown, ..._rest: unknown[]) => {
-      _shown.push({ kind: "info", text: String(msg) });
+    const origShow = vsc.window.showInformationMessage;
+    vsc.window.showInformationMessage = (async (msg: unknown, ..._rest: unknown[]) => {
+      vsc._shown.push({ kind: "info", text: String(msg) });
       return "Agree";
     }) as never;
-    const ctx = makeContext();
-    await ctx.secrets.store("kickbacks.access", "AT-CONSENT");
+    const ctx = vsc.makeContext();
+    await ctx.secrets.store("gptw.access", "AT-CONSENT");
 
     try {
-      await activate(ctx as never);
+      await activateFn(ctx as never);
       // maybePromptForConsent is fire-and-forget; drain a few ticks so the
       // GET → showInformationMessage → POST chain lands.
       await new Promise((r) => setTimeout(r, 50));
@@ -101,15 +113,15 @@ describe("consent flow — activate() wires maybePromptForConsent end-to-end", (
       expect(posts.length).toBe(1);
       expect(posts[0].headers.authorization).toBe("Bearer AT-CONSENT");
       // Prompt actually shown.
-      expect(_shown.some(
-        (s) => s.kind === "info" && /spinner/i.test(s.text))).toBe(true);
+      expect(vsc._shown.some(
+        (s: any) => s.kind === "info" && /spinner/i.test(s.text))).toBe(true);
       // Post-Agree, the SHOWN_KEY is persisted so we don't nag this session.
-      const stored = ctx.globalState.get<string>(
-        "vibe-ads.consent.promptShownForVersion");
+      const stored = ctx.globalState.get(
+        "gptw.consent.promptShownForVersion");
       expect(stored).toBe("v2");
     } finally {
-      window.showInformationMessage = origShow;
-      await deactivate();
+      vsc.window.showInformationMessage = origShow;
+      await deactivateFn();
       if (prevHome !== undefined) process.env.HOME = prevHome;
       else delete process.env.HOME;
       if (prevUser !== undefined) process.env.USERPROFILE = prevUser;
@@ -125,21 +137,21 @@ describe("consent flow — activate() wires maybePromptForConsent end-to-end", (
     process.env.HOME = home; process.env.USERPROFILE = home;
     const adapter = mkAdapter();
     const statusBar = { set: vi.fn(), dispose: vi.fn() };
-    __wireForTest({ adapter, statusBar });
+    wireForTestFn({ adapter, statusBar });
     const fetched = stubFetch({ hasAccepted: true });
-    const ctx = makeContext();
-    await ctx.secrets.store("kickbacks.access", "AT-CONSENT2");
+    const ctx = vsc.makeContext();
+    await ctx.secrets.store("gptw.access", "AT-CONSENT2");
 
     try {
-      await activate(ctx as never);
+      await activateFn(ctx as never);
       await new Promise((r) => setTimeout(r, 50));
       const posts = fetched.calls.filter(
         (c) => c.url.endsWith("/v1/me/consent") && c.method === "POST");
       expect(posts.length).toBe(0);
-      expect(_shown.some(
-        (s) => s.kind === "info" && /spinner/i.test(s.text))).toBe(false);
+      expect(vsc._shown.some(
+        (s: any) => s.kind === "info" && /spinner/i.test(s.text))).toBe(false);
     } finally {
-      await deactivate();
+      await deactivateFn();
       if (prevHome !== undefined) process.env.HOME = prevHome;
       else delete process.env.HOME;
       if (prevUser !== undefined) process.env.USERPROFILE = prevUser;
@@ -156,17 +168,17 @@ describe("consent flow — activate() wires maybePromptForConsent end-to-end", (
       process.env.HOME = home; process.env.USERPROFILE = home;
       const adapter = mkAdapter();
       const statusBar = { set: vi.fn(), dispose: vi.fn() };
-      __wireForTest({ adapter, statusBar });
+      wireForTestFn({ adapter, statusBar });
       const fetched = stubFetch({ hasAccepted: false });
-      const ctx = makeContext();  // NOT signed in
+      const ctx = vsc.makeContext();  // NOT signed in
       try {
-        await activate(ctx as never);
+        await activateFn(ctx as never);
         await new Promise((r) => setTimeout(r, 50));
         const consentCalls = fetched.calls.filter(
           (c) => c.url.endsWith("/v1/me/consent"));
         expect(consentCalls).toHaveLength(0);
       } finally {
-        await deactivate();
+        await deactivateFn();
         if (prevHome !== undefined) process.env.HOME = prevHome;
         else delete process.env.HOME;
         if (prevUser !== undefined) process.env.USERPROFILE = prevUser;

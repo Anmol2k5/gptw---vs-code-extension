@@ -64,7 +64,7 @@ function makeDeps(metrics: { send: ReturnType<typeof vi.fn> }) {
 
 describe("untagged-transcript billing integration (launch-day cohort fix)", () => {
   beforeEach(() => {
-    h.home = mkdtempSync(join(tmpdir(), "vibe-ads-untagged-"));
+    h.home = mkdtempSync(join(tmpdir(), "gptw-untagged-"));
     delete process.env.KICKBACKS_CLI_LOG;
     vi.useFakeTimers();
   });

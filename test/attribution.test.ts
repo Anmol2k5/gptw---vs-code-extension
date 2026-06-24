@@ -302,7 +302,7 @@ describe("loopback lifts the ad= claim (audit #17)", () => {
       getCurrentAd: () => null,
     });
     const { port, token } = await lb.start();
-    const base = `http://127.0.0.1:${port}/vibe-ads/${token}`;
+    const base = `http://127.0.0.1:${port}/gptw/${token}`;
     try {
       await fetch(`${base}/view_tick?surface=overlay&ad=ad-77&visible_ms=5000`);
       await fetch(`${base}/view_tick?surface=overlay&visible_ms=5000`);

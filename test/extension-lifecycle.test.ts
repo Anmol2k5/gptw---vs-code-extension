@@ -18,7 +18,7 @@ import { homedir, tmpdir } from "node:os";
 // REAL key-scoped CLI restore against ~/.claude/settings.json (audit #22), so
 // these activation tests must never see the developer's live install. Also
 // shields the boot-canary read from suites that write the real
-// ~/.vibe-ads/boot.canary in parallel workers.
+// ~/.gptw/boot.canary in parallel workers.
 const restoreEnv = (k: string, v: string | undefined): void => {
   if (v === undefined) delete process.env[k]; else process.env[k] = v;
 };
@@ -37,15 +37,15 @@ afterAll(() => {
 });
 
 // Mute dlog (same pattern as extension.test.ts) so test-driven activate()
-// calls don't append to the developer's real ~/.vibe-ads/debug.log.
+// calls don't append to the developer's real ~/.gptw/debug.log.
 vi.mock("../src/log", () => ({ debugEnabled: () => false, dlog: () => {},
   dlogRaw: () => {}, codexEnabled: () => false, codexDisabled: () => false,
   codexCliEnabled: () => false,
-  testHooksEnabled: () => false, debugIconDataUri: () => "",
+  testHooksEnabled: () => !!(process.env.GPTW_TEST_HOOKS || process.env.KICKBACKS_TEST_HOOKS || process.env.VIBE_ADS_TEST_HOOKS), debugIconDataUri: () => "",
   LOG_PATH: "/tmp/test-log" }));
 
 // Redirect the watched config file to a per-run temp path so the watcher
-// tests can create/touch/edit it without touching the real ~/.vibe-ads.
+// tests can create/touch/edit it without touching the real ~/.gptw.
 vi.mock("../src/config", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../src/config")>();
   const { join: j } = await import("node:path");
@@ -75,13 +75,22 @@ vi.mock("../src/loopback", () => {
   return {
     Loopback,
     resolveLoopbackBase: async (port: number, token: string) =>
-      `http://127.0.0.1:${port}/vibe-ads/${token}`,
+      `http://127.0.0.1:${port}/gptw/${token}`,
   };
 });
 
 import { activate, deactivate, __wireForTest } from "../src/extension";
 import { makeContext, commands } from "./mocks/vscode";
 import { configPath } from "../src/config";
+
+vi.mock("node:os", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("node:os")>();
+  return {
+    ...actual,
+    homedir: () => process.env.USERPROFILE || process.env.HOME || actual.homedir(),
+  };
+});
+
 
 const RESTART = "workbench.action.restartExtensionHost";
 const restartCount = (): number =>
@@ -185,12 +194,12 @@ describe("deactivate ordering + stop budget (audit #36)", { timeout: 20_000 }, (
     // suite's temp-home swap), so the canary the earlier activations wrote
     // lives under the REAL home — clear both locations.
     const realHome = REAL_USERPROFILE || REAL_HOME || homedir();
-    rmSync(join(realHome, ".vibe-ads", "boot.canary"), { force: true });
-    rmSync(join(homedir(), ".vibe-ads", "boot.canary"), { force: true });
+    rmSync(join(realHome, ".gptw", "boot.canary"), { force: true });
+    rmSync(join(homedir(), ".gptw", "boot.canary"), { force: true });
     await activate(ctx as never);
     // Simulate the user disabling via the menu BEFORE shutdown so the
     // uninstall-hygiene restore branch runs (same as extension.test.ts).
-    await ctx.globalState.update("kickbacks.debug.on", false);
+    await ctx.globalState.update("gptw.debug.on", false);
     adapter.restore.mockClear();
     lb.order.length = 0;
     lb.hangStops = true;          // every server close now hangs forever

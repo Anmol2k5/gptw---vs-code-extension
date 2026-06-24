@@ -13,6 +13,7 @@ import type { SbState } from "../statusbar";
 import { Loopback } from "../loopback";
 import { bootLoopback } from "../util/loopbackBoot";
 import { dlog, debugEnabled } from "../log";
+import { detectThemeKind } from "../util/theme";
 import { errMsg } from "../util/errMsg";
 import { resolveBannerOn } from "../banner";
 import { webviewMode, bannerOverride } from "../modes";
@@ -172,6 +173,7 @@ export async function setupWebviewInjection(
     !!attr.demo === !!auth.accessToken();
 
   const codexAdapter = actx.codexAdapter;
+  const opencodeAdapter = actx.opencodeAdapter;
   actx.loopback = new Loopback({
     onEvent: (k, payload) => {
       // Billing gate (wave 2, audit #3): the webview's pollAd ignores the
@@ -281,6 +283,7 @@ export async function setupWebviewInjection(
     loopbackToken: token, loopbackBase: lbBase, debug: debugEnabled(),
     bannerOn: resolveBannerOn(activeAd.bannerEnabled === true, bannerOverride()),
     viewThresholdMs,
+    themeKind: detectThemeKind(),
   };
 
   const claudeCompatible = deps.claudeCompatible ?? true;
@@ -293,7 +296,9 @@ export async function setupWebviewInjection(
   const anyTargetPatched = (): boolean => {
     try { if (adapter.isPatched?.() === true) return true; }
     catch { /* fall through to codex */ }
-    try { return codexAdapter?.isPatched?.() === true; }
+    try { if (codexAdapter?.isPatched?.() === true) return true; }
+    catch { /* fall through to opencode */ }
+    try { return opencodeAdapter?.isPatched?.() === true; }
     catch { return false; }
   };
   const setIncompatibleUnlessPatched = (): void => {
@@ -357,11 +362,30 @@ export async function setupWebviewInjection(
     }
   };
   const reapplyCodex = applyCodex;
+  const applyOpenCode = (): void => {
+    if (!opencodeAdapter) return;
+    if (!canPatch()) { dlog("ext", "opencode.skip", { reason: "serving-gate" }); return; }
+    if (port < 0) { dlog("ext", "opencode.skip", { reason: "no-loopback" }); return; }
+    try {
+      const opf = opencodeAdapter.preflight();
+      if (!opf.compatible) {
+        dlog("ext", "opencode.skip", { reason: opf.reason });
+        return;
+      }
+      const cr = opencodeAdapter.applyPatch(patchParams);
+      dlog("ext", "opencode.applyPatch", { ok: cr.ok, reason: cr.reason });
+      if (cr.ok) void statusBarShowActive();
+    } catch (e) {
+      dlog("ext", "opencode.error", { msg: errMsg(e) });
+    }
+  };
   // Codex-only boot: apply NOW — the deferred call below would leave the
   // first 10s of the session unserved (and the status bar unconfirmed).
   // Idempotent: the 10s pass re-validates via isPatched/marker checks.
   if (!claudeCompatible) applyCodex();
   actx.timers.push(setTimeout(applyCodex, 10_000));
+  if (!claudeCompatible) applyOpenCode();
+  actx.timers.push(setTimeout(applyOpenCode, 10_000));
 
   // Reassert the injection on a timer. The Claude branch is gated on the
   // boot-time compatibility flag: a codex-only boot would otherwise retry a
@@ -380,6 +404,9 @@ export async function setupWebviewInjection(
       }
       if (codexAdapter && codexAdapter.isPatched?.() !== true) {
         applyCodex();
+      }
+      if (opencodeAdapter && opencodeAdapter.isPatched?.() !== true) {
+        applyOpenCode();
       }
     } catch { /* prime directive: never break activation */ }
   };

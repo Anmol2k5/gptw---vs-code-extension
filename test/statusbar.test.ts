@@ -5,19 +5,19 @@ import { window, ThemeColor } from "./mocks/vscode";
 // NOTE: VS Code codicons render as `$(name)` in status-bar text, so the raw
 // string always contains `$(`. Earnings assertions match `$<digit>` instead.
 describe("StatusBar", () => {
-  it("renders each state; signed-in shows Kickbacks + earnings, no 'debug' word", () => {
+  it("renders each state; signed-in shows GPTW + earnings, no 'debug' word", () => {
     const sb = new StatusBar();
 
     sb.set({ kind: "signed-out" });
     expect(sb.text).toMatch(/sign in/i);
 
     sb.set({ kind: "active", version: "2.1.143", usd: "1.53" });
-    expect(sb.text).toContain("Kickbacks");
+    expect(sb.text).toContain("GPTW");
     expect(sb.text).toMatch(/\$1\.53/);
     expect(sb.text).not.toMatch(/active|2\.1\.143/); // version is tooltip-only
 
     sb.set({ kind: "active", version: "2.1.143" }); // no figure yet => $0.00
-    expect(sb.text).toContain("Kickbacks");
+    expect(sb.text).toContain("GPTW");
     expect(sb.text).toMatch(/\$0\.00 today · \$0\.00/);
 
     // debug renders exactly like active — never the word "debug"
@@ -36,7 +36,7 @@ describe("StatusBar", () => {
     expect(sb.text).toMatch(/offline/i);
 
     sb.set({ kind: "ad", adText: "Try Acme Widgets — acme.com" });
-    expect(sb.text).toBe("Kickbacks.ai  |  Try Acme Widgets — acme.com");
+    expect(sb.text).toBe("GPTW  |  Try Acme Widgets — acme.com");
   });
 });
 
@@ -112,7 +112,7 @@ describe("StatusBar needs-reload (post-install red call-to-action)", () => {
     const { sb, item } = mk();
     sb.set({ kind: "active", version: "2.1.143", usd: "1.00" });
     expect(item.backgroundColor).toBeUndefined();
-    expect(item.command).toBe("kickbacks.debugMenu");
+    expect(item.command).toBe("gptw.debugMenu");
     sb.dispose();
   });
 });

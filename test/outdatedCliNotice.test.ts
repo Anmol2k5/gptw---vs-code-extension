@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
 // Mute dlog so the helper doesn't append to the developer's real
-// ~/.vibe-ads/debug.log during tests (same reason incompatNotice.test.ts mocks it).
+// ~/.gptw/debug.log during tests (same reason incompatNotice.test.ts mocks it).
 vi.mock("../src/log", () => ({ dlog: () => {} }));
 
 import { notifyOutdatedCli } from "../src/activation/outdatedCliNotice";

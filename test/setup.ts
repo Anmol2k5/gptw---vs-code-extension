@@ -1,7 +1,7 @@
 // Global vitest setup. The one job here is keeping every test file hermetic
-// against the developer's real ~/.vibe-ads/debug.log.
+// against the developer's real ~/.gptw/debug.log.
 //
-// Background: ../src/log.dlog() appends a line to ~/.vibe-ads/debug.log
+// Background: ../src/log.dlog() appends a line to ~/.gptw/debug.log
 // whenever debugEnabled() returns true (sentinel file, env var, or
 // config.debugMode). Any test that drives activate(), DebugController, or
 // the Claude Code adapter therefore writes into the dev machine's *real*
@@ -22,3 +22,12 @@ vi.mock("../src/log", () => ({
   testHooksEnabled: () => true,
   LOG_PATH: "/tmp/test-log",
 }));
+
+vi.mock("node:os", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("node:os")>();
+  return {
+    ...actual,
+    homedir: () => process.env.USERPROFILE || process.env.HOME || actual.homedir(),
+  };
+});
+

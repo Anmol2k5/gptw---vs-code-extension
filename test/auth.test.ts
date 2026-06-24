@@ -13,8 +13,8 @@ import { AuthClient } from "../src/auth/client";
 import { createVault } from "../src/auth/vault";
 import { makeContext, _opened, _shown } from "./mocks/vscode";
 
-// Hermetic fallback file per test (never touch the real ~/.vibe-ads).
-const mkAuthFile = () => join(mkdtempSync(join(tmpdir(), "vibe-ads-auth-")), "auth.json");
+// Hermetic fallback file per test (never touch the real ~/.gptw).
+const mkAuthFile = () => join(mkdtempSync(join(tmpdir(), "gptw-auth-")), "auth.json");
 // Hermetic vault: an unknown platform => "plain" scheme, so seal/open never
 // shell out (fixture-only rule). Per-OS behavior is covered by vault.test.ts.
 const noExec = (async () => { throw new Error("no exec in tests"); }) as never;
@@ -95,15 +95,15 @@ describe("AuthClient", () => {
     const a = new AuthClient("http://b", ctx as never, f as never, 0, mkAuthFile(), pv());
     await a.signIn();
     expect(_opened.some((u) => u.includes("https://g/auth"))).toBe(true);
-    expect(await ctx.secrets.get("kickbacks.access")).toBe("AT");
-    expect(await ctx.secrets.get("kickbacks.refresh")).toBe("RT");
+    expect(await ctx.secrets.get("gptw.access")).toBe("AT");
+    expect(await ctx.secrets.get("gptw.refresh")).toBe("RT");
     expect(a.accessToken()).toBe("AT");
     expect(a.signedIn()).toBe(true);
   });
 
   it("refresh swaps access AND persists the rotated refresh token", async () => {
     const ctx = makeContext();
-    await ctx.secrets.store("kickbacks.refresh", "RT");
+    await ctx.secrets.store("gptw.refresh", "RT");
     const f = vi.fn(async (url: string) => {
       if (url.includes("/auth/refresh"))
         return { ok: true, status: 200, json: async () =>
@@ -113,7 +113,7 @@ describe("AuthClient", () => {
     const a = new AuthClient("http://b", ctx as never, f as never, 0, mkAuthFile(), pv());
     expect(await a.refresh()).toBe(true);
     expect(a.accessToken()).toBe("AT2");
-    expect(await ctx.secrets.get("kickbacks.refresh")).toBe("RT2"); // rotation persisted
+    expect(await ctx.secrets.get("gptw.refresh")).toBe("RT2"); // rotation persisted
   });
 
   it("single-flights concurrent refresh() calls so the rotating token is consumed once", async () => {
@@ -131,7 +131,7 @@ describe("AuthClient", () => {
         update: async (k: string, v: unknown) => { g.set(k, v); } },
       subscriptions: [],
     };
-    await ctx.secrets.store("kickbacks.refresh", "RT");
+    await ctx.secrets.store("gptw.refresh", "RT");
     let calls = 0;
     const f = vi.fn(async (url: string) => {
       if (url.includes("/auth/refresh")) {
@@ -399,7 +399,7 @@ describe("AuthClient refresh failure clears session (H1)", () => {
     const { AuthClient: AC } = await import("../src/auth/client");
     const ctx = makeContext();
     // Seed with a "dead" access token (no refresh token in storage).
-    await ctx.secrets.store("kickbacks.access", "DEAD");
+    await ctx.secrets.store("gptw.access", "DEAD");
     const a = new AC("http://localhost:6080", ctx as never,
       (async () => ({ ok: false, status: 401 })) as never,
       0, mkAuthFile(), pv());
@@ -471,7 +471,7 @@ describe("AuthClient keyring store failures are best-effort (#11)", () => {
             ({ access_token: "AT2", refresh_token: "RT2" }) } as Response
         : { ok: false, status: 500 } as Response);
     const a = new AuthClient("http://b",
-      lockedCtx([["kickbacks.refresh", "RT"]]) as never, f as never, 0, file, pv());
+      lockedCtx([["gptw.refresh", "RT"]]) as never, f as never, 0, file, pv());
     expect(await a.refresh()).toBe(true);     // pre-fix: false (store threw)
     expect(a.accessToken()).toBe("AT2");
     expect(JSON.parse(readFileSync(file, "utf8")).refresh).toBe("plain:1:RT2");
@@ -566,8 +566,8 @@ describe("AuthClient refresh transient-vs-fatal (#10)", () => {
   // Signed-in client with AT0 in memory and RT in secrets; `f` is swappable.
   const mkSignedIn = async (f: (url: string) => Promise<unknown>) => {
     const ctx = isoCtx();
-    await ctx.secrets.store("kickbacks.access", "AT0");
-    await ctx.secrets.store("kickbacks.refresh", "RT");
+    await ctx.secrets.store("gptw.access", "AT0");
+    await ctx.secrets.store("gptw.refresh", "RT");
     const a = new AuthClient("http://b", ctx as never, f as never, 0, mkAuthFile(), pv());
     await a.loadCached();
     expect(a.accessToken()).toBe("AT0");

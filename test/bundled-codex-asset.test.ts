@@ -18,8 +18,8 @@ describe("S9 bundled Codex asset", () => {
     // by the adapter AROUND the wrapper at injection (markers-outside, so a
     // strip removes the whole statement and never leaves an e=()||e; residue).
     expect(src.trim().startsWith("(function")).toBe(true);
-    expect(src).toContain("__vibeAdsCodexBoot");   // bootstrap guard present
-    expect(src).toContain("data-vibe-ads");        // overlay element marker
+    expect(src).toContain("__gptwCodexBoot");   // bootstrap guard present
+    expect(src).toContain("data-gptw");        // overlay element marker
   });
 
   it("resolveCodexBlockAsset finds the bundled (dist) layout", () => {

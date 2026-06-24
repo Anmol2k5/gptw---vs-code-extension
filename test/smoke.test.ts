@@ -12,16 +12,20 @@ describe("scaffold", () => {
   });
 });
 
-describe("manifest ⇄ runtime parity for kickbacks.test.* hooks", () => {
+describe("manifest ⇄ runtime parity for gptw.test.* hooks", () => {
   beforeEach(() => {
+    process.env.GPTW_TEST_HOOKS = "1";
     secrets.clear();
     commands._handlers.clear();
     commands._executed.length = 0;
     __wireForTest({});
   });
-  afterEach(() => { vi.unstubAllGlobals(); });
+  afterEach(() => {
+    delete process.env.GPTW_TEST_HOOKS;
+    vi.unstubAllGlobals();
+  });
 
-  it("every kickbacks.test.* command declared in package.json is registered"
+  it("every gptw.test.* command declared in package.json is registered"
     + " at activation when the gate is on — catches manifest/runtime drift",
     async () => {
     const pkg = JSON.parse(readFileSync(
@@ -29,9 +33,13 @@ describe("manifest ⇄ runtime parity for kickbacks.test.* hooks", () => {
         contributes: { commands: { command: string }[] } };
     const declared = pkg.contributes.commands
       .map((c) => c.command)
-      .filter((c) => c.startsWith("kickbacks.test."))
+      .filter((c) => c.startsWith("gptw.test."))
       .sort();
     expect(declared.length).toBeGreaterThan(0); // sanity
+
+    vi.resetModules();
+    const { activate, deactivate, __wireForTest } = await import("../src/extension");
+    const vsc = await import("./mocks/vscode");
 
     const adapter = {
       name: "claude-code" as const,
@@ -44,11 +52,11 @@ describe("manifest ⇄ runtime parity for kickbacks.test.* hooks", () => {
     __wireForTest({ adapter, statusBar });
     vi.stubGlobal("fetch", vi.fn(async () =>
       ({ ok: true, status: 200, json: async () => ({}) } as Response)));
-    const ctx = makeContext();
+    const ctx = vsc.makeContext();
     try {
       await activate(ctx as never);
-      const registered = [...commands._handlers.keys()]
-        .filter((c) => c.startsWith("kickbacks.test."))
+      const registered = [...vsc.commands._handlers.keys()]
+        .filter((c) => c.startsWith("gptw.test."))
         .sort();
       // Every declared id has a runtime handler — no orphan menu entries.
       for (const id of declared) expect(registered).toContain(id);

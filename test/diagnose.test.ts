@@ -33,12 +33,12 @@ describe("interpret (diagnose verdict)", () => {
     expect(v).toMatch(/reinstall.*claude code/i);
   });
 
-  it("stale backup but live OK → self-heal → update Kickbacks", () => {
+  it("stale backup but live OK → self-heal → update GPTW", () => {
     const v = interpret(diag({
       backup: { exists: true, path: "/x.bak", hasArray: false, hasBlock: false },
       live: { hasArray: true, bareVerbPresent: true },
     }));
-    expect(v).toMatch(/self-heal|update Kickbacks/i);
+    expect(v).toMatch(/self-heal|update GPTW/i);
   });
 });
 
@@ -50,7 +50,7 @@ describe("formatDiagnostics", () => {
         live: { hasArray: false, bareVerbPresent: false } }),
     } as unknown as TargetAdapter;
     const report = formatDiagnostics(cc, null);
-    expect(report).toContain("Kickbacks Diagnostics");
+    expect(report).toContain("GPTW Diagnostics");
     expect(report).toContain("PREFLIGHT compatible: false");
     expect(report).toContain("preflight reason: verb array not found");
     expect(report).toMatch(/VERDICT:/);
@@ -87,7 +87,7 @@ describe("formatDiagnostics — Codex section", () => {
     const r = formatDiagnostics(cc, { adapter: codexAdapter, policy: policy() });
     expect(r).toContain("serving policy: OFF");
     expect(r).toMatch(/opt-in/i);
-    expect(r).toMatch(/KICKBACKS_CODEX=1|codex\.enabled/);
+    expect(r).toMatch(/GPTW_CODEX=1|codex\.enabled/);
     expect(r).toMatch(/expected, not a bug/i);
   });
 

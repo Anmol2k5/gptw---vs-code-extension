@@ -27,6 +27,7 @@
     var BASE = __GPTW_BASE__ ||
       ("http://127.0.0.1:" + PORT + "/gptw/" + LBTOKEN);
     var GRACE_MS = 1500;
+    var THEME_KIND = __GPTW_THEME_KIND__;
 
     function esc(s) {
       return String(s).replace(/[&<>"]/g, function (c) {
@@ -393,11 +394,14 @@
       if (overlay && overlay.parentNode) return overlay;
       overlay = document.createElement("div");
       overlay.setAttribute("data-gptw", "codex");
+      var tb = THEME_KIND === "highContrast"
+        ? "border:1px solid var(--vscode-focusBorder,#6fc3df);"
+        : "border:1px solid transparent;";
       overlay.style.cssText =
         "position:fixed;z-index:2147483646;pointer-events:auto;" +
         "display:flex;align-items:center;box-sizing:border-box;" +
-        "overflow:hidden;white-space:nowrap;visibility:hidden;background:" +
-        surfaceBg(row);
+        "overflow:hidden;white-space:nowrap;visibility:hidden;" +
+        tb + "background:" + surfaceBg(row);
       try { (document.body || document.documentElement).appendChild(overlay); }
       catch (e) {}
       return overlay;

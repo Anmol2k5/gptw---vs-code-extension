@@ -1,13 +1,13 @@
 import { describe, it, expect, vi } from "vitest";
 
 // Mute dlog so test-driven activate() calls don't append to the developer's
-// real ~/.vibe-ads/debug.log. Same pattern auth.test.ts and commands.test.ts
+// real ~/.gptw/debug.log. Same pattern auth.test.ts and commands.test.ts
 // use. Without this, every test run leaves "build dev" / "9.9.9" preflight
 // noise interleaved with the user's real extension events, which was
 // misdiagnosed once as an extension restart loop.
 vi.mock("../src/log", () => ({ debugEnabled: () => false, dlog: () => {},
   dlogRaw: () => {}, codexEnabled: () => false, codexDisabled: () => false,
-  codexCliEnabled: () => false, testHooksEnabled: () => false,
+  codexCliEnabled: () => false, testHooksEnabled: () => !!(process.env.GPTW_TEST_HOOKS || process.env.KICKBACKS_TEST_HOOKS || process.env.VIBE_ADS_TEST_HOOKS),
   debugIconDataUri: () => "",
   LOG_PATH: "/tmp/test-log" }));
 
@@ -37,8 +37,17 @@ import { activate, deactivate, __wireForTest } from "../src/extension";
 import { makeContext, _warned, commands } from "./mocks/vscode";
 import { ImpressionDedupe } from "../src/metrics/dedupe";
 
+vi.mock("node:os", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("node:os")>();
+  return {
+    ...actual,
+    homedir: () => process.env.USERPROFILE || process.env.HOME || actual.homedir(),
+  };
+});
+
+
 /** Redirect HOME/USERPROFILE to a fresh temp dir for one test: hermetic
- *  ~/.vibe-ads/boot.canary (a lingering real-home canary < 90s old reads as
+ *  ~/.gptw/boot.canary (a lingering real-home canary < 90s old reads as
  *  a crash and suspends auto-enable) and a guaranteed-empty extension scan
  *  for the codex strand-restore's locateCodexTarget(). */
 function tempHome() {
@@ -212,10 +221,10 @@ describe("extension orchestration", { timeout: 15_000 }, () => {
     __wireForTest({ adapter, statusBar: sb });
     const ctx = makeContext();
     // Seed K_ON=true so debugCtl.on() returns true at deactivate time.
-    // Canonical current key is "kickbacks.debug.on"; the "vibe-ads.debug.on"
+    // Canonical current key is "gptw.debug.on"; the legacy "vibe-ads.debug.on"
     // legacy key is read-through-only (see debug.ts on()). Legacy key parity
     // is covered by debug.test.ts.
-    await ctx.globalState.update("kickbacks.debug.on", true);
+    await ctx.globalState.update("gptw.debug.on", true);
     await activate(ctx as never);
     adapter.restore.mockClear();
     await deactivate();
@@ -243,7 +252,7 @@ describe("extension orchestration", { timeout: 15_000 }, () => {
     const ctx = makeContext();
     await activate(ctx as never);
     // Simulate the user disabling via the menu BEFORE shutdown.
-    await ctx.globalState.update("kickbacks.debug.on", false);
+    await ctx.globalState.update("gptw.debug.on", false);
     adapter.restore.mockClear();
     await deactivate();
     expect(adapter.restore, "deactivate must restore when K_ON is false")
@@ -288,12 +297,12 @@ describe("extension orchestration", { timeout: 15_000 }, () => {
     try {
       await expect(activate(ctx as never)).resolves.toBeUndefined();
       // Proceeds: the sign-in surface exists and the bar is never relabeled.
-      expect(commands._handlers.has("kickbacks.signIn")).toBe(true);
+      expect(commands._handlers.has("gptw.signIn")).toBe(true);
       expect(sb.set).not.toHaveBeenCalledWith(
         expect.objectContaining({ kind: "incompatible" }));
       // bootCanary's widened auto-enable persisted K_ON through the
       // codex-folded DebugController.apply()…
-      expect(ctx.globalState.get("kickbacks.debug.on")).toBe(true);
+      expect(ctx.globalState.get("gptw.debug.on")).toBe(true);
       // …which patched Codex.
       expect(codexAdapter.applyPatch).toHaveBeenCalled();
       // The host-version label travels the wire as codex/<ver> (killswitch
@@ -332,7 +341,7 @@ describe("extension orchestration", { timeout: 15_000 }, () => {
       await expect(activate(makeContext() as never)).resolves.toBeUndefined();
       expect(sb.set).toHaveBeenCalledWith(
         expect.objectContaining({ kind: "incompatible" }));
-      expect(commands._handlers.has("kickbacks.signIn")).toBe(false);
+      expect(commands._handlers.has("gptw.signIn")).toBe(false);
       expect(codexAdapter.applyPatch).not.toHaveBeenCalled();
       // Audit #22's CLI strand restore is preserved on the narrower gate.
       expect(cliRestore).toHaveBeenCalled();

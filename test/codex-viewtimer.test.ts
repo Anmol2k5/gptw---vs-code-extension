@@ -22,17 +22,18 @@ const ASSET = readFileSync(
 // about threshold_met vs error_impression unambiguous.
 function preparedAsset(thresholdMs: number): string {
   const subs: Record<string, string> = {
-    __VIBE_ADS_AD__: JSON.stringify("turbopuffer: like RAG, but way better"),
-    __VIBE_ADS_PORT__: "5555",
-    __VIBE_ADS_LBTOKEN__: JSON.stringify("lt"),
-    __VIBE_ADS_BASE__: JSON.stringify("http://127.0.0.1:5555/vibe-ads/lt"),
-    __VIBE_ADS_CLICKTOKEN__: JSON.stringify("ct"),
-    __VIBE_ADS_CLICKURL__: JSON.stringify("https://turbopuffer.example/lp"),
-    __VIBE_ADS_CORR__: JSON.stringify("test.codex.vt"),
-    __VIBE_ADS_DEBUG__: "false",
-    __VIBE_ADS_VIEW_THRESHOLD_MS__: String(thresholdMs),
-    __VIBE_ADS_ARG__: "e",
-    __VIBE_ADS_JSX__: "d",
+    __GPTW_AD__: JSON.stringify("turbopuffer: like RAG, but way better"),
+    __GPTW_PORT__: "5555",
+    __GPTW_LBTOKEN__: JSON.stringify("lt"),
+    __GPTW_BASE__: JSON.stringify("http://127.0.0.1:5555/gptw/lt"),
+    __GPTW_CLICKTOKEN__: JSON.stringify("ct"),
+    __GPTW_CLICKURL__: JSON.stringify("https://turbopuffer.example/lp"),
+    __GPTW_CORR__: JSON.stringify("test.codex.vt"),
+    __GPTW_THEME_KIND__: JSON.stringify("dark"),
+    __GPTW_DEBUG__: "false",
+    __GPTW_VIEW_THRESHOLD_MS__: String(thresholdMs),
+    __GPTW_ARG__: "e",
+    __GPTW_JSX__: "d",
   };
   let src = ASSET;
   for (const [k, v] of Object.entries(subs)) src = src.split(k).join(v);
@@ -122,7 +123,7 @@ describe("codex view-timer phantom-billing fixes", () => {
     // Turn ends: rect collapses → findRow releases → dropOverlay → viewEnd.
     setRect(row, { x: 0, y: 0, w: 0, h: 0 });
     await sleep(1800);                  // > GRACE_MS (1500)
-    expect(h.doc.querySelector('[data-vibe-ads="codex"]')).toBeNull();
+    expect(h.doc.querySelector('[data-gptw="codex"]')).toBeNull();
     const afterIdle = count(h.pings, THRESHOLD);
 
     // New turn: a FRESH session must fire a SECOND threshold_met. If the old

@@ -55,6 +55,10 @@ export interface PatchParams {
    *  server did not specify. Baked into the block as
    *  `__GPTW_VIEW_THRESHOLD_MS__`. */
   viewThresholdMs?: number;
+  /** Theme kind detected at patch time so the block can adjust styling
+   *  (borders, shadows, opacity) to match the IDE's current color theme.
+   *  Baked into the block as `__GPTW_THEME_KIND__`. */
+  themeKind?: "dark" | "light" | "highContrast";
 }
 
 /** Ground-truth snapshot for the `GPTW: Diagnose` command — everything

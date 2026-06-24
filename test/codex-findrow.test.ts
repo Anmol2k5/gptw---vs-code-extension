@@ -21,17 +21,18 @@ function preparedAsset(): string {
   // the IIFE body to run inside JSDOM; markers stripped since the bare asset
   // is itself a valid IIFE expression).
   const subs: Record<string, string> = {
-    __VIBE_ADS_AD__: JSON.stringify("Ramp - Save time & money"),
-    __VIBE_ADS_PORT__: "5555",
-    __VIBE_ADS_LBTOKEN__: JSON.stringify("lt"),
-    __VIBE_ADS_BASE__: JSON.stringify("http://127.0.0.1:5555/vibe-ads/lt"),
-    __VIBE_ADS_CLICKTOKEN__: JSON.stringify("ct"),
-    __VIBE_ADS_CLICKURL__: JSON.stringify("https://ramp.example/lp"),
-    __VIBE_ADS_CORR__: JSON.stringify("test.codex"),
-    __VIBE_ADS_DEBUG__: "false",
-    __VIBE_ADS_VIEW_THRESHOLD_MS__: "15000",
-    __VIBE_ADS_ARG__: "e",        // unused by overlay path
-    __VIBE_ADS_JSX__: "d",        // unused by overlay path
+    __GPTW_AD__: JSON.stringify("Ramp - Save time & money"),
+    __GPTW_PORT__: "5555",
+    __GPTW_LBTOKEN__: JSON.stringify("lt"),
+    __GPTW_BASE__: JSON.stringify("http://127.0.0.1:5555/gptw/lt"),
+    __GPTW_CLICKTOKEN__: JSON.stringify("ct"),
+    __GPTW_CLICKURL__: JSON.stringify("https://ramp.example/lp"),
+    __GPTW_CORR__: JSON.stringify("test.codex"),
+    __GPTW_THEME_KIND__: JSON.stringify("dark"),
+    __GPTW_DEBUG__: "false",
+    __GPTW_VIEW_THRESHOLD_MS__: "15000",
+    __GPTW_ARG__: "e",        // unused by overlay path
+    __GPTW_JSX__: "d",        // unused by overlay path
   };
   let src = ASSET;
   for (const [k, v] of Object.entries(subs)) src = src.split(k).join(v);
@@ -108,9 +109,9 @@ describe("S9 codex findRow — live shimmer only, never stale chip", () => {
     mc.appendChild(makeLiveShimmer(doc));
     bootAsset(dom);
     await sleep(200);                          // > 80ms interval tick
-    const overlay = doc.querySelector('[data-vibe-ads="codex"]');
+    const overlay = doc.querySelector('[data-gptw="codex"]');
     expect(overlay).toBeTruthy();
-    expect(overlay!.querySelector('[data-vibe-ads-ad]')).toBeTruthy();
+    expect(overlay!.querySelector('[data-gptw-ad]')).toBeTruthy();
     dom.window.close();
   });
 
@@ -120,7 +121,7 @@ describe("S9 codex findRow — live shimmer only, never stale chip", () => {
     mc.appendChild(makeStaleSummaryChip(doc));   // only the stale chip
     bootAsset(dom);
     await sleep(200);
-    const overlay = doc.querySelector('[data-vibe-ads="codex"]');
+    const overlay = doc.querySelector('[data-gptw="codex"]');
     expect(overlay).toBeNull();
     dom.window.close();
   });
@@ -137,7 +138,7 @@ describe("S9 codex findRow — live shimmer only, never stale chip", () => {
     mc.appendChild(live);
     bootAsset(dom);
     await sleep(200);
-    const overlay = doc.querySelector('[data-vibe-ads="codex"]') as
+    const overlay = doc.querySelector('[data-gptw="codex"]') as
       HTMLElement | null;
     expect(overlay).toBeTruthy();
     // Overlay rect must align with the LIVE shimmer, not the stale chip.
@@ -155,7 +156,7 @@ describe("S9 codex findRow — live shimmer only, never stale chip", () => {
     mc.appendChild(live);
     bootAsset(dom);
     await sleep(200);
-    expect(doc.querySelector('[data-vibe-ads="codex"]')).toBeTruthy();
+    expect(doc.querySelector('[data-gptw="codex"]')).toBeTruthy();
     // Simulate Codex finishing the turn: rect collapses to 0×0
     // (Codex applies display:none on the shimmer). The current row
     // class trio (text-size-chat/truncate/select-none) survives but
@@ -164,7 +165,7 @@ describe("S9 codex findRow — live shimmer only, never stale chip", () => {
     setRect(live, { x: 0, y: 0, w: 0, h: 0 });
     // Walk past GRACE_MS=1500 so the idle-drop branch fires.
     await sleep(1800);
-    expect(doc.querySelector('[data-vibe-ads="codex"]')).toBeNull();
+    expect(doc.querySelector('[data-gptw="codex"]')).toBeNull();
     dom.window.close();
   });
 
@@ -183,7 +184,7 @@ describe("S9 codex findRow — live shimmer only, never stale chip", () => {
     mc.appendChild(live);
     bootAsset(dom);
     await sleep(200);
-    expect(doc.querySelector('[data-vibe-ads="codex"]')).toBeNull();
+    expect(doc.querySelector('[data-gptw="codex"]')).toBeNull();
     dom.window.close();
   });
 });

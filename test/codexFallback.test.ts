@@ -43,7 +43,7 @@ describe("codexDiscoveryEnabled truth table", () => {
 describe("log.ts codexDisabled (env legs)", () => {
   // vi.importActual bypasses setup.ts's process-wide log mock — these legs
   // exercise the REAL sentinel/env reader. Only the env legs are asserted
-  // (the sentinel leg would depend on the developer's real ~/.vibe-ads).
+  // (the sentinel leg would depend on the developer's real ~/.gptw).
   it("KICKBACKS_CODEX=0 / VIBE_ADS_CODEX=0 opt out; =1 does not", async () => {
     const { codexDisabled } =
       await vi.importActual<typeof import("../src/log")>("../src/log");

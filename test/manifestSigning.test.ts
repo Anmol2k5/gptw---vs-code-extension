@@ -17,8 +17,8 @@ describe("manifest signing contract (deploy.mjs producer <-> client.ts consumer)
 
   // Sign exactly what deploy.mjs would sign for a given manifest shape.
   const signFor = (m: { version: string; sha256: string; url: string; rollback_to?: string }) =>
-    sign(null, Buffer.from(
-      manifestSignedString(m.version, m.sha256, m.url, m.rollback_to ?? "")), privateKey)
+    sign(null, new Uint8Array(Buffer.from(
+      manifestSignedString(m.version, m.sha256, m.url, m.rollback_to ?? ""))), privateKey)
       .toString("base64");
 
   it("forward manifest (rollback_to empty) verifies", () => {

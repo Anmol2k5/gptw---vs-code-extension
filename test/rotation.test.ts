@@ -42,7 +42,7 @@ describe("rotation → loopback /ad contract", () => {
       getCurrentAd: () => currentAd,
     });
     const { port, token } = await lb.start();
-    const base = `http://127.0.0.1:${port}/vibe-ads/${token}`;
+    const base = `http://127.0.0.1:${port}/gptw/${token}`;
 
     // Initial state: Linear
     let r = await (await fetch(`${base}/ad`)).json();
@@ -70,7 +70,7 @@ describe("rotation → loopback /ad contract", () => {
       getCurrentAd: () => null,
     });
     const { port, token } = await lb.start();
-    const base = `http://127.0.0.1:${port}/vibe-ads/${token}`;
+    const base = `http://127.0.0.1:${port}/gptw/${token}`;
     const r = await (await fetch(`${base}/ad`)).json();
     expect(r).toEqual({});
   });
@@ -89,7 +89,7 @@ describe("rotation → loopback /ad contract", () => {
       },
     });
     const { port, token } = await lb.start();
-    const base = `http://127.0.0.1:${port}/vibe-ads/${token}`;
+    const base = `http://127.0.0.1:${port}/gptw/${token}`;
 
     for (let i = 0; i < ads.length; i++) {
       idx = i;

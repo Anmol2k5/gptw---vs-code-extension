@@ -240,12 +240,12 @@ function renderScript(cachePath: string, freshMs: number,
   const tpl = readFileSync(join(__dirname,
     "../src/adapters/claude-cli/statusline.asset.mjs"), "utf8");
   return tpl
-    .split("__VIBE_ADS_CLI_AD_PATH__").join(JSON.stringify(cachePath))
-    .split("__VIBE_ADS_CLI_PREV_PATH__").join(JSON.stringify(prevPath))
-    .split("__VIBE_ADS_FRESH_MS__").join(String(freshMs))
-    .split("__VIBE_ADS_SCRIPT_NAME__")
+    .split("__GPTW_CLI_AD_PATH__").join(JSON.stringify(cachePath))
+    .split("__GPTW_CLI_PREV_PATH__").join(JSON.stringify(prevPath))
+    .split("__GPTW_FRESH_MS__").join(String(freshMs))
+    .split("__GPTW_SCRIPT_NAME__")
     .join(JSON.stringify("vibe-ads-statusline.mjs"))
-    .split("__VIBE_ADS_CHAIN_TIMEOUT_MS__").join(String(chainTimeoutMs));
+    .split("__GPTW_CHAIN_TIMEOUT_MS__").join(String(chainTimeoutMs));
 }
 function runScript(body: string, input?: string): string {
   const d = tmp();
@@ -445,7 +445,7 @@ describe("ClaudeCliStatuslineAdapter", () => {
     expect(existsSync(settings + ".vibe-ads-backup")).toBe(true);
     expect(readFileSync(settings + ".vibe-ads-backup", "utf8"))
       .toBe('{\n  "model": "opus"\n}\n');
-    expect(existsSync(join(home, ".vibe-ads",
+    expect(existsSync(join(home, ".gptw",
       "vibe-ads-statusline.mjs"))).toBe(true);
     const after1 = readFileSync(settings, "utf8");
     a.applyPatch(P);
@@ -531,7 +531,7 @@ describe("ClaudeCliStatuslineAdapter", () => {
     expect(patched).toContain('"spinnerVerbs"');
     expect(a.restore().restored).toBe(true);
     expect(readFileSync(settings, "utf8")).toBe(pristine);
-    expect(existsSync(join(home, ".vibe-ads",
+    expect(existsSync(join(home, ".gptw",
       "vibe-ads-statusline.mjs"))).toBe(false);
     expect(existsSync(settings + ".vibe-ads-backup")).toBe(false);
   });
@@ -572,7 +572,7 @@ const HUD = '{ "type": "command", "command": "node /x/hud.js", "padding": 1 }';
 
 describe("ClaudeCliStatuslineAdapter chain-capture", () => {
   const prevFile = (home: string): string =>
-    join(home, ".vibe-ads", "cli-prev-statusline.json");
+    join(home, ".gptw", "cli-prev-statusline.json");
 
   it("applyPatch captures a pre-existing foreign statusLine", () => {
     const { home, settings } = homeWithClaude();
@@ -587,7 +587,7 @@ describe("ClaudeCliStatuslineAdapter chain-capture", () => {
     const parsed = JSON.parse(readFileSync(settings, "utf8"));
     expect(parsed.statusLine.command).toContain("vibe-ads-statusline.mjs");
     // …and the installed script points at the capture file.
-    const script = readFileSync(join(home, ".vibe-ads",
+    const script = readFileSync(join(home, ".gptw",
       "vibe-ads-statusline.mjs"), "utf8");
     expect(script).toContain("cli-prev-statusline.json");
   });
@@ -661,7 +661,7 @@ describe("ClaudeCliStatuslineAdapter chain-capture", () => {
       '{\n  "model": "opus",\n  "statusLine": ' + HUD + '\n}\n');
     const a = new ClaudeCliStatuslineAdapter(settings);
     a.applyPatch(P);
-    rmSync(prevFile(home));                // cleared ~/.vibe-ads, AV tooling…
+    rmSync(prevFile(home));                // cleared ~/.gptw, AV tooling…
     expect(a.restore().restored).toBe(true);
     const parsed = JSON.parse(readFileSync(settings, "utf8"));
     expect(parsed.statusLine)
@@ -691,7 +691,7 @@ describe("ClaudeCliStatuslineAdapter chain-capture", () => {
     writeCliAdCache(home, { adText: "Acme deploys", iconRef: "i",
       iconUrl: "", clickUrl: "https://acme/x" });
     const out = execFileSync(process.execPath,
-      [join(home, ".vibe-ads", "vibe-ads-statusline.mjs")],
+      [join(home, ".gptw", "vibe-ads-statusline.mjs")],
       { encoding: "utf8", input: "{}" });
     const nl = out.indexOf("\n");
     expect(out.slice(0, nl)).toContain("ad· Acme deploys");

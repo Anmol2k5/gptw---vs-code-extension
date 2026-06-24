@@ -18,7 +18,7 @@ import { bootLoopback, resetSharedLoopbackForTest }
   from "../src/util/loopbackBoot";
 import { makeContext } from "./mocks/vscode";
 
-const PORT_KEY = "kickbacks.loopback.port";
+const PORT_KEY = "gptw.loopback.port";
 
 function mkHandlers(tag: string, log: string[]): LoopbackHandlers {
   return {

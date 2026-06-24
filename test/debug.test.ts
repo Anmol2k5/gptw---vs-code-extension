@@ -9,6 +9,15 @@ import { mkdtempSync, rmSync, existsSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
+vi.mock("node:os", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("node:os")>();
+  return {
+    ...actual,
+    homedir: () => process.env.USERPROFILE || process.env.HOME || actual.homedir(),
+  };
+});
+
+
 // Hermetic: the shared-loopback record and the serving gate are module-level
 // singletons (audit #7 / wave 2) — never leak one test's state into the next.
 beforeEach(() => { resetServingGate(); resetSharedLoopbackForTest(); });
@@ -35,7 +44,7 @@ describe("DebugController", () => {
   it("defaults to off with a default message", () => {
     const d = new DebugController(mkAdapter(), makeContext() as never, () => {});
     expect(d.on()).toBe(false);
-    expect(d.text()).toMatch(/kickbacks/i);
+    expect(d.text()).toMatch(/gptw/i);
   });
 
   it("setOn(true) patches with the custom text and reports state", async () => {
@@ -105,7 +114,7 @@ describe("DebugController", () => {
     expect(captured[1].id).toBe("signin");
     expect(captured[1].label).toMatch(/sign in/i);
     expect(captured.some((i) => i.id === "signout")).toBe(false);
-    expect(exec).toHaveBeenCalledWith("kickbacks.signIn");
+    expect(exec).toHaveBeenCalledWith("gptw.signIn");
     qp.mockRestore(); exec.mockRestore();
   });
 
@@ -128,7 +137,7 @@ describe("DebugController", () => {
     expect(captured[1].label).toMatch(/sign out/i);
     expect(captured.some((i) => i.id === "signin")).toBe(false);
     expect(captured.some((i) => i.id === "__identity")).toBe(false);
-    expect(exec).toHaveBeenCalledWith("kickbacks.signOut");
+    expect(exec).toHaveBeenCalledWith("gptw.signOut");
     qp.mockRestore(); exec.mockRestore();
   });
 
@@ -145,7 +154,7 @@ describe("DebugController", () => {
     await d.openMenu();
     expect(captured[0].id).toBe("getpaid");
     expect(captured[0].label).toMatch(/GET PAID OUT \$\$\$/);
-    expect(_opened).toContain("https://kickbacks.ai/me");
+    expect(_opened).toContain("https://get-paid-to-wait-m44znelko-mayurs-projects-4c08c14e.vercel.app/");
     qp.mockRestore();
   });
 
@@ -187,7 +196,7 @@ describe("DebugController", () => {
     // Toggle label reflects state
     const toggleLabel = captured.find((i) => i.id === "toggle")?.label || "";
     expect(toggleLabel).toMatch(/enable|disable/i);
-    expect(toggleLabel).toMatch(/kickbacks/i);
+    expect(toggleLabel).toMatch(/gptw/i);
     qp.mockRestore();
   });
 
@@ -307,12 +316,12 @@ describe("DebugController", () => {
       expect(ctl.bannerOverride()).toBe("server");
       await ctl.cycleBannerOverride();
       expect(ctl.bannerOverride()).toBe("on");
-      expect(readFileSync(join(tmp, ".vibe-ads", "banner.mode"), "utf8").trim()).toBe("on");
+      expect(readFileSync(join(tmp, ".gptw", "banner.mode"), "utf8").trim()).toBe("on");
       await ctl.cycleBannerOverride();
       expect(ctl.bannerOverride()).toBe("off");
       await ctl.cycleBannerOverride();
       expect(ctl.bannerOverride()).toBe("server");
-      expect(existsSync(join(tmp, ".vibe-ads", "banner.mode"))).toBe(false);
+      expect(existsSync(join(tmp, ".gptw", "banner.mode"))).toBe(false);
     } finally {
       if (RH !== undefined) process.env.HOME = RH; else delete process.env.HOME;
       if (RU !== undefined) process.env.USERPROFILE = RU; else delete process.env.USERPROFILE;

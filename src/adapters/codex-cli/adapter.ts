@@ -158,7 +158,7 @@ export class CodexCliWrapperAdapter implements TargetAdapter {
       if (!existsSync(bak))
         return { ok: true, restored: false, reason: "no backup present" };
       const pristine = readFileSync(bak);
-      writeFileSync(this.shim, pristine);
+      writeFileSync(this.shim, new Uint8Array(pristine));
       if (sha256(readFileSync(this.shim)) !== sha256(pristine))
         return { ok: false, restored: false,
                  reason: "sha256 mismatch after restore" };

@@ -1,0 +1,842 @@
+{
+  "D:\\projects\\kickass add\\kickbacks.ai\\esbuild.mjs": {
+    "mtime": 1781237420.2857835,
+    "ast_hash": "ee93a78c9d19b8a10005a2931bd63e4b",
+    "semantic_hash": "ee93a78c9d19b8a10005a2931bd63e4b"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\package.json": {
+    "mtime": 1781237420.299069,
+    "ast_hash": "5471137441507a9af7dd97036f360e98",
+    "semantic_hash": "5471137441507a9af7dd97036f360e98"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\scripts\\_brand.mjs": {
+    "mtime": 1781237420.300091,
+    "ast_hash": "bde9e9cfa8e59a3dc55bcdfe8a55db74",
+    "semantic_hash": "bde9e9cfa8e59a3dc55bcdfe8a55db74"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\scripts\\gen-icon.mjs": {
+    "mtime": 1781237420.300091,
+    "ast_hash": "2bb005b8395a805051d496c2e0a5d1d9",
+    "semantic_hash": "2bb005b8395a805051d496c2e0a5d1d9"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\scripts\\gen-logos.mjs": {
+    "mtime": 1781237420.300091,
+    "ast_hash": "145ccb89fb1d54c2e2919df34c3812fd",
+    "semantic_hash": "145ccb89fb1d54c2e2919df34c3812fd"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\scripts\\package.mjs": {
+    "mtime": 1781237420.30111,
+    "ast_hash": "025668a8eb9afc51283abd838427a95b",
+    "semantic_hash": "025668a8eb9afc51283abd838427a95b"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activation\\adRotation.ts": {
+    "mtime": 1781237420.3021047,
+    "ast_hash": "26be577b3966cc48381d29389684cc56",
+    "semantic_hash": "26be577b3966cc48381d29389684cc56"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activation\\bootCanary.ts": {
+    "mtime": 1781237420.3021047,
+    "ast_hash": "e737a2f2f8b1ecec1452f7e7901cd8d4",
+    "semantic_hash": "e737a2f2f8b1ecec1452f7e7901cd8d4"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activation\\cliSync.ts": {
+    "mtime": 1781237420.303238,
+    "ast_hash": "c11ff826c4036be94808685320795837",
+    "semantic_hash": "c11ff826c4036be94808685320795837"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activation\\cliTick.ts": {
+    "mtime": 1781237420.303238,
+    "ast_hash": "23512465a268613b36543c8a6f884835",
+    "semantic_hash": "23512465a268613b36543c8a6f884835"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activation\\codexFallback.ts": {
+    "mtime": 1781237420.303238,
+    "ast_hash": "a096b4e40a4bfa169058e3ce64980c62",
+    "semantic_hash": "a096b4e40a4bfa169058e3ce64980c62"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activation\\commands.ts": {
+    "mtime": 1781237420.3042505,
+    "ast_hash": "7765a184e3167792f9ac3725cd3c98fb",
+    "semantic_hash": "7765a184e3167792f9ac3725cd3c98fb"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activation\\context.ts": {
+    "mtime": 1781237420.3042505,
+    "ast_hash": "66b150bcdf19bba5e4e577d60c4bdf7f",
+    "semantic_hash": "66b150bcdf19bba5e4e577d60c4bdf7f"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activation\\desyncDetector.ts": {
+    "mtime": 1781237420.3042505,
+    "ast_hash": "225775b770eccf3dbb113ec7e1ed8016",
+    "semantic_hash": "225775b770eccf3dbb113ec7e1ed8016"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activation\\diagnose.ts": {
+    "mtime": 1781237420.3042505,
+    "ast_hash": "157a36992a8fcd695b2a8d0f738db29b",
+    "semantic_hash": "157a36992a8fcd695b2a8d0f738db29b"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activation\\earningsRefresh.ts": {
+    "mtime": 1781237420.3052502,
+    "ast_hash": "f5edefd5db039ca1b34e833caeae1da3",
+    "semantic_hash": "f5edefd5db039ca1b34e833caeae1da3"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activation\\incompatNotice.ts": {
+    "mtime": 1781237420.3052502,
+    "ast_hash": "68bf28d60c6533290c0c198510841fa9",
+    "semantic_hash": "68bf28d60c6533290c0c198510841fa9"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activation\\outdatedCliNotice.ts": {
+    "mtime": 1781237420.3052502,
+    "ast_hash": "ebf26cc17a3fc7552758d4011451482d",
+    "semantic_hash": "ebf26cc17a3fc7552758d4011451482d"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activation\\reloadNudge.ts": {
+    "mtime": 1781237420.306556,
+    "ast_hash": "abebb1fbcfd8176327f43902cad7106a",
+    "semantic_hash": "abebb1fbcfd8176327f43902cad7106a"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activation\\selfUpdate.ts": {
+    "mtime": 1781237420.306556,
+    "ast_hash": "b5260c8e4f2c9ad3171e04d4d4688c44",
+    "semantic_hash": "b5260c8e4f2c9ad3171e04d4d4688c44"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activation\\statusBarAd.ts": {
+    "mtime": 1781237420.3075657,
+    "ast_hash": "0f87517cb1e173dfa5d7fa1f7db7c0db",
+    "semantic_hash": "0f87517cb1e173dfa5d7fa1f7db7c0db"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activation\\webviewInjection.ts": {
+    "mtime": 1781237420.3075657,
+    "ast_hash": "1b63c925def49f9cbe03f36d0bdedaa4",
+    "semantic_hash": "1b63c925def49f9cbe03f36d0bdedaa4"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\activity\\logTail.ts": {
+    "mtime": 1781237420.3085668,
+    "ast_hash": "2dccf8010b677146372d41495746c38a",
+    "semantic_hash": "2dccf8010b677146372d41495746c38a"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\adapters\\claude-cli\\adapter.ts": {
+    "mtime": 1781237420.309693,
+    "ast_hash": "f241d95118271d0033e4a14d1c24568b",
+    "semantic_hash": "f241d95118271d0033e4a14d1c24568b"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\adapters\\claude-cli\\cliAd.ts": {
+    "mtime": 1781237420.309693,
+    "ast_hash": "e537af30ee60f4c15765145ff9664a01",
+    "semantic_hash": "e537af30ee60f4c15765145ff9664a01"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\adapters\\claude-cli\\cliVersion.ts": {
+    "mtime": 1781237420.3107061,
+    "ast_hash": "4f9e75d4a11421dc41e5eda7c7103b46",
+    "semantic_hash": "4f9e75d4a11421dc41e5eda7c7103b46"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\adapters\\claude-cli\\settingsEdit.ts": {
+    "mtime": 1781237420.3117058,
+    "ast_hash": "692bd7de09644c54b508de3794bc0762",
+    "semantic_hash": "692bd7de09644c54b508de3794bc0762"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\adapters\\claude-cli\\statusline.asset.mjs": {
+    "mtime": 1781237420.3117058,
+    "ast_hash": "27623611bcf658a3581fe1e8c49c7ce0",
+    "semantic_hash": "27623611bcf658a3581fe1e8c49c7ce0"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\adapters\\claude-code\\adapter.ts": {
+    "mtime": 1781237420.3127046,
+    "ast_hash": "ae9d8afaf492a7469ec09f4f823b1162",
+    "semantic_hash": "ae9d8afaf492a7469ec09f4f823b1162"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\adapters\\claude-code\\block.asset.js": {
+    "mtime": 1781237420.314705,
+    "ast_hash": "50efb2a818ee43349646c02337089852",
+    "semantic_hash": "50efb2a818ee43349646c02337089852"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\adapters\\codex-cli\\adapter.ts": {
+    "mtime": 1781237420.314705,
+    "ast_hash": "bc974ff74a4f9b3eacd35aea687feb0b",
+    "semantic_hash": "bc974ff74a4f9b3eacd35aea687feb0b"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\adapters\\codex\\adapter.ts": {
+    "mtime": 1781237420.3157048,
+    "ast_hash": "8944f1d342f97a5dba158313f50e20ec",
+    "semantic_hash": "8944f1d342f97a5dba158313f50e20ec"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\adapters\\codex\\block.asset.js": {
+    "mtime": 1781237420.316703,
+    "ast_hash": "6ed04ebf5eb004489ac216b74067c873",
+    "semantic_hash": "6ed04ebf5eb004489ac216b74067c873"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\adapters\\registry.ts": {
+    "mtime": 1781237420.316703,
+    "ast_hash": "b65beb540b7c522d72f3cfe021ad71de",
+    "semantic_hash": "b65beb540b7c522d72f3cfe021ad71de"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\adapters\\types.ts": {
+    "mtime": 1781237420.3177044,
+    "ast_hash": "8da63b575775360a76cb72e641854627",
+    "semantic_hash": "8da63b575775360a76cb72e641854627"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\auth\\client.ts": {
+    "mtime": 1781237420.3187037,
+    "ast_hash": "fb773a659c93542ae3b58c8bc1369dde",
+    "semantic_hash": "fb773a659c93542ae3b58c8bc1369dde"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\auth\\vault.ts": {
+    "mtime": 1781237420.3192105,
+    "ast_hash": "64f7c43a39a2592d91a239a79ac091ec",
+    "semantic_hash": "64f7c43a39a2592d91a239a79ac091ec"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\banner.ts": {
+    "mtime": 1781237420.3192105,
+    "ast_hash": "dd48686ca8404ef775869104e5c0754b",
+    "semantic_hash": "dd48686ca8404ef775869104e5c0754b"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\buildflags.ts": {
+    "mtime": 1781237420.3192105,
+    "ast_hash": "85cf883ac447c28b0405bb975c72f6ec",
+    "semantic_hash": "85cf883ac447c28b0405bb975c72f6ec"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\buildinfo.ts": {
+    "mtime": 1781237420.3202202,
+    "ast_hash": "e2b3b09d7094b5bae4a57b26f03d450c",
+    "semantic_hash": "e2b3b09d7094b5bae4a57b26f03d450c"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\config.ts": {
+    "mtime": 1781237420.3202202,
+    "ast_hash": "899e67310be226c24c9e93ceee9fd32f",
+    "semantic_hash": "899e67310be226c24c9e93ceee9fd32f"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\consent\\client.ts": {
+    "mtime": 1781237420.3212297,
+    "ast_hash": "99e5668ae6e6e1732339ca0a0dac74b1",
+    "semantic_hash": "99e5668ae6e6e1732339ca0a0dac74b1"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\consent\\prompt.ts": {
+    "mtime": 1781237420.3222318,
+    "ast_hash": "de082dfbfd3841486c6cc22c41f64593",
+    "semantic_hash": "de082dfbfd3841486c6cc22c41f64593"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\debug.ts": {
+    "mtime": 1781237420.3232353,
+    "ast_hash": "1a41e761f24878da2ba0d00fefecf0c1",
+    "semantic_hash": "1a41e761f24878da2ba0d00fefecf0c1"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\earnings\\client.ts": {
+    "mtime": 1781237420.3242288,
+    "ast_hash": "db9c4b87740c1d245eafaf830094b074",
+    "semantic_hash": "db9c4b87740c1d245eafaf830094b074"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\extension.ts": {
+    "mtime": 1781237420.3262296,
+    "ast_hash": "b97999c7b4848893c90810fab4862d81",
+    "semantic_hash": "b97999c7b4848893c90810fab4862d81"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\killswitch\\client.ts": {
+    "mtime": 1781237420.3272316,
+    "ast_hash": "f36daabb46abd85fd6eeee11d4dc694a",
+    "semantic_hash": "f36daabb46abd85fd6eeee11d4dc694a"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\locate.ts": {
+    "mtime": 1781237420.3272316,
+    "ast_hash": "63c77c4ac27890616dff78a2bfbc660e",
+    "semantic_hash": "63c77c4ac27890616dff78a2bfbc660e"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\log.ts": {
+    "mtime": 1781237420.3272316,
+    "ast_hash": "410c52cfacef8b79f26b309ba0566de4",
+    "semantic_hash": "410c52cfacef8b79f26b309ba0566de4"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\loopback.ts": {
+    "mtime": 1781237420.3287501,
+    "ast_hash": "bfd17f17a424854642f3205d73233f1a",
+    "semantic_hash": "bfd17f17a424854642f3205d73233f1a"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\metrics\\client.ts": {
+    "mtime": 1781237420.3287501,
+    "ast_hash": "cd3cdb4a612c2d6531919d3a6c0efeda",
+    "semantic_hash": "cd3cdb4a612c2d6531919d3a6c0efeda"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\metrics\\dedupe.ts": {
+    "mtime": 1781237420.3297641,
+    "ast_hash": "968df88134246c09e69606463ad2b4b8",
+    "semantic_hash": "968df88134246c09e69606463ad2b4b8"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\modes.ts": {
+    "mtime": 1781237420.3297641,
+    "ast_hash": "1cceb547f29b35ed3cdc29fb08171443",
+    "semantic_hash": "1cceb547f29b35ed3cdc29fb08171443"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\portfolio\\client.ts": {
+    "mtime": 1781237420.3297641,
+    "ast_hash": "2f5c1cb5a5b51a2d53b13e9eb2024374",
+    "semantic_hash": "2f5c1cb5a5b51a2d53b13e9eb2024374"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\reassert.ts": {
+    "mtime": 1781237420.3307757,
+    "ast_hash": "06f08149042719bf22e0030057da339c",
+    "semantic_hash": "06f08149042719bf22e0030057da339c"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\reloadSignal.ts": {
+    "mtime": 1781237420.3307757,
+    "ast_hash": "eb8866f2eeea473a7abc20e23f8de583",
+    "semantic_hash": "eb8866f2eeea473a7abc20e23f8de583"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\servingGate.ts": {
+    "mtime": 1781237420.3307757,
+    "ast_hash": "b27f31a13d0c264755cedf1a3411aa83",
+    "semantic_hash": "b27f31a13d0c264755cedf1a3411aa83"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\sessionState.ts": {
+    "mtime": 1781237420.3317742,
+    "ast_hash": "613d28afbd1ab08968c76bf71e0443bc",
+    "semantic_hash": "613d28afbd1ab08968c76bf71e0443bc"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\statusbar.ts": {
+    "mtime": 1781237420.3317742,
+    "ast_hash": "63b892bd07aeb89c734f38860239d2ac",
+    "semantic_hash": "63b892bd07aeb89c734f38860239d2ac"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\testHooks.ts": {
+    "mtime": 1781237420.332774,
+    "ast_hash": "a725b678538eb0feefd3896d9ca3d436",
+    "semantic_hash": "a725b678538eb0feefd3896d9ca3d436"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\types\\surface.ts": {
+    "mtime": 1781237420.332774,
+    "ast_hash": "dbf92ff8422c7d479069a967d3fc3073",
+    "semantic_hash": "dbf92ff8422c7d479069a967d3fc3073"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\update\\client.ts": {
+    "mtime": 1781237420.3337748,
+    "ast_hash": "b22c4ec06687f1131e94157a7156c6e5",
+    "semantic_hash": "b22c4ec06687f1131e94157a7156c6e5"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\util\\asset.ts": {
+    "mtime": 1781237420.334773,
+    "ast_hash": "f8456815ed85926861127e9070eaa203",
+    "semantic_hash": "f8456815ed85926861127e9070eaa203"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\util\\claudeCodeVersion.ts": {
+    "mtime": 1781237420.334773,
+    "ast_hash": "c072a18a9f5e3b5bbba85fca0727a765",
+    "semantic_hash": "c072a18a9f5e3b5bbba85fca0727a765"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\util\\crypto.ts": {
+    "mtime": 1781237420.334773,
+    "ast_hash": "e741c31541122ed004523d1a06c58660",
+    "semantic_hash": "e741c31541122ed004523d1a06c58660"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\util\\errMsg.ts": {
+    "mtime": 1781237420.3357713,
+    "ast_hash": "0848c31809f64a8a077566bbe51e1941",
+    "semantic_hash": "0848c31809f64a8a077566bbe51e1941"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\util\\http.ts": {
+    "mtime": 1781237420.3357713,
+    "ast_hash": "53189a4857bbe69bbfcc4843d7b6c471",
+    "semantic_hash": "53189a4857bbe69bbfcc4843d7b6c471"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\util\\loopback.ts": {
+    "mtime": 1781237420.3357713,
+    "ast_hash": "0807c6272d9f69f8a9955244f59253e3",
+    "semantic_hash": "0807c6272d9f69f8a9955244f59253e3"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\util\\loopbackBoot.ts": {
+    "mtime": 1781237420.3367727,
+    "ast_hash": "006b0ed8622b18454ba45997dd18f374",
+    "semantic_hash": "006b0ed8622b18454ba45997dd18f374"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\src\\viewTracking\\timer.ts": {
+    "mtime": 1781237420.337772,
+    "ast_hash": "295a0e891f87ed927757ed1a26fb92a2",
+    "semantic_hash": "295a0e891f87ed927757ed1a26fb92a2"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\adRotation-token-refresh.test.ts": {
+    "mtime": 1781237420.338774,
+    "ast_hash": "f97ddde97cd65722241a9957e4d349ad",
+    "semantic_hash": "f97ddde97cd65722241a9957e4d349ad"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\adapter.test.ts": {
+    "mtime": 1781237420.338774,
+    "ast_hash": "e13414198bc5672c447120c21f5979da",
+    "semantic_hash": "e13414198bc5672c447120c21f5979da"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\attribution.test.ts": {
+    "mtime": 1781237420.3402324,
+    "ast_hash": "0ff898f4eacb63a11803a50a314d16f1",
+    "semantic_hash": "0ff898f4eacb63a11803a50a314d16f1"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\audit-deferred-xfail.test.ts": {
+    "mtime": 1781237420.3402324,
+    "ast_hash": "02ae9d132cb8a7677f3ecd932887965c",
+    "semantic_hash": "02ae9d132cb8a7677f3ecd932887965c"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\auth.test.ts": {
+    "mtime": 1781237420.3412585,
+    "ast_hash": "027e9434550d044ef280c724ff8079de",
+    "semantic_hash": "027e9434550d044ef280c724ff8079de"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\backup-safety.test.ts": {
+    "mtime": 1781237420.3412585,
+    "ast_hash": "59fabc1399291b7f2142302abd043333",
+    "semantic_hash": "59fabc1399291b7f2142302abd043333"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\banner.test.ts": {
+    "mtime": 1781237420.3422542,
+    "ast_hash": "5040a97163900761d23ce0e833b9637f",
+    "semantic_hash": "5040a97163900761d23ce0e833b9637f"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\block.test.ts": {
+    "mtime": 1781237420.3425896,
+    "ast_hash": "08004d3c46c09bea9a2c31adf11b0e5d",
+    "semantic_hash": "08004d3c46c09bea9a2c31adf11b0e5d"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\buildinfo.test.ts": {
+    "mtime": 1781237420.3425896,
+    "ast_hash": "ae26507e49e1eb4a6b157735b3bcd526",
+    "semantic_hash": "ae26507e49e1eb4a6b157735b3bcd526"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\bundled-codex-asset.test.ts": {
+    "mtime": 1781237420.3437092,
+    "ast_hash": "60fe302de11d7a3d81464dfcc1d746dd",
+    "semantic_hash": "60fe302de11d7a3d81464dfcc1d746dd"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\cc-pollad.test.ts": {
+    "mtime": 1781237420.3437092,
+    "ast_hash": "1efd0fed883fdf9660a5a20c1e89abad",
+    "semantic_hash": "1efd0fed883fdf9660a5a20c1e89abad"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\cc-spinner-detect.test.ts": {
+    "mtime": 1781237420.3437092,
+    "ast_hash": "7e91d2103d2cc10257d4b393b59c2e22",
+    "semantic_hash": "7e91d2103d2cc10257d4b393b59c2e22"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\cc-viewtimer.test.ts": {
+    "mtime": 1781237420.3447301,
+    "ast_hash": "bc730e0f308747c8eafbdb2734b8cefb",
+    "semantic_hash": "bc730e0f308747c8eafbdb2734b8cefb"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\claudeCodeVersion.test.ts": {
+    "mtime": 1781237420.3447301,
+    "ast_hash": "1eb2d6621cad8ad125763ef8cf491c87",
+    "semantic_hash": "1eb2d6621cad8ad125763ef8cf491c87"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\cli-statusline.test.ts": {
+    "mtime": 1781237420.3447301,
+    "ast_hash": "8868df92ad2e14dbec1a452a400fda74",
+    "semantic_hash": "8868df92ad2e14dbec1a452a400fda74"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\cliTick.test.ts": {
+    "mtime": 1781237420.3459215,
+    "ast_hash": "dc0a233f4e91c2be3d5c3900108df5bc",
+    "semantic_hash": "dc0a233f4e91c2be3d5c3900108df5bc"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\click-telemetry.test.ts": {
+    "mtime": 1781237420.3459215,
+    "ast_hash": "325984ef86897e2a0a14ae586aa5f7ea",
+    "semantic_hash": "325984ef86897e2a0a14ae586aa5f7ea"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\codex-adapter.test.ts": {
+    "mtime": 1781237420.3469367,
+    "ast_hash": "0392c8068f95c80ea318c689fdb42f7f",
+    "semantic_hash": "0392c8068f95c80ea318c689fdb42f7f"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\codex-cli-adapter.test.ts": {
+    "mtime": 1781237420.3469367,
+    "ast_hash": "04da87c9732ab9ec50aa6c5fc4e9aec0",
+    "semantic_hash": "04da87c9732ab9ec50aa6c5fc4e9aec0"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\codex-findrow.test.ts": {
+    "mtime": 1781237420.3479476,
+    "ast_hash": "c060ad9850719cd0842943f94018a8ff",
+    "semantic_hash": "c060ad9850719cd0842943f94018a8ff"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\codex-gating.test.ts": {
+    "mtime": 1781237420.3479476,
+    "ast_hash": "6728b99fcf1af52876df2c4dba6782a2",
+    "semantic_hash": "6728b99fcf1af52876df2c4dba6782a2"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\codex-viewtimer.test.ts": {
+    "mtime": 1781237420.3479476,
+    "ast_hash": "c1ac5438e2b967ee0900709599eebb29",
+    "semantic_hash": "c1ac5438e2b967ee0900709599eebb29"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\codexFallback.test.ts": {
+    "mtime": 1781237420.3479476,
+    "ast_hash": "73b02fce034e576bfec2d346bd6b56e0",
+    "semantic_hash": "73b02fce034e576bfec2d346bd6b56e0"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\commands.test.ts": {
+    "mtime": 1781237420.3494446,
+    "ast_hash": "1a053ba0a1e91a1184b41dffb975ad95",
+    "semantic_hash": "1a053ba0a1e91a1184b41dffb975ad95"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\consent.test.ts": {
+    "mtime": 1781237420.3494446,
+    "ast_hash": "c854cffee7e684f5b41aca221fb2bd74",
+    "semantic_hash": "c854cffee7e684f5b41aca221fb2bd74"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\consentFlow.test.ts": {
+    "mtime": 1781237420.3504603,
+    "ast_hash": "e9bb74ce98c13654989c891bf40df2cc",
+    "semantic_hash": "e9bb74ce98c13654989c891bf40df2cc"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\debug.test.ts": {
+    "mtime": 1781237420.3504603,
+    "ast_hash": "97562fd1945cdc96df103b1394024a4e",
+    "semantic_hash": "97562fd1945cdc96df103b1394024a4e"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\dedupe.test.ts": {
+    "mtime": 1781237420.3514605,
+    "ast_hash": "a4b8deb2a7f1c493465d1f555413db58",
+    "semantic_hash": "a4b8deb2a7f1c493465d1f555413db58"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\diagnose.test.ts": {
+    "mtime": 1781237420.3514605,
+    "ast_hash": "057d6b3aad9610bc4fccd86dfb688257",
+    "semantic_hash": "057d6b3aad9610bc4fccd86dfb688257"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\e2e.test.ts": {
+    "mtime": 1781237420.3514605,
+    "ast_hash": "ff92f2e7ea21d15fe345c68164e2371b",
+    "semantic_hash": "ff92f2e7ea21d15fe345c68164e2371b"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\earnings.test.ts": {
+    "mtime": 1781237420.3529737,
+    "ast_hash": "b20fcc8e72d8c6a3f5e3c9b9ae15222f",
+    "semantic_hash": "b20fcc8e72d8c6a3f5e3c9b9ae15222f"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\earningsRefresh.test.ts": {
+    "mtime": 1781237420.3529737,
+    "ast_hash": "3ca9583a2e25c73d144302fa81ce0300",
+    "semantic_hash": "3ca9583a2e25c73d144302fa81ce0300"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\extension-lifecycle.test.ts": {
+    "mtime": 1781237420.3529737,
+    "ast_hash": "4214584cd2eeb11b6dc97fc523fc40c4",
+    "semantic_hash": "4214584cd2eeb11b6dc97fc523fc40c4"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\extension.test.ts": {
+    "mtime": 1781237420.3542202,
+    "ast_hash": "ffb721dda24b1e7bbde8cd4591d26132",
+    "semantic_hash": "ffb721dda24b1e7bbde8cd4591d26132"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\fixtures\\synthetic-index.js": {
+    "mtime": 1781237420.3542202,
+    "ast_hash": "617ecd252d62954f7122e29ad0a9631b",
+    "semantic_hash": "617ecd252d62954f7122e29ad0a9631b"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\fixtures\\synthetic-thinking-shimmer.js": {
+    "mtime": 1781237420.3552337,
+    "ast_hash": "6267e46b310fa341a8e5425ffc25179b",
+    "semantic_hash": "6267e46b310fa341a8e5425ffc25179b"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\honest-incompatible.test.ts": {
+    "mtime": 1781237420.3562207,
+    "ast_hash": "a626a2ac934967a7e204429e253d1525",
+    "semantic_hash": "a626a2ac934967a7e204429e253d1525"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\hooksE2E.test.ts": {
+    "mtime": 1781237420.3562207,
+    "ast_hash": "013429faa451d5437fa608f5dc425277",
+    "semantic_hash": "013429faa451d5437fa608f5dc425277"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\icon-render.test.ts": {
+    "mtime": 1781237420.35722,
+    "ast_hash": "b5d2d243e171b2e8da4f86af9f91c654",
+    "semantic_hash": "b5d2d243e171b2e8da4f86af9f91c654"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\incident-guards.test.ts": {
+    "mtime": 1781237420.35722,
+    "ast_hash": "a7ed1b2a8d3dfc19239bcb30f8e4d883",
+    "semantic_hash": "a7ed1b2a8d3dfc19239bcb30f8e4d883"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\incompatNotice.test.ts": {
+    "mtime": 1781237420.35722,
+    "ast_hash": "8ca9ccfa6c1e8d4aea427e9f5d133c7b",
+    "semantic_hash": "8ca9ccfa6c1e8d4aea427e9f5d133c7b"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\killEnforcement.test.ts": {
+    "mtime": 1781237420.35722,
+    "ast_hash": "1f7fa407e60e770133ad268cf948e642",
+    "semantic_hash": "1f7fa407e60e770133ad268cf948e642"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\killswitch.test.ts": {
+    "mtime": 1781237420.3587363,
+    "ast_hash": "bafcebba85a7f02439c044e05fee969d",
+    "semantic_hash": "bafcebba85a7f02439c044e05fee969d"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\localVsixWatcher.test.ts": {
+    "mtime": 1781237420.3597548,
+    "ast_hash": "4830c75e7dc56eee66582bb34f23c045",
+    "semantic_hash": "4830c75e7dc56eee66582bb34f23c045"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\locateLog.test.ts": {
+    "mtime": 1781237420.3607574,
+    "ast_hash": "17303a1e60ba1cdcfa8fc79a7677c069",
+    "semantic_hash": "17303a1e60ba1cdcfa8fc79a7677c069"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\log.test.ts": {
+    "mtime": 1781237420.3607574,
+    "ast_hash": "55c0d0fb61026a44d1a4b7c482b837a6",
+    "semantic_hash": "55c0d0fb61026a44d1a4b7c482b837a6"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\logTail.test.ts": {
+    "mtime": 1781237420.3617575,
+    "ast_hash": "21657a58d849cbd9e328473c4ec54fb9",
+    "semantic_hash": "21657a58d849cbd9e328473c4ec54fb9"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\loopback.test.ts": {
+    "mtime": 1781237420.3617575,
+    "ast_hash": "5eb4c1960077276938f70ce2acc397eb",
+    "semantic_hash": "5eb4c1960077276938f70ce2acc397eb"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\loopbackSingleton.test.ts": {
+    "mtime": 1781237420.3627567,
+    "ast_hash": "46d2b1f53b0419ef79b53d7fcf9891dc",
+    "semantic_hash": "46d2b1f53b0419ef79b53d7fcf9891dc"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\loopbackTest.test.ts": {
+    "mtime": 1781237420.3627567,
+    "ast_hash": "338be626bf9affef01756af8a519fd08",
+    "semantic_hash": "338be626bf9affef01756af8a519fd08"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\metrics.test.ts": {
+    "mtime": 1781237420.363754,
+    "ast_hash": "8a7b4ece5513a16e8e7c6e6b418165d4",
+    "semantic_hash": "8a7b4ece5513a16e8e7c6e6b418165d4"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\mocks\\vscode.ts": {
+    "mtime": 1781237420.3647556,
+    "ast_hash": "4e0e7c208007be2301e14a1ced66628a",
+    "semantic_hash": "4e0e7c208007be2301e14a1ced66628a"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\modes.test.ts": {
+    "mtime": 1781237420.3647556,
+    "ast_hash": "22b654b80bb7cb64cea17495554e014c",
+    "semantic_hash": "22b654b80bb7cb64cea17495554e014c"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\portfolio.test.ts": {
+    "mtime": 1781237420.3661015,
+    "ast_hash": "09fc20700101bb2115d3a831508f44fa",
+    "semantic_hash": "09fc20700101bb2115d3a831508f44fa"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\reassert.test.ts": {
+    "mtime": 1781237420.3661015,
+    "ast_hash": "a5a0cc0d8f26f2c229c5a62647ebefbb",
+    "semantic_hash": "a5a0cc0d8f26f2c229c5a62647ebefbb"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\registry.test.ts": {
+    "mtime": 1781237420.3661015,
+    "ast_hash": "ca8d2c45ef460054bff3b745aaa69e16",
+    "semantic_hash": "ca8d2c45ef460054bff3b745aaa69e16"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\reloadNudge.test.ts": {
+    "mtime": 1781237420.3671193,
+    "ast_hash": "8dda46abd40fa6f6dd3f36ef2a96edad",
+    "semantic_hash": "8dda46abd40fa6f6dd3f36ef2a96edad"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\reloadSignal.test.ts": {
+    "mtime": 1781237420.3671193,
+    "ast_hash": "cf52fd36dd6e6ac720a64906384eb683",
+    "semantic_hash": "cf52fd36dd6e6ac720a64906384eb683"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\rotation.test.ts": {
+    "mtime": 1781237420.3671193,
+    "ast_hash": "acd4c8b461f5501c8b46274f5a38a4ca",
+    "semantic_hash": "acd4c8b461f5501c8b46274f5a38a4ca"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\selfUpdateWiring.test.ts": {
+    "mtime": 1781237420.3686306,
+    "ast_hash": "4d3ae4ed280af14dbf346af40e63e084",
+    "semantic_hash": "4d3ae4ed280af14dbf346af40e63e084"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\servingGate.test.ts": {
+    "mtime": 1781237420.3686306,
+    "ast_hash": "470b3c42ec6063560582a6734ea97554",
+    "semantic_hash": "470b3c42ec6063560582a6734ea97554"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\servingRetry.test.ts": {
+    "mtime": 1781237420.3696418,
+    "ast_hash": "0079dcac649f5d8c67e59c662dd880be",
+    "semantic_hash": "0079dcac649f5d8c67e59c662dd880be"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\setup.ts": {
+    "mtime": 1781237420.3696418,
+    "ast_hash": "087070f4f623004079b4d71b519e12ab",
+    "semantic_hash": "087070f4f623004079b4d71b519e12ab"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\smoke.test.ts": {
+    "mtime": 1781237420.3706448,
+    "ast_hash": "60e32fca99a899c7fe562e37ff4ab8ef",
+    "semantic_hash": "60e32fca99a899c7fe562e37ff4ab8ef"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\statusBarAd.test.ts": {
+    "mtime": 1781237420.3706448,
+    "ast_hash": "ffcf2f093544617239cba03cf8f1d9d3",
+    "semantic_hash": "ffcf2f093544617239cba03cf8f1d9d3"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\statusbar.test.ts": {
+    "mtime": 1781237420.3716583,
+    "ast_hash": "87a26f07956f1808c649fe47fcf556e8",
+    "semantic_hash": "87a26f07956f1808c649fe47fcf556e8"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\statusbarReloadLock.test.ts": {
+    "mtime": 1781237420.3716583,
+    "ast_hash": "efd83dd3f3b56c0e52af4c661ac2036c",
+    "semantic_hash": "efd83dd3f3b56c0e52af4c661ac2036c"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\testHooks.test.ts": {
+    "mtime": 1781237420.3726544,
+    "ast_hash": "84ddca328d2b9641f8589b0fe5b07897",
+    "semantic_hash": "84ddca328d2b9641f8589b0fe5b07897"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\update-cooldown.test.ts": {
+    "mtime": 1781237420.3726544,
+    "ast_hash": "a4a4c1f1b60fabc2874b3a42791438a5",
+    "semantic_hash": "a4a4c1f1b60fabc2874b3a42791438a5"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\update.test.ts": {
+    "mtime": 1781237420.3736534,
+    "ast_hash": "9c10348f0d52a5f22ba09f26a1fb982e",
+    "semantic_hash": "9c10348f0d52a5f22ba09f26a1fb982e"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\vault.test.ts": {
+    "mtime": 1781237420.3736534,
+    "ast_hash": "00fb1af359704aec2f5ee69bc73fde27",
+    "semantic_hash": "00fb1af359704aec2f5ee69bc73fde27"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\viewTimer.test.ts": {
+    "mtime": 1781237420.374667,
+    "ast_hash": "27c5a8c663962ebe34204ab049eeb795",
+    "semantic_hash": "27c5a8c663962ebe34204ab049eeb795"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\test\\webviewInjection-dualtarget.test.ts": {
+    "mtime": 1781237420.374667,
+    "ast_hash": "dde85e75ce3b33d7bd9fff01f1a254e4",
+    "semantic_hash": "dde85e75ce3b33d7bd9fff01f1a254e4"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\tsconfig.json": {
+    "mtime": 1781237420.3756542,
+    "ast_hash": "75f515824660fac0d38475b00acc54ec",
+    "semantic_hash": "75f515824660fac0d38475b00acc54ec"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\vitest.config.ts": {
+    "mtime": 1781237420.3756542,
+    "ast_hash": "0e73dbca7d8e99ba3886943f85f76406",
+    "semantic_hash": "0e73dbca7d8e99ba3886943f85f76406"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\README.md": {
+    "mtime": 1781237420.2857835,
+    "ast_hash": "dcb692502c9298961648d1e3c7e292ec",
+    "semantic_hash": "dcb692502c9298961648d1e3c7e292ec"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\readme_extension.md": {
+    "mtime": 1781237420.299069,
+    "ast_hash": "155ca910ef230120c1681eb2a3e2761b",
+    "semantic_hash": "155ca910ef230120c1681eb2a3e2761b"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\icon.png": {
+    "mtime": 1781237420.2867866,
+    "ast_hash": "7d83255114f60716f9f6676dd66cfac4",
+    "semantic_hash": "7d83255114f60716f9f6676dd66cfac4"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logo.svg": {
+    "mtime": 1781237420.2867866,
+    "ast_hash": "9015839d48310d624ab02bf9a4ce2899",
+    "semantic_hash": "9015839d48310d624ab02bf9a4ce2899"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\apple-touch-icon.png": {
+    "mtime": 1781237420.2877815,
+    "ast_hash": "464253a578e1ef21c211c9aab55b5e58",
+    "semantic_hash": "464253a578e1ef21c211c9aab55b5e58"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\favicon-32.png": {
+    "mtime": 1781237420.2877815,
+    "ast_hash": "ab01dd814a220bec0ace010a8d2d5e72",
+    "semantic_hash": "ab01dd814a220bec0ace010a8d2d5e72"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\favicon.svg": {
+    "mtime": 1781237420.2887821,
+    "ast_hash": "6408e8118b9e9b6301258b911eca793a",
+    "semantic_hash": "6408e8118b9e9b6301258b911eca793a"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\icon-192.png": {
+    "mtime": 1781237420.2892885,
+    "ast_hash": "5c91c3c2c51ab3b4ab33845d04cb4ea2",
+    "semantic_hash": "5c91c3c2c51ab3b4ab33845d04cb4ea2"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\icon-512.png": {
+    "mtime": 1781237420.2892885,
+    "ast_hash": "e21ccebb3cc0d5c308e42d964a3009c9",
+    "semantic_hash": "e21ccebb3cc0d5c308e42d964a3009c9"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\kickbacks-128.png": {
+    "mtime": 1781237420.290298,
+    "ast_hash": "41d0733d7ba0c3281a65d429dd893f73",
+    "semantic_hash": "41d0733d7ba0c3281a65d429dd893f73"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\kickbacks-16.png": {
+    "mtime": 1781237420.290298,
+    "ast_hash": "6e07a59ba0d73ced42fad963b42105b7",
+    "semantic_hash": "6e07a59ba0d73ced42fad963b42105b7"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\kickbacks-180.png": {
+    "mtime": 1781237420.2913077,
+    "ast_hash": "464253a578e1ef21c211c9aab55b5e58",
+    "semantic_hash": "464253a578e1ef21c211c9aab55b5e58"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\kickbacks-192.png": {
+    "mtime": 1781237420.2913077,
+    "ast_hash": "5c91c3c2c51ab3b4ab33845d04cb4ea2",
+    "semantic_hash": "5c91c3c2c51ab3b4ab33845d04cb4ea2"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\kickbacks-256.png": {
+    "mtime": 1781237420.2923067,
+    "ast_hash": "7d83255114f60716f9f6676dd66cfac4",
+    "semantic_hash": "7d83255114f60716f9f6676dd66cfac4"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\kickbacks-32.png": {
+    "mtime": 1781237420.2923067,
+    "ast_hash": "ab01dd814a220bec0ace010a8d2d5e72",
+    "semantic_hash": "ab01dd814a220bec0ace010a8d2d5e72"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\kickbacks-48.png": {
+    "mtime": 1781237420.2935455,
+    "ast_hash": "bbd34a4366564468e696f931a71bc925",
+    "semantic_hash": "bbd34a4366564468e696f931a71bc925"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\kickbacks-512.png": {
+    "mtime": 1781237420.2945468,
+    "ast_hash": "e21ccebb3cc0d5c308e42d964a3009c9",
+    "semantic_hash": "e21ccebb3cc0d5c308e42d964a3009c9"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\kickbacks-64.png": {
+    "mtime": 1781237420.2945468,
+    "ast_hash": "ae2b2d063326e5f37ca96374959d0a5f",
+    "semantic_hash": "ae2b2d063326e5f37ca96374959d0a5f"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\kickbacks-green.svg": {
+    "mtime": 1781237420.2945468,
+    "ast_hash": "372ab51e989ae4cf4054a84a1c45e81c",
+    "semantic_hash": "372ab51e989ae4cf4054a84a1c45e81c"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\kickbacks-lockup.png": {
+    "mtime": 1781237420.2965446,
+    "ast_hash": "ced732bd786ef62f3a6de11f0ee801ec",
+    "semantic_hash": "ced732bd786ef62f3a6de11f0ee801ec"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\kickbacks-white.svg": {
+    "mtime": 1781237420.2965446,
+    "ast_hash": "06e33d09139124eb7a09ebd580152b21",
+    "semantic_hash": "06e33d09139124eb7a09ebd580152b21"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\kickbacks.svg": {
+    "mtime": 1781237420.2965446,
+    "ast_hash": "6408e8118b9e9b6301258b911eca793a",
+    "semantic_hash": "6408e8118b9e9b6301258b911eca793a"
+  },
+  "D:\\projects\\kickass add\\kickbacks.ai\\media\\logos\\og-logo.png": {
+    "mtime": 1781237420.2975533,
+    "ast_hash": "e21ccebb3cc0d5c308e42d964a3009c9",
+    "semantic_hash": "e21ccebb3cc0d5c308e42d964a3009c9"
+  }
+}

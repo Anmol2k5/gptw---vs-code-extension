@@ -17,7 +17,7 @@ beforeEach(() => {
   dir = mkdtempSync(join(tmpdir(), "vibe-modes-"));
   process.env.HOME = dir;
   process.env.USERPROFILE = dir;
-  vd = join(dir, ".vibe-ads");
+  vd = join(dir, ".gptw");
   mkdirSync(vd, { recursive: true });
 });
 

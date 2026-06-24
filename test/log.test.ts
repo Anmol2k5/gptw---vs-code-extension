@@ -5,7 +5,7 @@ import { join } from "node:path";
 
 // This file tests the REAL log module. The global setupFile mocks it
 // process-wide (to keep every other test from polluting the dev machine's
-// ~/.vibe-ads/debug.log); we opt out here so the assertions exercise the
+// ~/.gptw/debug.log); we opt out here so the assertions exercise the
 // actual dlog/debugEnabled/codexEnabled implementations.
 vi.unmock("../src/log");
 
@@ -37,11 +37,11 @@ describe("log.ts", () => {
   it("off by default: no file, no throw", async () => {
     const { dlog } = await import("../src/log");
     dlog("ext", "evt", { a: 1 });
-    expect(existsSync(join(dir, ".vibe-ads", "debug.log"))).toBe(false);
+    expect(existsSync(join(dir, ".gptw", "debug.log"))).toBe(false);
   });
 
   it("sentinel on: writes a line carrying level + corr", async () => {
-    const vd = join(dir, ".vibe-ads");
+    const vd = join(dir, ".gptw");
     mkdirSync(vd, { recursive: true });
     writeFileSync(join(vd, "debug.enabled"), "");
     const { dlog } = await import("../src/log");
@@ -53,7 +53,7 @@ describe("log.ts", () => {
   });
 
   it("default level is info when opts omitted", async () => {
-    const vd = join(dir, ".vibe-ads");
+    const vd = join(dir, ".gptw");
     mkdirSync(vd, { recursive: true });
     writeFileSync(join(vd, "debug.enabled"), "");
     const { dlog } = await import("../src/log");
@@ -74,8 +74,8 @@ describe("log.ts", () => {
     delete process.env.VIBE_ADS_CODEX;
   });
 
-  it("codexEnabled: ~/.vibe-ads/codex.enabled sentinel opt-in", async () => {
-    const vd = join(dir, ".vibe-ads");
+  it("codexEnabled: ~/.gptw/codex.enabled sentinel opt-in", async () => {
+    const vd = join(dir, ".gptw");
     mkdirSync(vd, { recursive: true });
     writeFileSync(join(vd, "codex.enabled"), "");
     const { codexEnabled } = await import("../src/log");
@@ -83,7 +83,7 @@ describe("log.ts", () => {
   });
 
   it("rolling trim: caps log at MAX_LOG_LINES (oldest dropped)", async () => {
-    const vd = join(dir, ".vibe-ads");
+    const vd = join(dir, ".gptw");
     mkdirSync(vd, { recursive: true });
     writeFileSync(join(vd, "debug.enabled"), "");
     const log = join(vd, "debug.log");
@@ -117,7 +117,7 @@ describe("log.ts", () => {
     dlog("ext", "session.state", { signedIn: false });
     dlog("ext", "selfupdate.installed", { path: "x" });
     dlog("ext", "auth.refresh", { ok: false }); // future auth.* family
-    const log = join(dir, ".vibe-ads", "debug.log");
+    const log = join(dir, ".gptw", "debug.log");
     expect(existsSync(log)).toBe(true);
     const txt = readFileSync(log, "utf8");
     expect(txt).toContain("session.state");
@@ -129,7 +129,7 @@ describe("log.ts", () => {
     const { dlog } = await import("../src/log");
     dlog("ext", "metric.send", { event: "view_tick" });
     dlog("ext", "loopback.event", { route: "impression_rendered" });
-    expect(existsSync(join(dir, ".vibe-ads", "debug.log"))).toBe(false);
+    expect(existsSync(join(dir, ".gptw", "debug.log"))).toBe(false);
   });
 
   it("isLifecycleEvent: allowlist + family prefixes true; firehose false", async () => {
@@ -150,7 +150,7 @@ describe("log.ts", () => {
   });
 
   it("rolling trim: small file is left alone (no read, no rewrite)", async () => {
-    const vd = join(dir, ".vibe-ads");
+    const vd = join(dir, ".gptw");
     mkdirSync(vd, { recursive: true });
     writeFileSync(join(vd, "debug.enabled"), "");
     const log = join(vd, "debug.log");

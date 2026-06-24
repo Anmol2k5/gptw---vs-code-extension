@@ -34,7 +34,7 @@ function buildSuite(opts: { ad?: PatchAd | null;
     killed: opts.killed ?? false,
     ccVersion: "2.1.143",
     viewThresholdMs: opts.viewThresholdMs ?? 15000,
-    loopback: { port: 12345, base: "http://127.0.0.1:12345/vibe-ads/tok" },
+    loopback: { port: 12345, base: "http://127.0.0.1:12345/gptw/tok" },
   };
   const hooks = new TestHooks(metrics, portfolio, earnings, () => ctx,
     opts.onBillableEvent ?? null);
@@ -246,9 +246,9 @@ describe("TestHooks", () => {
     expect(ring[0]?.event).toBe("view_tick");
   });
 
-  it("registerCommands wires every kickbacks.test.* id exactly once and"
+  it("registerCommands wires every gptw.test.* id exactly once and"
     + " each handler invokes the corresponding TestHooks method", async () => {
-    const { hooks } = buildSuite();
+    const hooks = buildSuite().hooks;
     // Hand-rolled minimal mock so the spy assertions stay focused on this
     // contract; reuses the real vscode mock's dispatching pattern.
     const handlers = new Map<string, (...a: unknown[]) => unknown>();
@@ -270,16 +270,16 @@ describe("TestHooks", () => {
     try {
       hooks.registerCommands(fakeCtx);
       const expected = [
-        "kickbacks.test.fireImpressionRendered",
-        "kickbacks.test.fireImpressionViewable",
-        "kickbacks.test.fireViewTick",
-        "kickbacks.test.fireViewThresholdMet",
-        "kickbacks.test.fireErrorImpression",
-        "kickbacks.test.fireClick",
-        "kickbacks.test.refreshPortfolio",
-        "kickbacks.test.refreshEarnings",
-        "kickbacks.test.getState",
-        "kickbacks.test.clearEventLog",
+        "gptw.test.fireImpressionRendered",
+        "gptw.test.fireImpressionViewable",
+        "gptw.test.fireViewTick",
+        "gptw.test.fireViewThresholdMet",
+        "gptw.test.fireErrorImpression",
+        "gptw.test.fireClick",
+        "gptw.test.refreshPortfolio",
+        "gptw.test.refreshEarnings",
+        "gptw.test.getState",
+        "gptw.test.clearEventLog",
       ];
       expect(ids).toEqual(expected);
       // Each id is registered exactly once.
@@ -290,13 +290,13 @@ describe("TestHooks", () => {
       expect(subs.length).toBe(expected.length);
       // Invoking a fire command actually drives the hook (one POST queued).
       const r = await fakeVscode.commands.executeCommand(
-        "kickbacks.test.fireClick", { surface: "banner" }) as { ok: boolean };
+        "gptw.test.fireClick", { surface: "banner" }) as { ok: boolean };
       expect(r.ok).toBe(true);
       expect(hooks.getState().lastEvents.some(
         (e) => e?.event === "click" && e.surface === "banner")).toBe(true);
       // getState is reachable via the dispatcher and returns a snapshot.
       const snap = await fakeVscode.commands.executeCommand(
-        "kickbacks.test.getState") as { enabled: boolean };
+        "gptw.test.getState") as { enabled: boolean };
       expect(snap.enabled).toBe(true);
     } finally {
       fakeVscode.commands.registerCommand = origReg;
@@ -311,7 +311,7 @@ describe("TestHooks gated off", () => {
     async () => {
       vi.doMock("../src/log", () => ({
         debugEnabled: () => false, dlog: () => {}, dlogRaw: () => {},
-        codexEnabled: () => false, testHooksEnabled: () => false,
+        codexEnabled: () => false, testHooksEnabled: () => !!(process.env.GPTW_TEST_HOOKS || process.env.KICKBACKS_TEST_HOOKS || process.env.VIBE_ADS_TEST_HOOKS),
         LOG_PATH: "/tmp/test-log",
       }));
       const { TestHooks: GatedHooks } = await import("../src/testHooks");

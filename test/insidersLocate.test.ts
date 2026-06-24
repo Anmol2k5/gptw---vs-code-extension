@@ -19,7 +19,7 @@ vi.mock("node:os", async (importOriginal) => {
 });
 
 function freshHome(): string {
-  h.home = mkdtempSync(join(tmpdir(), "vibe-ads-insiders-"));
+  h.home = mkdtempSync(join(tmpdir(), "gptw-insiders-"));
   return h.home;
 }
 function installClaudeCode(root: string, ver = "2.1.170"): string {

@@ -55,26 +55,26 @@ const E2E = process.env.VIBE_ADS_E2E === "1";
   }
   // The ad is a body-level overlay we own (NOT inside CC's tree).
   const adVisible = (doc: Document) => {
-    const o = doc.querySelector('[data-vibe-ads-overlay="1"]') as
+    const o = doc.querySelector('[data-gptw-overlay="1"]') as
       HTMLElement | null;
     return !!o && !!o.isConnected && o.parentElement === doc.body &&
       (o.textContent || "").includes("Acme deploys faster");
   };
   // CC's spinner subtree must be byte-untouched: its child still present,
-  // no data-vibe-ads* injected/added inside the row (we only READ it).
+  // no data-gptw* injected/added inside the row (we only READ it).
   const ccTreeUntouched = (doc: Document) => {
     const row = doc.querySelector('[class*="spinnerRow_"]');
     if (!row) return true;                 // row gone (idle) — trivially fine
     const v = row.querySelector(".ccverb");
-    return !!v && v.getAttribute("data-vibe-ads-hid") === null &&
+    return !!v && v.getAttribute("data-gptw-hid") === null &&
       (v as HTMLElement).style.visibility !== "hidden" &&
-      row.querySelector("[data-vibe-ads-overlay]") === null &&
-      row.querySelector("[data-vibe-ads-host]") === null;
+      row.querySelector("[data-gptw-overlay]") === null &&
+      row.querySelector("[data-gptw-host]") === null;
   };
 
   it("patch -> ad renders in a body overlay, CC tree untouched -> restore " +
      "byte-exact", async () => {
-    const d = mkdtempSync(join(tmpdir(), "vibe-ads-e2e-"));
+    const d = mkdtempSync(join(tmpdir(), "gptw-e2e-"));
     const target = join(d, "index.js");
     writeFileSync(target, FIX, "utf8");
     const a = new ClaudeCodeAdapter(target);
@@ -83,7 +83,7 @@ const E2E = process.env.VIBE_ADS_E2E === "1";
       corr: "e2e.tst", loopbackPort: 5555,
       loopbackToken: "lt", loopbackBase: "http://127.0.0.1:5555" }).ok).toBe(true);
     const patched = readFileSync(target, "utf8");
-    const block = patched.slice(patched.indexOf("/* VIBE-ADS-START */"));
+    const block = patched.slice(patched.indexOf("/* GPTW-START */"));
     const dom = new JSDOM(
       `<body><div class="messagesContainer_X stickyMode_X">` +
       `<div class="spinnerRow_07S1Yg"><span class="ccverb">✢._.</span>` +
@@ -101,7 +101,7 @@ const E2E = process.env.VIBE_ADS_E2E === "1";
 
   it("ad PERSISTS frozen at idle (last ad stays in view), re-glues next " +
      "turn, CC tree never mutated", async () => {
-    const d = mkdtempSync(join(tmpdir(), "vibe-ads-pin-"));
+    const d = mkdtempSync(join(tmpdir(), "gptw-pin-"));
     const target = join(d, "index.js");
     writeFileSync(target, FIX, "utf8");
     new ClaudeCodeAdapter(target).applyPatch({ tier: 3,
@@ -110,7 +110,7 @@ const E2E = process.env.VIBE_ADS_E2E === "1";
       loopbackPort: 5555, loopbackToken: "lt",
       loopbackBase: "http://127.0.0.1:5555" });
     const patched = readFileSync(target, "utf8");
-    const block = patched.slice(patched.indexOf("/* VIBE-ADS-START */"));
+    const block = patched.slice(patched.indexOf("/* GPTW-START */"));
     const { dom, doc, tick, setTurn } = makeCcDom();
     dom.window.eval(block);
 
@@ -137,7 +137,7 @@ const E2E = process.env.VIBE_ADS_E2E === "1";
 
   it("does NOT vanish mid-thinking while CC animates its child in place " +
      "(read-only detection keeps the signal)", async () => {
-    const d = mkdtempSync(join(tmpdir(), "vibe-ads-inplace-"));
+    const d = mkdtempSync(join(tmpdir(), "gptw-inplace-"));
     const target = join(d, "index.js");
     writeFileSync(target, FIX, "utf8");
     new ClaudeCodeAdapter(target).applyPatch({ tier: 3,
@@ -146,7 +146,7 @@ const E2E = process.env.VIBE_ADS_E2E === "1";
       loopbackPort: 5555, loopbackToken: "lt",
       loopbackBase: "http://127.0.0.1:5555" });
     const patched = readFileSync(target, "utf8");
-    const block = patched.slice(patched.indexOf("/* VIBE-ADS-START */"));
+    const block = patched.slice(patched.indexOf("/* GPTW-START */"));
     const { dom, doc, tick, setTurn } = makeCcDom();
     dom.window.eval(block);
 
@@ -166,7 +166,7 @@ const E2E = process.env.VIBE_ADS_E2E === "1";
 
   it("does NOT bill while frozen at idle (no view_tick / error_impression " +
      "pings accrue once the turn ends)", async () => {
-    const d = mkdtempSync(join(tmpdir(), "vibe-ads-nobill-"));
+    const d = mkdtempSync(join(tmpdir(), "gptw-nobill-"));
     const target = join(d, "index.js");
     writeFileSync(target, FIX, "utf8");
     new ClaudeCodeAdapter(target).applyPatch({ tier: 3,
@@ -175,7 +175,7 @@ const E2E = process.env.VIBE_ADS_E2E === "1";
       loopbackPort: 5555, loopbackToken: "lt",
       loopbackBase: "http://127.0.0.1:5555" });
     const patched = readFileSync(target, "utf8");
-    const block = patched.slice(patched.indexOf("/* VIBE-ADS-START */"));
+    const block = patched.slice(patched.indexOf("/* GPTW-START */"));
     const { dom, doc, tick, setTurn } = makeCcDom();
     // Record every loopback hit (fetch + sendBeacon) so we can prove the
     // view-time accumulator emits NOTHING once the ad freezes at idle.
@@ -214,7 +214,7 @@ const E2E = process.env.VIBE_ADS_E2E === "1";
   }, 20000);
 
   it("renders a clickable ad into a real usage banner when bannerOn", async () => {
-    const d = mkdtempSync(join(tmpdir(), "vibe-ads-bn-"));
+    const d = mkdtempSync(join(tmpdir(), "gptw-bn-"));
     const target = join(d, "index.js");
     writeFileSync(target, FIX, "utf8");
     const a = new ClaudeCodeAdapter(target);
@@ -223,7 +223,7 @@ const E2E = process.env.VIBE_ADS_E2E === "1";
       loopbackPort: 5555,
       loopbackToken: "lt", loopbackBase: "http://127.0.0.1:5555", bannerOn: true });
     const patched = readFileSync(target, "utf8");
-    const block = patched.slice(patched.indexOf("/* VIBE-ADS-START */"));
+    const block = patched.slice(patched.indexOf("/* GPTW-START */"));
     const dom = new JSDOM(
       `<body><div id="b">You've used 71% of your weekly limit · resets in 4d · View usage</div></body>`,
       { runScripts: "outside-only" });
@@ -231,13 +231,13 @@ const E2E = process.env.VIBE_ADS_E2E === "1";
     dom.window.eval(block);
     await new Promise((r) => setTimeout(r, 1200)); // banner loop is 1s
     const b = dom.window.document.getElementById("b")!;
-    expect(b.getAttribute("data-vibe-ads-banner")).toBe("1");
+    expect(b.getAttribute("data-gptw-banner")).toBe("1");
     expect(b.innerHTML).toContain("Acme deploys faster");
-    expect(b.innerHTML).toContain('data-vibe-ads-ad="1"');
+    expect(b.innerHTML).toContain('data-gptw-ad="1"');
   });
 
   it("leaves the banner untouched when bannerOn is false", async () => {
-    const d = mkdtempSync(join(tmpdir(), "vibe-ads-bf-"));
+    const d = mkdtempSync(join(tmpdir(), "gptw-bf-"));
     const target = join(d, "index.js");
     writeFileSync(target, FIX, "utf8");
     new ClaudeCodeAdapter(target).applyPatch({ tier: 3, adText: "Acme", iconRef: "i", iconUrl: "",
@@ -245,7 +245,7 @@ const E2E = process.env.VIBE_ADS_E2E === "1";
       loopbackPort: 5555,
       loopbackToken: "lt", loopbackBase: "http://127.0.0.1:5555", bannerOn: false });
     const patched = readFileSync(target, "utf8");
-    const block = patched.slice(patched.indexOf("/* VIBE-ADS-START */"));
+    const block = patched.slice(patched.indexOf("/* GPTW-START */"));
     const orig = "You've used 71% of your weekly limit · resets in 4d · View usage";
     const dom = new JSDOM(`<body><div id="b">${orig}</div></body>`,
       { runScripts: "outside-only" });

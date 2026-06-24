@@ -7,19 +7,20 @@ function load(iconUrl: string = "") {
   let src = readFileSync(
     join(__dirname, "../src/adapters/claude-code/block.asset.js"), "utf8");
   const subs: Record<string, string> = {
-    __VIBE_ADS_TIER__: "3",
-    __VIBE_ADS_AD__: JSON.stringify("Acme deploys faster than your CI"),
-    __VIBE_ADS_ICON__: JSON.stringify("icon.a"),
-    __VIBE_ADS_ICON_URL__: JSON.stringify(iconUrl),
-    __VIBE_ADS_PORT__: "5555",
-    __VIBE_ADS_LBTOKEN__: JSON.stringify("lt"),
-    __VIBE_ADS_CLICKTOKEN__: JSON.stringify("ck"),
-    __VIBE_ADS_BASE__: JSON.stringify("http://127.0.0.1:5555/vibe-ads/lt"),
-    __VIBE_ADS_DEBUG__: "false",
-    __VIBE_ADS_CLICKURL__: JSON.stringify("https://acme.example/lp"),
-    __VIBE_ADS_BANNER_ON__: "true",
-    __VIBE_ADS_CORR__: JSON.stringify("ad1.test"),
-    __VIBE_ADS_VIEW_THRESHOLD_MS__: "15000",
+    __GPTW_TIER__: "3",
+    __GPTW_AD__: JSON.stringify("Acme deploys faster than your CI"),
+    __GPTW_ICON__: JSON.stringify("icon.a"),
+    __GPTW_ICON_URL__: JSON.stringify(iconUrl),
+    __GPTW_PORT__: "5555",
+    __GPTW_LBTOKEN__: JSON.stringify("lt"),
+    __GPTW_CLICKTOKEN__: JSON.stringify("ck"),
+    __GPTW_BASE__: JSON.stringify("http://127.0.0.1:5555/gptw/lt"),
+    __GPTW_DEBUG__: "false",
+    __GPTW_CLICKURL__: JSON.stringify("https://acme.example/lp"),
+    __GPTW_BANNER_ON__: "true",
+    __GPTW_CORR__: JSON.stringify("ad1.test"),
+    __GPTW_THEME_KIND__: JSON.stringify("dark"),
+    __GPTW_VIEW_THRESHOLD_MS__: "15000",
   };
   for (const [k, v] of Object.entries(subs)) src = src.split(k).join(v);
   const mod = { exports: {} as Record<string, unknown> };
@@ -94,14 +95,14 @@ describe("block.asset icon rendering (ICON_URL feature)", () => {
       "Acme banner text", "https://acme.example/lp");
     expect(h).toContain("<img");
     expect(h).toContain(`src="${url}"`);
-    expect(h).toContain('data-vibe-ads-ad="1"');
+    expect(h).toContain('data-gptw-ad="1"');
   });
 
   it("buildBannerHtml falls back to V badge when no icon_url", () => {
     const b = load("");
     const h = (b.buildBannerHtml as Function)(
       "Acme banner text", "https://acme.example/lp");
-    expect(h).toContain('data-vibe-ads-ad="1"');
+    expect(h).toContain('data-gptw-ad="1"');
     // Banner may or may not include the favicon — depends on implementation.
     // The key invariant: no <img> tag when no icon_url.
     expect(h).not.toContain("<img");

@@ -15,9 +15,17 @@ const PLUGIN_FILE_NAME = "opencode-plugin.js";
 const FRESH_MS = 10 * 60 * 1000;
 
 // OpenCode config paths (platform-aware).
+//   $XDG_CONFIG_HOME/opencode — respected on all platforms (allows overrides
+//            and hermetic test environments).
+//   Windows: %APPDATA%\opencode when XDG is unset.
+//   macOS/Linux: ~/.config/opencode when XDG is unset.
 function opencodeConfigDir(): string {
+  const xdg = process.env.XDG_CONFIG_HOME;
+  if (xdg) return join(xdg, "opencode");
   if (process.platform === "win32") {
-    return join(homedir(), ".config", "opencode");
+    const appData = process.env.APPDATA;
+    if (appData) return join(appData, "opencode");
+    return join(homedir(), "AppData", "Roaming", "opencode");
   }
   return join(homedir(), ".config", "opencode");
 }

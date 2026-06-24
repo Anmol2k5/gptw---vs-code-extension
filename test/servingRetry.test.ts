@@ -38,6 +38,15 @@ import { activate, deactivate, __wireForTest } from "../src/extension";
 import { makeContext, secrets, commands } from "./mocks/vscode";
 import { setKillPosture } from "../src/servingGate";
 
+vi.mock("node:os", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("node:os")>();
+  return {
+    ...actual,
+    homedir: () => process.env.USERPROFILE || process.env.HOME || actual.homedir(),
+  };
+});
+
+
 // The production webview apply is the one that carries the portfolio ad's
 // text — the boot-canary debug cycle patches with the DEFAULT_TEXT
 // placeholder (setPortfolioAd is wired after bootCanary), so filtering on
@@ -56,7 +65,7 @@ const mkAdapter = () => ({
 // Guarantee the clean-boot canary branch (a recent canary from a parallel
 // test worker would otherwise suspend serving and gate the retry loop).
 const clearBootCanary = (): void => {
-  try { rmSync(join(homedir(), ".vibe-ads", "boot.canary"), { force: true }); }
+  try { rmSync(join(homedir(), ".gptw", "boot.canary"), { force: true }); }
   catch { /* best-effort */ }
 };
 
@@ -135,7 +144,7 @@ describe("serving bring-up retry (audit #5)", { timeout: 30_000 }, () => {
     stubFetch(state);
     __wireForTest({ adapter, statusBar, killed: true, servingRetryBaseMs: 25 });
     const ctx = makeContext();
-    await ctx.secrets.store("kickbacks.access", "AT-RETRY");
+    await ctx.secrets.store("gptw.access", "AT-RETRY");
     try {
       await activate(ctx as never);
       // Several gated retry ticks elapse — killed-confirmed must SKIP the
